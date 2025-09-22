@@ -21,7 +21,7 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
       >
         <div className="flex items-center gap-2">
           <CryptoIcon symbol={selected.symbol} size={20} />
@@ -31,7 +31,7 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-card rounded-lg shadow-lg border border-border py-1 z-50">
           {currencies.map(currency => (
             <button
               key={currency.symbol}
@@ -39,8 +39,8 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
                 onChange(currency.symbol);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                currency.symbol === value ? 'bg-gray-50 dark:bg-gray-700' : ''
+              className={`w-full flex items-center gap-2 px-4 py-2 hover:bg-muted transition-colors ${
+                currency.symbol === value ? 'bg-muted' : ''
               }`}
             >
               <CryptoIcon symbol={currency.symbol} size={20} />

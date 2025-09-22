@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useTransactions } from '@/contexts/TransactionsContext';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -9,55 +11,39 @@ import {
   Tooltip,
   ReferenceLine
 } from 'recharts';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { TimeRangeSelector } from '../components/TimeRangeSelector';
-import { ProgressBar } from '../components/ProgressBar.tsx';
-import { generateChartData, rewardTransactions } from '../utils/stakingData';
-import { initialDemoTransactions } from '../pages/Transactions';
-import type { Transaction, TransactionType } from '../types';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { TimeRangeSelector } from '@/components/TimeRangeSelector';
+import { generateChartData, rewardTransactions } from '@/utils/stakingData';
+import { initialDemoTransactions } from '@/pages/Transactions';
+import type { Transaction, TransactionType } from '@/types';
+import { cn } from "@/lib/utils";
+import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/components/ui/typography';
+import { TransactionRow } from '@/components/TransactionRow';
 
 export function Dashboard() {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
-  const [investAmount, setInvestAmount] = useState(10000);
-  const [transactions, setTransactions] = useState<Transaction[]>(initialDemoTransactions);
+  const [investAmount, setInvestAmount] = useState('');
   const navigate = useNavigate();
+  const { transactions, addTransaction } = useTransactions();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
 
-  // Function to add a new transaction
-  const addTransaction = (amount: number, token: string, type: TransactionType = 'top-up') => {
-    const newTransaction: Transaction = {
-      id: Date.now().toString(),
-      type,
-      amount,
-      token,
-      status: 'pending',
-      timestamp: new Date().toISOString(),
-    };
-
-    setTransactions(prev => [newTransaction, ...prev]);
-
-    // Update status to completed after 10 seconds
-    setTimeout(() => {
-      setTransactions(prev => 
-        prev.map(tx => 
-          tx.id === newTransaction.id 
-            ? { ...tx, status: 'completed' }
-            : tx
-        )
-      );
-    }, 10000);
-  };
-
-  // Export addTransaction function to make it available to other components
-  useEffect(() => {
-    window.addTransaction = addTransaction;
-    return () => {
-      if ('addTransaction' in window) {
-        delete (window as any).addTransaction;
-      }
-    };
-  }, []);
 
   // Update chart data when time range changes
   useEffect(() => {
@@ -92,15 +78,15 @@ export function Dashboard() {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{label}</p>
-          <p className="font-medium">
+        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border">
+          <span className="text-caption mb-1">{label}</span>
+          <BodyTextSmall className="font-medium">
             Total: ${data.value.toLocaleString()}
-          </p>
+          </BodyTextSmall>
           {data.reward > 0 && (
-            <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+            <BodyTextSmall className="text-success mt-1">
               +${data.reward.toLocaleString()} reward
-            </p>
+            </BodyTextSmall>
           )}
         </div>
       );
@@ -108,67 +94,77 @@ export function Dashboard() {
     return null;
   };
 
-  const getTransactionLabel = (type: TransactionType) => {
-    switch (type) {
-      case 'top-up':
-        return 'Top Up';
-      case 'investment':
-        return 'Investment';
-      default:
-        return type.charAt(0).toUpperCase() + type.slice(1);
-    }
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1 }
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
   };
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-8 gap-6">
-        <Card className="lg:col-span-5">
-          <div className="space-y-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Rewards</h2>
-                <h1 className="text-4xl font-bold mt-1">
-                  ${totalRewards.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  +${rewardsLast24h.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })} in the last 24h
-                </p>
-              </div>
-              <div className="scale-90 origin-top-right">
-                <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-              </div>
-            </div>
-
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={cardVariants}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="lg:col-span-5"
+        >
+          <Card>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={contentVariants}
+              transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            >
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardDescription>Total Rewards</CardDescription>
+                    <h1 className="text-heading-1 text-foreground mt-1">
+                      ${totalRewards.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </h1>
+                    <BodyText className="mt-1 text-success">
+                      +$17.49
+                    </BodyText>
+                  </div>
+                  <div className="scale-90 origin-top-right">
+                    <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
             <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#26A17B" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#26A17B" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="white" stopOpacity={0.05}/>
+                      <stop offset="95%" stopColor="white" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="date"
-                    stroke="#888888"
+                    stroke="hsl(var(--muted-foreground))"
                     tickMargin={8}
-                    tick={{ fill: '#888888', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   />
-
                   <Tooltip content={<CustomTooltip />} />
-                  {/* Add reference lines for rewards */}
                   {chartData.map((entry, index) => 
                     entry.reward > 0 ? (
                       <ReferenceLine
                         key={index}
                         x={entry.date}
-                        stroke="#26A17B"
+                        stroke="hsl(var(--primary))"
                         strokeDasharray="3 3"
                         opacity={0.5}
                       />
@@ -177,7 +173,7 @@ export function Dashboard() {
                   <Area
                     type="stepAfter"
                     dataKey="value"
-                    stroke="#26A17B"
+                    stroke="white"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorValue)"
@@ -189,155 +185,172 @@ export function Dashboard() {
               </ResponsiveContainer>
             </div>
 
-            <ProgressBar
-              progress={progressPercentage}
-              label="Next reward"
-              rightLabel={timeUntilRewardFormatted}
-            />
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Next reward</span>
+                <span className="text-muted-foreground">21h 32min</span>
+              </div>
+              <Progress value={30} className="h-2" />
+            </div>
 
-            <button
+            <Button
               onClick={() => navigate('/transactions?filter=rewards')}
-              className="flex items-center text-sm text-brand hover:text-brand/80 transition-colors"
+              variant="link"
+              className="text-primary hover:text-primary/80 p-0 h-auto font-normal"
             >
               <span>See rewards history</span>
-              <ExternalLink size={14} className="ml-1" />
-            </button>
-          </div>
-        </Card>
+              <ExternalLink className="ml-1 h-4 w-4" />
+            </Button>
+              </CardContent>
+            </motion.div>
+          </Card>
+        </motion.div>
 
-        <Card className="lg:col-span-3">
-          <div className="h-full flex flex-col">
-            <div>
-              <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Invest</h2>
-              <div className="mt-8 space-y-6">
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Investment</label>
-                    <input
-                      type="text"
-                      value={`$${investAmount.toLocaleString()}`}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '');
-                        setInvestAmount(Number(value) || 0);
-                      }}
-                      className="w-full h-14 px-4 text-2xl font-semibold bg-transparent border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50"
-                    />
-                  </div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={cardVariants}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          className="lg:col-span-3"
+        >
+          <Card>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={contentVariants}
+              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+            >
+              <CardHeader>
+                <CardDescription>Passive Income</CardDescription>
+              </CardHeader>
+              <CardContent>
+            <div className="space-y-4">
+              <div>
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={investAmount ? `$${Number(investAmount).toLocaleString()}` : ''}
+                    placeholder="$10,000"
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      setInvestAmount(value);
+                    }}
+                    className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
+                    autoFocus
+                  />
+                  <span className="text-caption absolute left-4 top-2 font-medium">
+                    Amount
+                  </span>
+                </div>
+              </div>
 
-                  <div className="flex justify-start">
-                    <ArrowRight className="text-gray-400 rotate-90" size={24} />
-                  </div>
+              <div className="relative -my-6">
+                <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[calc(50%+8px)] bg-card rounded-full p-2 z-50">
+                  <ArrowRight className="text-primary rotate-90" size={18} />
+                </div>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Estimated Return (APY 7.8%)</label>
-                    <div className="w-full h-14 px-4 text-2xl font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center text-brand">
-                      ${(investAmount * 1.078).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </div>
+              <div>
+                <div className="relative">
+                  <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-muted rounded-md flex items-center text-primary">
+                    {investAmount ? `$${(Number(investAmount) * 1.078).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '$10,780'}
                   </div>
+                  <span className="text-caption absolute left-4 top-2 font-medium">
+                    Estimated Return (APY 7.8%)
+                  </span>
                 </div>
               </div>
             </div>
             
-            <div className="mt-auto pt-8">
+            <div className="mt-6 space-y-6">
               <Button 
                 onClick={() => navigate('/transaction-review', { 
-                  state: { amount: investAmount } 
+                  state: { amount: investAmount ? Number(investAmount) : 10000 } 
                 })} 
-                className="w-full h-14 rounded-xl">
+                className="w-full h-12"
+                variant="default"
+                size="lg">
                 Review Order
               </Button>
+
+              <div className=" rounded-lg space-y-4">
+                <div className="flex items-center gap-3 ">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-caption">You'll receive $2,13 every 24h</span>
+                </div>
+                <div className="flex items-center gap-3 ">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-caption">Your funds are securely stored</span>
+                </div>
+                <div className="flex items-center gap-3 ">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-caption">You can withdraw your funds anytime</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </Card>
+              </CardContent>
+            </motion.div>
+          </Card>
+        </motion.div>
       </div>
 
-      <Card>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Latest transactions</h2>
-          <button
-            onClick={() => navigate('/transactions')}
-            className="text-sm text-brand hover:text-brand/80 transition-colors flex items-center"
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+      >
+        <Card>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
           >
-            See all
-            <ExternalLink size={14} className="ml-1" />
-          </button>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left border-b border-gray-200 dark:border-gray-700">
-                <th className="pb-3 font-medium text-gray-600 dark:text-gray-400">Type</th>
-                <th className="pb-3 font-medium text-gray-600 dark:text-gray-400">Amount</th>
-                <th className="pb-3 font-medium text-gray-600 dark:text-gray-400">Status</th>
-                <th className="pb-3 font-medium text-gray-600 dark:text-gray-400">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {transactions.slice(0, 3).map((tx) => (
-                <tr
-                  key={tx.id}
-                  className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            <CardHeader>
+              <div className="flex items-center justify-between space-x-4">
+                <CardDescription>Latest transactions</CardDescription>
+                <Button
+                  onClick={() => navigate('/transactions')}
+                  variant="link"
+                  className="text-primary hover:text-primary/80 p-0 h-auto font-normal"
                 >
-                  <td className="py-4">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        tx.type === 'rewards'
-                          ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
-                          : tx.type === 'withdrawals'
-                          ? 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400'
-                          : tx.type === 'investment'
-                          ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
-                          : tx.type === 'top-up'
-                          ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
-                          : 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400'
-                      }`}>
-                        {tx.type === 'rewards' ? <Gift className="w-5 h-5" />
-                          : tx.type === 'withdrawals' ? <ArrowDownLeft className="w-5 h-5" />
-                          : tx.type === 'investment' ? <ArrowUpRight className="w-5 h-5" />
-                          : tx.type === 'top-up' ? <ArrowUpRight className="w-5 h-5" />
-                          : <RefreshCw className="w-5 h-5" />}
-                      </div>
-                      <span className="font-medium">
-                        {getTransactionLabel(tx.type as TransactionType)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4">
-                    <span className={`font-medium ${
-                      tx.type === 'withdrawals' 
-                        ? 'text-red-600 dark:text-red-400'
-                        : tx.type === 'investment'
-                        ? 'text-gray-900 dark:text-gray-100'
-                        : 'text-green-600 dark:text-green-400'
-                    }`}>
-                      {tx.type === 'withdrawals' 
-                        ? `-${tx.amount} ${tx.token}`
-                        : tx.type === 'investment'
-                        ? `${tx.amount} ${tx.token}`
-                        : `+${tx.amount} ${tx.token}`}
-                    </span>
-                  </td>
-                  <td className="py-4">
-                    <span className={`px-2 py-1 rounded-full text-sm capitalize ${
-                      tx.status === 'completed'
-                        ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30'
-                        : tx.status === 'pending'
-                        ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30'
-                        : 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30'
-                    }`}>
-                      {tx.status}
-                    </span>
-                  </td>
-                  <td className="py-4 text-gray-600 dark:text-gray-400">
-                    {new Date(tx.timestamp).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                  See all
+                  <ExternalLink className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead><Caption>Type</Caption></TableHead>
+                  <TableHead><Caption>Amount</Caption></TableHead>
+                  <TableHead><Caption>Status</Caption></TableHead>
+                  <TableHead><Caption>Date</Caption></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transactions.slice(0, 3).map((tx) => (
+                  <TransactionRow 
+                    key={tx.id} 
+                    transaction={tx} 
+                  />
+                ))}
+              </TableBody>
+            </Table>
+              </div>
+            </CardContent>
+          </motion.div>
+        </Card>
+      </motion.div>
     </div>
   );
 }

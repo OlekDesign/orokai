@@ -1,0 +1,124 @@
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, PiggyBank, History, LogOut, Wallet, Users, User } from 'lucide-react';
+import { MetaMaskIcon } from './MetaMaskIcon';
+import { Heading3 } from './ui/typography';
+import { useAuth } from '../contexts/AuthContext';
+import { useUserProfile } from '../contexts/UserProfileContext';
+
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: PiggyBank, label: 'Passive Income', path: '/invest' },
+  { icon: History, label: 'Transactions', path: '/transactions' },
+  { icon: Wallet, label: 'Wallet', path: '/wallet' },
+  { icon: Users, label: 'Affiliate', path: '/affiliate' },
+];
+
+const DEMO_WALLET = {
+  address: '0x1234567890123456789012345678901234567890',
+};
+
+export function Navbar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { profile } = useUserProfile();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <nav className="hidden md:flex fixed top-0 left-0 h-full w-64 bg-card border-r border-border z-50 flex-col">
+        {/* Logo */}
+        <div className="p-6 border-b border-border">
+          <Link to="/dashboard">
+            <Heading3 className="text-foreground font-bold">
+              Orokai
+            </Heading3>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 p-4">
+          <nav className="space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors w-full ${
+                    isActive
+                      ? 'bg-secondary text-foreground border-t border-primary/15'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
+                >
+                  <Icon size={16} />
+                  <span className={`text-xs leading-none ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Wallet Info & Logout */}
+        <div className="p-4 border-t border-border">
+          <div 
+            className="flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
+            onClick={() => navigate('/wallet')}
+          >
+              <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
+                {profile?.avatar ? (
+                  <img 
+                    src={profile.avatar} 
+                    alt={profile.name || "Profile"} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User size={16} className="text-muted-foreground" />
+                )}
+              </div>
+              <div className="flex flex-col">
+                {profile?.name && (
+                  <span className="text-xs font-medium text-foreground">
+                    {profile.name}
+                  </span>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  {DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}
+                </span>
+              </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Navigation (Bottom) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border z-50">
+        <div className="h-full grid grid-cols-5 items-center">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex flex-col items-center space-y-1 p-2 ${
+                  isActive ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Icon size={20} />
+                <span className={`text-xs leading-none ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </>
+  );
+}

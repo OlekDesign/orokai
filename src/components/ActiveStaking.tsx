@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Clock, TrendingUp } from 'lucide-react';
-import { Card } from './Card';
-import { Button } from './Button';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
 
 interface Investment {
   id: string;
@@ -43,7 +43,7 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
           </div>
           <div>
             <h3 className="font-medium">{staking.chain} Staking</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               {staking.amount.toLocaleString()} USDT
             </p>
           </div>
@@ -52,7 +52,7 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
           <div className="font-medium text-brand">
             {staking.apy}% APY
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-muted-foreground">
             +{staking.earned.toLocaleString()} USDT earned
           </div>
         </div>
@@ -66,10 +66,10 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-6 pt-6 border-t border-border">
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  <div className="text-sm text-muted-foreground mb-1">
                     Start Date
                   </div>
                   <div className="font-medium">
@@ -77,7 +77,7 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  <div className="text-sm text-muted-foreground mb-1">
                     End Date
                   </div>
                   <div className="font-medium">
@@ -86,12 +86,12 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
                 </div>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-                <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+              <div className="bg-muted rounded-lg p-4 mb-6">
+                <div className="flex items-center space-x-3 text-muted-foreground">
                   <Clock size={20} />
                   <div className="text-sm">
                     Time until maturity:
-                    <span className="ml-1 text-gray-900 dark:text-white font-medium">
+                    <span className="ml-1 text-foreground font-medium">
                       {/* Calculate time remaining in a real app */}
                       45 days
                     </span>
@@ -108,12 +108,12 @@ export function ActiveStaking({ staking, onClose }: ActiveStakingProps) {
                   Close Details
                 </Button>
                 <Button
-                  variant="primary"
+                  variant="default"
                   className="flex-1"
-                  isLoading={isClosing}
+                  disabled={isClosing}
                   onClick={handleClose}
                 >
-                  Close Position
+                  {isClosing ? 'Closing...' : 'Close Position'}
                 </Button>
               </div>
             </div>

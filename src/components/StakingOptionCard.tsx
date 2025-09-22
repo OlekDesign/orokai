@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Card } from './Card';
-import { Button } from './Button';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
 
 interface StakingOptionProps {
   title: string;
@@ -56,23 +56,23 @@ export function StakingOptionCard({
       <div className="space-y-4">
         <div>
           <h3 className="text-section">{title}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground">
             on {chain}
           </p>
         </div>
 
         <div className="flex items-baseline space-x-1">
-          <span className="text-3xl font-bold text-brand">
+          <span className="text-heading-2 font-bold text-brand">
             {apy}%
           </span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-muted-foreground">
             APY
           </span>
         </div>
 
-        <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="space-y-2 pt-4 border-t border-border">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-muted-foreground">
               Minimum Stake
             </span>
             <span className="font-medium">
@@ -80,7 +80,7 @@ export function StakingOptionCard({
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-muted-foreground">
               Lock Period
             </span>
             <span className="font-medium">
@@ -95,7 +95,7 @@ export function StakingOptionCard({
               variant="secondary"
               size="sm"
               className="w-full"
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 // Handle view details
               }}

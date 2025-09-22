@@ -25,6 +25,13 @@ interface CryptoWallet {
 }
 
 interface UserProfileContextType {
+  // Profile
+  profile: {
+    name: string;
+    avatar: string | null;
+  } | null;
+  setProfile: (profile: { name: string; avatar: string | null }) => void;
+  
   // Payment methods
   hasSavedCard: boolean;
   creditCards: CreditCard[];
@@ -36,6 +43,10 @@ interface UserProfileContextType {
   investments: Investment[];
   addInvestment: (investment: Investment) => void;
   removeInvestment: (investmentId: string) => void;
+  
+  // Closed investments
+  closedInvestmentAmount: number | null;
+  setClosedInvestmentAmount: (amount: number | null) => void;
   
   // Crypto
   hasCryptoWallet: boolean;
@@ -52,6 +63,7 @@ const UserProfileContext = createContext<UserProfileContextType | undefined>(und
 
 // Demo initial state for development
 const DEMO_STATE = {
+  profile: null,
   creditCards: [],
   investments: [
     {
@@ -69,14 +81,20 @@ const DEMO_STATE = {
 };
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
+  const [profile, setProfile] = useState<{ name: string; avatar: string | null } | null>(DEMO_STATE.profile);
   const [creditCards, setCreditCards] = useState<CreditCard[]>(DEMO_STATE.creditCards);
   const [investments, setInvestments] = useState<Investment[]>(DEMO_STATE.investments);
   const [cryptoWallet, setCryptoWallet] = useState<CryptoWallet | null>(DEMO_STATE.cryptoWallet);
   const [preferredPaymentMethod, setPreferredPaymentMethod] = useState<'card' | 'crypto' | null>(
     DEMO_STATE.preferredPaymentMethod
   );
+  const [closedInvestmentAmount, setClosedInvestmentAmount] = useState<number | null>(null);
 
   const value = {
+    // Profile
+    profile,
+    setProfile,
+    
     // Payment methods
     hasSavedCard: creditCards.length > 0,
     creditCards,
@@ -88,6 +106,10 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     investments,
     addInvestment: (investment: Investment) => setInvestments(prev => [...prev, investment]),
     removeInvestment: (investmentId: string) => setInvestments(prev => prev.filter(i => i.id !== investmentId)),
+    
+    // Closed investments
+    closedInvestmentAmount,
+    setClosedInvestmentAmount,
     
     // Crypto
     hasCryptoWallet: cryptoWallet !== null,

@@ -1,6 +1,6 @@
 import { Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Card } from './Card';
+import { Card } from './ui/card';
 
 interface WalletCardProps {
   address: string;
@@ -26,13 +26,13 @@ export function WalletCard({ address, balance, tokenSymbol }: WalletCardProps) {
     <Card className="bg-gradient-to-br from-brand/10 to-accent/10">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-muted-foreground">
             Wallet Address
           </span>
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={copyToClipboard}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-muted-foreground hover:text-foreground"
           >
             <Copy size={16} />
           </motion.button>
@@ -42,8 +42,8 @@ export function WalletCard({ address, balance, tokenSymbol }: WalletCardProps) {
           {shortenAddress(address)}
         </div>
 
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="pt-4 border-t border-border">
+          <span className="text-sm text-muted-foreground">
             Available Balance
           </span>
           <div className="mt-1 flex items-baseline">
@@ -53,7 +53,7 @@ export function WalletCard({ address, balance, tokenSymbol }: WalletCardProps) {
                 maximumFractionDigits: 2
               })}
             </span>
-            <span className="ml-1 text-gray-600 dark:text-gray-400">
+            <span className="ml-1 text-muted-foreground">
               {tokenSymbol}
             </span>
           </div>

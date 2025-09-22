@@ -1,191 +1,239 @@
 import { useNavigate } from 'react-router-dom';
-import { Plus, Wallet, ArrowRight } from 'lucide-react';
-import { Card } from '../components/Card';
-import { ProgressBar } from '../components/ProgressBar';
-import { Button } from '../components/Button';
-import { useUserProfile } from '../contexts/UserProfileContext';
+import { Plus, TrendingUp, Shield, Clock } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Heading1, Heading2, BodyTextLarge, BodyTextSmall, Caption } from '@/components/ui/typography';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useUserProfile } from '../contexts/UserProfileContext';
+import { InvestmentCard } from "@/components/InvestmentCard";
 
 export function Investments() {
   const navigate = useNavigate();
-  const { investments, removeInvestment } = useUserProfile();
-  const [investAmount, setInvestAmount] = useState(10000);
+  const { investments, removeInvestment, setClosedInvestmentAmount } = useUserProfile();
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1 }
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
 
   const handleWithdraw = (investmentId: string) => {
-    removeInvestment(investmentId);
+    // Find the investment before removing it to store its amount
+    const investment = investments.find(inv => inv.id === investmentId);
+    if (investment) {
+      setClosedInvestmentAmount(investment.amount);
+      removeInvestment(investmentId);
+    }
   };
 
-  // Helper function to calculate time since investment start
-  const getTimeSince = (startDate: string) => {
-    const start = new Date(startDate);
-    const now = new Date();
-    const diffMs = now.getTime() - start.getTime();
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    return { days, hours };
-  };
-
-  // Calculate next reward time (similar to Dashboard.tsx)
-  const calculateNextReward = (startDate: string) => {
-    const lastRewardTime = new Date(startDate);
-    const nextRewardTime = new Date(lastRewardTime.getTime() + 24 * 60 * 60 * 1000);
-    const timeUntilNextReward = Math.max(0, nextRewardTime.getTime() - Date.now());
-    const totalRewardPeriod = 24 * 60 * 60 * 1000;
-    const progressPercentage = ((totalRewardPeriod - timeUntilNextReward) / totalRewardPeriod) * 100;
-    
-    const hoursUntilReward = Math.floor(timeUntilNextReward / (1000 * 60 * 60));
-    return { progressPercentage, hoursUntilReward };
-  };
+  // Passive income options data
+  const passiveIncomeOptions = [
+    {
+      id: 1,
+      title: "DeFi Staking",
+      description: "Stake your crypto assets in decentralized protocols for consistent returns",
+      apy: "7.8%",
+      minAmount: 1000,
+      risk: "Medium",
+      duration: "Flexible",
+      icon: TrendingUp,
+      color: "text-success",
+      bgColor: "bg-success/5"
+    },
+    {
+      id: 2,
+      title: "Liquidity Pools",
+      description: "Provide liquidity to DEX pools and earn fees from trading activity",
+      apy: "12.4%",
+      minAmount: 2500,
+      risk: "High",
+      duration: "30+ days",
+      icon: Shield,
+      color: "text-info",
+      bgColor: "bg-info/5"
+    },
+    {
+      id: 3,
+      title: "Yield Farming",
+      description: "Maximize returns through automated yield optimization strategies",
+      apy: "15.2%",
+      minAmount: 5000,
+      risk: "High",
+      duration: "60+ days",
+      icon: Clock,
+      color: "text-primary",
+      bgColor: "bg-primary/5"
+    }
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.2 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Your Investments</h1>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          {investments.length} active {investments.length === 1 ? 'investment' : 'investments'}
-        </div>
-      </div>
+    <div className="space-y-8">
       
-      {investments.length === 0 ? (
-        <Card className="max-w-md mx-auto">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold mb-8">Create your first investment</h2>
-            
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Investment</label>
-                <input
-                  type="text"
-                  value={`$${investAmount.toLocaleString()}`}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, '');
-                    setInvestAmount(Number(value) || 0);
-                  }}
-                  className="w-full h-14 px-4 text-2xl font-semibold bg-transparent border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50"
-                />
-              </div>
-
-              <div className="flex justify-start">
-                <ArrowRight className="text-gray-400 rotate-90" size={24} />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Estimated Return (APY 7.8%)</label>
-                <div className="w-full h-14 px-4 text-2xl font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center text-brand">
-                  ${(investAmount * 1.078).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-8">
+      {/* Banner Section */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            className="relative px-8 py-12"
+          >
+            <div className="max-w-2xl">
+              <Heading1 className="mb-4">
+                Passive Income Starts Here
+              </Heading1>
+              <BodyTextLarge className="text-muted-foreground mb-8">
+                Define how much you want to invest and choose from our carefully curated investment options. 
+                Our platform automatically manages your portfolio, reinvests earnings, and optimizes returns 
+                so you can earn passive income without the complexity of managing individual positions.
+              </BodyTextLarge>
               <Button 
-                onClick={() => navigate('/transaction-review', { 
-                  state: { amount: investAmount } 
-                })} 
-                className="w-full h-14 rounded-xl">
-                Review Order
+                onClick={() => navigate('/new-investment', {
+                  state: { originalSource: 'investments' }
+                })}
+                className="w-auto h-12"
+                variant="default"
+                size="lg"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                New Investment
               </Button>
             </div>
-          </div>
-        </Card>
-      ) : (
-        <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4">
-          {/* New Investment Card */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Card 
-              onClick={() => navigate('/transaction-review')}
-              className="min-w-[300px] h-[400px] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-brand dark:hover:border-brand transition-colors cursor-pointer group"
-            >
-              <div className="flex flex-col items-center text-gray-500 dark:text-gray-400 group-hover:text-brand transition-colors">
-                <div className="w-12 h-12 rounded-full border-2 border-current flex items-center justify-center mb-4">
-                  <Plus size={24} />
-                </div>
-                <span className="font-medium">New Investment</span>
-              </div>
-            </Card>
+            
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 right-8 w-64 h-64 bg-gradient-to-tl from-primary/5 to-transparent rounded-full blur-2xl translate-y-1/2" />
           </motion.div>
+        </div>
+      </motion.div>
 
-          {/* Active Investment Cards */}
-          {[...investments]
-          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-          .map((investment) => {
-          const timeSince = getTimeSince(investment.startDate);
-          const { progressPercentage, hoursUntilReward } = calculateNextReward(investment.startDate);
-          
-          return (
-            <motion.div
-              key={investment.id}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Card className="min-w-[300px] h-[400px] p-6 flex flex-col">
-                <div className="flex-1 space-y-6">
-                  <div>
-                    <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Rewards</h2>
-                    <p className="text-3xl font-bold mt-1 text-brand">
-                      ${investment.earned.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </p>
-                  </div>
+      {/* Passive Income Cards Grid - Hidden */}
+      {false && (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <Heading2>Investment Options</Heading2>
+            <BodyTextSmall className="text-muted-foreground">
+              {investments.length} active {investments.length === 1 ? 'investment' : 'investments'}
+            </BodyTextSmall>
+          </div>
 
-                  <div>
-                    <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Since</h2>
-                    <p className="text-lg font-medium mt-1">
-                      {timeSince.days}d {timeSince.hours}h
-                    </p>
-                  </div>
-
-                  <div>
-                    <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">Invested Amount</h2>
-                    <p className="text-lg font-medium mt-1">
-                      ${investment.amount.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      APY {investment.apy}%
-                    </p>
-                  </div>
-
-                  <div className="h-[1px] bg-gray-200 dark:bg-gray-700" />
-
-                  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <span>Chain</span>
-                    <span className="font-medium">{investment.chain}</span>
-                  </div>
-                </div>
-
-                <div className="mt-auto pt-6">
-                  <ProgressBar
-                    progress={progressPercentage}
-                    label="Next reward"
-                    rightLabel={`${hoursUntilReward}h`}
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleWithdraw(investment.id)}
-                    className="w-full mt-4 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {passiveIncomeOptions.map((option) => {
+              const IconComponent = option.icon;
+              return (
+                <motion.div
+                  key={option.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="h-full"
+                >
+                  <Card 
+                    className="h-full cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary/20"
+                    onClick={() => navigate('/transaction-review', { 
+                      state: { 
+                        selectedOption: option,
+                        amount: option.minAmount 
+                      } 
+                    })}
                   >
-                    <Wallet size={16} />
-                    Withdraw Funds
-                  </motion.button>
-                </div>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </div>)}
-    </motion.div>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between">
+                        <div className={`p-3 rounded-xl ${option.bgColor}`}>
+                          <IconComponent className={`h-6 w-6 ${option.color}`} />
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">{option.apy}</div>
+                          <span className="text-caption">APY</span>
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl">{option.title}</CardTitle>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      <CardDescription className="text-sm leading-relaxed">
+                        {option.description}
+                      </CardDescription>
+                      
+                      <div className="space-y-3 pt-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Minimum</span>
+                          <span className="font-medium">${option.minAmount.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Risk Level</span>
+                          <span className={`font-medium ${
+                            option.risk === 'Low' ? 'text-success' :
+                            option.risk === 'Medium' ? 'text-warning' :
+                            'text-destructive'
+                          }`}>
+                            {option.risk}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Duration</span>
+                          <span className="font-medium">{option.duration}</span>
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full mt-4" variant="secondary">
+                        Start Earning
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Active Investments Section */}
+      {investments.length > 0 && (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={cardVariants}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          className="space-y-6"
+        >
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+          >
+            <Heading2>Your Passive Income</Heading2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {[...investments]
+              .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+              .map((investment) => (
+                <InvestmentCard
+                  key={investment.id}
+                  investment={investment}
+                  onWithdraw={handleWithdraw}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </div>
   );
 }

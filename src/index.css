@@ -4,57 +4,129 @@
 
 @layer base {
   :root {
-    --color-brand: 38 161 123;
-    --color-accent: 79 142 247;
-    --color-danger: 224 85 85;
+    --background: 0 0% 100%;           /* neutral-50 */
+    --foreground: 0 0% 20.5%;          /* neutral-900 */
+    --card: 0 0% 100%;                 /* neutral-50 */
+    --card-foreground: 0 0% 20.5%;     /* neutral-900 */
+    --popover: 0 0% 100%;              /* neutral-50 */
+    --popover-foreground: 0 0% 20.5%;  /* neutral-900 */
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 92.2%;           /* neutral-200 */
+    --secondary-foreground: 0 0% 20.5%; /* neutral-900 */
+    --muted: 0 0% 92.2%;               /* neutral-200 */
+    --muted-foreground: 0 0% 55.6%;    /* neutral-500 */
+    --accent: 0 0% 92.2%;              /* neutral-200 */
+    --accent-foreground: 0 0% 20.5%;   /* neutral-900 */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 48 96% 53%;
+    --warning-foreground: 26 83% 14%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 98%;
+    --border: 0 0% 87%;                /* neutral-300 */
+    --input: 0 0% 87%;                 /* neutral-300 */
+    --ring: 0 0% 20.5%;                /* neutral-900 */
+    --radius: 0.5rem;
   }
 
+  .dark {
+    --background: 0 0% 9%;             /* darker than neutral-950 for comfortable dark mode */
+    --foreground: 0 0% 98%;            /* neutral-50 */
+    --card: 0 0% 10%;                   /* match background for consistent dark mode */
+    --card-foreground: 0 0% 98%;       /* neutral-50 */
+    --popover: 0 0% 9%;               /* darker than neutral-950 for comfortable dark mode */
+    --popover-foreground: 0 0% 98%;    /* neutral-50 */
+    --primary:  0 15 76%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 17%;           /* neutral-800 */
+    --secondary-foreground: 0 0% 98%;  /* neutral-50 */
+    --muted: 0 0% 13%;              /* neutral-800 */
+    --muted-foreground: 0 0% 70.8%;   /* neutral-400 */
+    --accent: 0 0% 15%;             /* neutral-700 */
+    --accent-foreground: 0 0% 98%;     /* neutral-50 */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 150 90% 60%;
+    --success-foreground: 0 0% 98%;
+    --warning: 48 96% 53%;
+    --warning-foreground: 26 83% 14%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 98%;
+    --border: 0 0% 15%;             /* neutral-700 */
+    --input: 0 0% 18%;              /* neutral-700 */
+    --ring: 0 0% 43.9%;               /* neutral-600 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply bg-background;
+  }
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
 
-  h1 {
-    @apply text-4xl font-semibold;
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-
-  h3 {
-    @apply text-2xl font-medium;
-  }
-
-  h4 {
-    @apply text-xl font-medium;
-  }
-
-  /* Respect user's motion preferences */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
 @layer components {
-  .btn {
-    @apply px-4 py-2 rounded font-medium transition-transform active:scale-[0.98];
+  /* Typography System */
+  .text-heading-1 {
+    @apply text-3xl font-medium leading-tight tracking-tight;
   }
-
-  .btn-primary {
-    @apply bg-brand text-white hover:bg-brand/90;
+  
+  .text-heading-2 {
+    @apply text-2xl font-semibold leading-tight;
   }
-
-  .btn-secondary {
-    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
+  
+  .text-heading-3 {
+    @apply text-xl font-semibold leading-snug;
   }
-
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-elevation p-6;
+  
+  .text-heading-4 {
+    @apply text-lg font-medium leading-snug;
   }
-
-  .input {
-    @apply w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-brand;
+  
+  .text-body-large {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .text-body {
+    @apply text-base leading-normal;
+  }
+  
+  .text-body-small {
+    @apply text-sm leading-normal;
+  }
+  
+  .text-label {
+    @apply text-sm font-medium leading-none;
+  }
+  
+  .text-caption {
+    @apply text-xs font-light text-muted-foreground leading-none;
+  }
+  
+  .text-overline {
+    @apply text-xs font-medium uppercase tracking-wide;
+  }
+  
+  .text-display {
+    @apply text-5xl font-bold leading-none tracking-tight;
   }
 }

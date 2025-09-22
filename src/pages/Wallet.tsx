@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Wallet2, 
   CreditCard, 
@@ -9,23 +10,54 @@ import {
   Plus,
   Trash2,
   X,
-  Check
+  Check,
+  CreditCardIcon,
+  ArrowDownLeft,
+  User,
+  Edit3,
+  Save
 } from 'lucide-react';
 import { CryptoIcon } from '../components/CryptoIcon';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
 import confetti from 'canvas-confetti';
-import { Button } from '../components/Button';
-import { Card } from '../components/Card';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Caption, BodyText, Heading3 } from "@/components/ui/typography";
 import { useAuth } from '../contexts/AuthContext';
+import { useTransactions } from '../contexts/TransactionsContext';
+import { useUserProfile } from '../contexts/UserProfileContext';
+import { cn } from "@/lib/utils";
 
 // Demo data
 const DEMO_WALLET: { address: string; assets: Asset[] } = {
   address: '0x1234567890123456789012345678901234567890',
   assets: [
-    { symbol: 'USDT', balance: 1000.00, value: 1000.00 },
-    { symbol: 'ETH', balance: 0.5, value: 1250.00 },
-    { symbol: 'BTC', balance: 0.025, value: 750.00 }
+    { symbol: 'USDT', balance: 1000.00, value: 1000.00, price: 1.00 },
+    { symbol: 'ETH', balance: 0.5, value: 1250.00, price: 2500.00 },
+    { symbol: 'BTC', balance: 0.025, value: 750.00, price: 30000.00 }
   ]
 };
 
@@ -33,6 +65,7 @@ type Asset = {
   symbol: string;
   balance: number;
   value: number;
+  price: number;
 };
 
 interface CreditCardData {
@@ -61,16 +94,41 @@ const DEMO_CARDS: CreditCardData[] = [
 ];
 
 export function Wallet() {
-  const { } = useAuth(); // Auth context available for future use
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { addTransaction } = useTransactions();
+  const { closedInvestmentAmount, profile, setProfile } = useUserProfile();
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
-  const [transferAmount, setTransferAmount] = useState('');
-  const [isTransferring, setIsTransferring] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [hasWallet, setHasWallet] = useState(true);
   const [selectedCardId, setSelectedCardId] = useState(DEMO_CARDS[0].id);
   const [cards, setCards] = useState(DEMO_CARDS);
   const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [availableFunds, setAvailableFunds] = useState(closedInvestmentAmount || 0);
+  
+  // Profile editing states
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(profile?.name || '');
+  const [showNameEdit, setShowNameEdit] = useState(false);
+  const [showAvatarEdit, setShowAvatarEdit] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1 }
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
+
+  useEffect(() => {
+    // Update available funds when closed investment amount changes
+    setAvailableFunds(closedInvestmentAmount || 0);
+  }, [closedInvestmentAmount]);
 
   const selectedCard = cards.find(card => card.id === selectedCardId);
 
@@ -107,26 +165,6 @@ export function Wallet() {
     }
   };
 
-  const handleTransfer = async () => {
-    if (!transferAmount) return;
-    
-    setIsTransferring(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-
-      setShowSuccessModal(true);
-      setTransferAmount('');
-    } finally {
-      setIsTransferring(false);
-    }
-  };
-
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -139,263 +177,483 @@ export function Wallet() {
     }
   };
 
+  const handleNameEdit = () => {
+    setIsEditingName(true);
+    setEditedName(profile?.name || '');
+  };
+
+  const handleNameSave = () => {
+    if (editedName.trim() && profile) {
+      setProfile({ ...profile, name: editedName.trim() });
+    }
+    setIsEditingName(false);
+  };
+
+  const handleNameCancel = () => {
+    setEditedName(profile?.name || '');
+    setIsEditingName(false);
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && profile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const avatar = e.target?.result as string;
+        setProfile({ ...profile, avatar });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="space-y-8">
-
-      {/* Cash Section */}
-      <div className="space-y-4">
-        <h2 className="text-section">Cash</h2>
-        <Card>
-          <div className="text-left py-6 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">Available Cash</p>
-            <h3 className="text-4xl font-bold mt-2">$2,500.00</h3>
+      {/* Profile Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div 
+            className="relative w-10 h-10"
+            onMouseEnter={() => setShowAvatarEdit(true)}
+            onMouseLeave={() => setShowAvatarEdit(false)}
+          >
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer">
+              {profile?.avatar ? (
+                <img 
+                  src={profile.avatar} 
+                  alt={profile.name || "Profile"} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User size={20} className="text-muted-foreground" />
+              )}
+            </div>
+            {showAvatarEdit && (
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute -top-1 -right-1 w-6 h-6 rounded-full shadow-lg"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Edit3 size={12} />
+              </Button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="hidden"
+            />
           </div>
-
-          <div className="space-y-6 pt-6">
-            <button
-              onClick={() => setShowCardModal(true)}
-              className="w-full flex items-center space-x-3 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          
+          {profile?.name && (
+            <div 
+              className="relative"
+              onMouseEnter={() => setShowNameEdit(true)}
+              onMouseLeave={() => setShowNameEdit(false)}
             >
-              <div className="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-brand" />
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="h-8 text-lg font-semibold"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleNameSave();
+                      if (e.key === 'Escape') handleNameCancel();
+                    }}
+                    autoFocus
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="w-6 h-6"
+                    onClick={handleNameSave}
+                  >
+                    <Save size={12} />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="w-6 h-6"
+                    onClick={handleNameCancel}
+                  >
+                    <X size={12} />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Heading3>{profile.name}</Heading3>
+                  {showNameEdit && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="w-6 h-6 opacity-70 hover:opacity-100"
+                      onClick={handleNameEdit}
+                    >
+                      <Edit3 size={12} />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Logout Button */}
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="flex items-center gap-2"
+        >
+          <LogOut size={16} />
+          Log out
+        </Button>
+      </div>
+      {/* Cash Section - Always show but with different states */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="space-y-4"
+      >
+        <Card>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+          >
+            <CardHeader className="pb-6">
+              <CardDescription>Cash</CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+            <Button
+              variant="secondary"
+              onClick={() => setShowCardModal(true)}
+              className="w-full justify-start h-auto py-4"
+            >
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                <CreditCard className="w-5 h-5 text-primary" />
               </div>
               <div className="text-left">
                 <p className="font-medium">•••• {selectedCard?.last4}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{selectedCard?.bank}</p>
+                <p className="text-sm text-muted-foreground">{selectedCard?.bank}</p>
               </div>
-            </button>
+            </Button>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Transfer Amount (USD)
-              </label>
-              <div className="flex items-center space-x-4">
-                <div className="relative" style={{ width: '300px' }}>
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <DollarSign size={16} className="text-gray-400" />
-                  </div>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    className="input pl-8"
-                    value={transferAmount}
-                    onChange={(e) => setTransferAmount(e.target.value)}
-                    placeholder="0.00"
-                  />
+            {/* Show available cash only if there's a closed investment */}
+            {closedInvestmentAmount !== null && closedInvestmentAmount > 0 ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Available Cash
+                  </label>
+                  <p className="text-heading-2 font-semibold mt-1">${availableFunds.toLocaleString()}</p>
                 </div>
-                <Button
-                  onClick={handleTransfer}
-                  isLoading={isTransferring}
-                  disabled={!transferAmount || parseFloat(transferAmount) <= 0}
-                >
-                  Transfer
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Crypto Wallet Section */}
-      <div className="space-y-4">
-        <h2 className="text-section">Connected Wallet</h2>
-        {!hasWallet ? (
-          <Card>
-            <div className="text-center py-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
-                <Wallet2 size={32} className="text-gray-600 dark:text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">Connect Your Wallet</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                Connect your crypto wallet to start managing your assets and participate in staking
-              </p>
-              <Button
-                onClick={handleConnectWallet}
-                isLoading={isConnectingWallet}
-              >
-                Connect Wallet
-              </Button>
-            </div>
-          </Card>
-        ) : (
-          <Card className="space-y-6">
-            <div className="flex items-center">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 flex items-center justify-center">
-                  <MetaMaskIcon size={40} />
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  {DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}
-                </p>
-              </div>
-              <div className="flex items-center ml-6">
-                <div className="relative">
-                  <button
-                    onClick={() => copyToClipboard(DEMO_WALLET.address)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate('/transaction-review', { state: { amount: availableFunds } })}
+                    className="flex-1"
                   >
-                    <Copy size={20} className="text-gray-500" />
-                  </button>
-                  <Tooltip show={showCopiedTooltip} message="Address copied" />
-                </div>
-                <button
-                  onClick={handleDisconnectWallet}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors text-red-500"
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-4">Available Assets</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {DEMO_WALLET.assets.map((asset) => (
-                  <div
-                    key={asset.symbol}
-                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                    Reinvest
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowWithdrawModal(true)}
+                    className="flex-1"
                   >
-                    <div className="flex items-center space-x-3">
-                      <CryptoIcon symbol={asset.symbol} size={32} />
-                      <div>
-                        <div className="font-medium">{asset.balance} {asset.symbol}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          ${asset.value.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Card>
-        )}
-      </div>
-
-      {/* Card Selection Modal */}
-      <AnimatePresence>
-        {showCardModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 relative"
-            >
-              <button
-                onClick={() => setShowCardModal(false)}
-                className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-              >
-                <X size={20} />
-              </button>
-              
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Payment Methods</h3>
-                
-                <div className="space-y-3">
-                  {cards.map((card) => (
-                    <div
-                      key={card.id}
-                      className={`p-4 rounded-lg transition-colors ${
-                        selectedCardId === card.id
-                          ? 'bg-brand/10 border-2 border-brand'
-                          : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                            <CreditCard className="w-5 h-5 text-brand" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{card.fullNumber}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {card.bank} • {card.holder}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {selectedCardId === card.id ? (
-                            <div className="w-6 h-6 bg-brand rounded-full flex items-center justify-center">
-                              <Check size={14} className="text-white" />
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setSelectedCardId(card.id)}
-                              className="w-6 h-6 border-2 border-gray-300 dark:border-gray-500 rounded-full"
-                            />
-                          )}
-                          <button
-                            onClick={() => handleDeleteCard(card.id)}
-                            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full text-red-500"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    Withdraw to Your Card
+                  </Button>
                 </div>
-
-                <Button
-                  variant="secondary"
-                  onClick={handleAddCard}
-                  className="w-full"
-                >
-                  <Plus size={16} className="mr-2" />
-                  Add New Card
-                </Button>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Success Modal */}
-      <AnimatePresence>
-        {showSuccessModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 relative"
-            >
-              <button
-                onClick={() => setShowSuccessModal(false)}
-                className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-              >
-                <X size={20} />
-              </button>
-              
-              <div className="text-center">
-                <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <DollarSign size={24} className="text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">Transfer Initiated!</h3>
-                <div className="space-y-4 mb-6">
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-                    <p className="text-yellow-600 dark:text-yellow-400 text-sm font-medium mb-1">
-                      Transaction Pending
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      Your funds will be available in your account within 2 minutes
-                    </p>
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Transfer amount: ${transferAmount}<br/>
-                    From: {selectedCard?.bank} card ending in {selectedCard?.last4}
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Available Cash
+                  </label>
+                  <p className="text-heading-2 font-semibold mt-1 text-muted-foreground">$0</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Your rewards & closed investments
                   </p>
                 </div>
-                <Button onClick={() => setShowSuccessModal(false)}>
-                  Done
-                </Button>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate('/transaction-review')}
+                    className="flex-1"
+                    disabled
+                  >
+                    Reinvest
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowWithdrawModal(true)}
+                    className="flex-1"
+                    disabled
+                  >
+                    Withdraw to Your Card
+                  </Button>
+                </div>
               </div>
+            )}
+            </CardContent>
+          </motion.div>
+        </Card>
+      </motion.div>
+
+      {/* Crypto Wallet Section */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+        className="space-y-4"
+      >
+        {!hasWallet ? (
+          <Card>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={contentVariants}
+              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+            >
+              <CardContent className="pt-6 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/30 mb-4">
+                  <Wallet2 className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <CardTitle className="mb-2">Connect Your Wallet</CardTitle>
+                <CardDescription className="mb-6 max-w-md mx-auto">
+                  Connect your crypto wallet to start managing your assets and participate in staking
+                </CardDescription>
+                <Button
+                  onClick={handleConnectWallet}
+                  disabled={isConnectingWallet}
+                >
+                  {isConnectingWallet ? "Connecting..." : "Connect Wallet"}
+                </Button>
+              </CardContent>
             </motion.div>
-          </div>
+          </Card>
+        ) : (
+          <Card>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={contentVariants}
+              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+            >
+              <CardHeader className="pb-6">
+                <CardDescription>Crypto</CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+              <Button
+                variant="secondary"
+                className="w-full justify-start h-auto py-4"
+              >
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                  <MetaMaskIcon size={24} />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</p>
+                  <p className="text-sm text-muted-foreground">MetaMask</p>
+                </div>
+                <div className="flex items-center ml-auto space-x-2">
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(DEMO_WALLET.address);
+                      }}
+                      className="rounded-full"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Tooltip show={showCopiedTooltip} message="Address copied" />
+                  </div>
+                 
+                </div>
+              </Button>
+
+              <div className="space-y-4">
+                <div>
+                  
+                  <div className="mt-3">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead><Caption>Name</Caption></TableHead>
+                          <TableHead><Caption>Balance</Caption></TableHead>
+                          <TableHead><Caption>Price</Caption></TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {DEMO_WALLET.assets.map((asset) => (
+                          <TableRow key={asset.symbol}>
+                            <TableCell>
+                              <div className="flex items-center space-x-3">
+                                <CryptoIcon symbol={asset.symbol} size={24} />
+                                <BodyText className="font-medium">{asset.symbol}</BodyText>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <BodyText className="font-medium">{asset.balance} {asset.symbol}</BodyText>
+                                <BodyText className="text-muted-foreground">
+                                  ${asset.value.toLocaleString()}
+                                </BodyText>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <BodyText className="font-medium">${asset.price.toLocaleString()}</BodyText>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </div>
+              </CardContent>
+            </motion.div>
+          </Card>
         )}
+      </motion.div>
+
+      {/* Card Selection Modal */}
+      <Dialog open={showCardModal} onOpenChange={setShowCardModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Payment Methods</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              {cards.map((card) => (
+                <div
+                  key={card.id}
+                  className={cn(
+                    "p-4 rounded-lg transition-colors",
+                    selectedCardId === card.id
+                      ? "bg-primary/10 border-2 border-primary"
+                      : "bg-accent/30 hover:bg-accent/50"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
+                        <CreditCard className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{card.fullNumber}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {card.bank} • {card.holder}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {selectedCardId === card.id ? (
+                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                          <Check className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className="w-6 h-6 rounded-full p-0"
+                          onClick={() => setSelectedCardId(card.id)}
+                        />
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteCard(card.id)}
+                        className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              variant="secondary"
+              onClick={handleAddCard}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Card
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdraw Funds Modal */}
+      <AnimatePresence>
+        {showWithdrawModal && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-lg z-40"
+            onClick={() => setShowWithdrawModal(false)}
+          />
+
+          {/* Dialog */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          >
+            <Card className="w-full max-w-md rounded-3xl">
+              <CardContent className="p-12 relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowWithdrawModal(false)}
+                  className="absolute right-4 top-4 rounded-full hover:bg-accent/30"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                <h2 className="text-2xl font-bold mb-6">Withdraw Funds</h2>
+                <div className="space-y-6">
+                  <p className="text-center text-muted-foreground">
+                    All funds will be available to you in your wallet within a couple of minutes. Do you want to proceed?
+                  </p>
+                  <Button 
+                    className="w-full"
+                    onClick={() => {
+                      addTransaction('withdrawals', availableFunds, 'USDT');
+                      setAvailableFunds(0);
+                      setShowWithdrawModal(false);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </>
+      )}
       </AnimatePresence>
+
     </div>
   );
 }

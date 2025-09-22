@@ -1,15 +1,26 @@
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { UserProfileProvider } from './contexts/UserProfileContext';
+import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
+import { TransactionsProvider } from './contexts/TransactionsContext';
+import { OnboardingProvider } from './contexts/OnboardingContext';
 import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
+import CreateProfile from './pages/CreateProfile';
 import { Onboarding } from './pages/Onboarding';
 import { Dashboard } from './pages/Dashboard';
+import DashboardEmpty from './pages/Dashboard-empty';
 import { Wallet } from './pages/Wallet';
+import WalletEmpty from './pages/Wallet-empty';
 import { Investments } from './pages/Investments';
+import InvestmentsEmpty from './pages/Investments-empty';
+import { Affiliate } from './pages/Affiliate';
+import AffiliateEmpty from './pages/Affiliate-empty';
 import { CreateInvestment } from './pages/CreateInvestment';
+import { NewInvestment } from './pages/NewInvestment';
 import { Transactions } from './pages/Transactions';
+import TransactionsEmpty from './pages/Transactions-empty';
 import { TransactionReview } from './pages/TransactionReview';
+import { TypographyDemo } from './components/TypographyDemo';
 
 
 // Protected route wrapper
@@ -22,6 +33,26 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+}
+
+// Profile protected route wrapper (redirects to create profile if no profile exists)
+function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const { profile } = useUserProfile();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!profile) {
+    return <Navigate to="/create-profile" />;
   }
 
   return <>{children}</>;
@@ -57,82 +88,174 @@ function AppRoutes() {
 
       {/* Protected routes */}
       <Route
-        path="/onboarding"
+        path="/create-profile"
         element={
           <ProtectedRoute>
-            <Onboarding />
+            <CreateProfile />
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/onboarding"
+        element={
+          <ProfileProtectedRoute>
+            <Onboarding />
+          </ProfileProtectedRoute>
+        }
+      />
 
+      {/* Dashboard Routes */}
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <Dashboard />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard-empty"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <DashboardEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
         }
       />
 
+      {/* Wallet Routes */}
       <Route
         path="/wallet"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <Wallet />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/wallet-empty"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <WalletEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
         }
       />
 
+      {/* Investment Routes */}
       <Route
         path="/invest"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <Investments />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
         }
       />
-
+      <Route
+        path="/invest-empty"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <InvestmentsEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
       <Route
         path="/invest/create"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <CreateInvestment />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/new-investment"
+        element={
+          <ProfileProtectedRoute>
+            <NewInvestment />
+          </ProfileProtectedRoute>
         }
       />
 
+      {/* Transaction Routes */}
       <Route
         path="/transactions"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <Transactions />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
         }
       />
-
+      <Route
+        path="/transactions-empty"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <TransactionsEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
       <Route
         path="/transaction-review"
         element={
-          <ProtectedRoute>
+          <ProfileProtectedRoute>
             <Layout>
               <TransactionReview />
             </Layout>
-          </ProtectedRoute>
+          </ProfileProtectedRoute>
         }
       />
 
-      {/* Redirect root to login or dashboard */}
-      <Route path="/" element={<Navigate to="/login" />} />
+      {/* Affiliate Routes */}
+      <Route
+        path="/affiliate"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <Affiliate />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/affiliate-empty"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <AffiliateEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+
+      {/* Typography Demo Route */}
+      <Route
+        path="/typography-demo"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <TypographyDemo />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+
+      {/* Redirect root to login, profile creation, or dashboard */}
+      <Route path="/" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
 }
@@ -142,7 +265,11 @@ export default function App() {
     <Router>
       <AuthProvider>
         <UserProfileProvider>
-          <AppRoutes />
+          <TransactionsProvider>
+            <OnboardingProvider>
+              <AppRoutes />
+            </OnboardingProvider>
+          </TransactionsProvider>
         </UserProfileProvider>
       </AuthProvider>
     </Router>

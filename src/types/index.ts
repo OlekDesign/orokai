@@ -1,4 +1,4 @@
-export type TransactionType = 'all' | 'rewards' | 'withdrawals' | 'top-up' | 'investment' | 'internal';
+export type TransactionType = 'all' | 'rewards' | 'withdrawals' | 'investment' | 'internal' | 'top-up';
 
 export interface Transaction {
   id: string;
