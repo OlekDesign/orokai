@@ -1,51 +1,83 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { OnboardingStep } from '../components/OnboardingStep';
+import { OnboardingPersonalization } from '../components/OnboardingPersonalization';
 import { OnboardingWelcome } from '../components/OnboardingWelcome';
 
 const onboardingSteps = [
   {
-    heading: "Simple Setup",
-    description: "We've made it incredibly easy to start investing. Just a few taps and you're ready to begin your journey towards financial growth.",
-    buttonText: "Got it",
+    heading: "What's your investment experience?",
+    description: "Help us understand your background so we can provide the best guidance for you.",
+    options: [
+      "I'm completely new to investing",
+      "I have some basic knowledge",
+      "I'm an experienced investor"
+    ],
     backgroundImageType: 'setup' as const
   },
   {
-    heading: "Guaranteed Frequent Rewards",
-    description: "Earn fixed returns on a predictable schedule. No surprises, just consistent rewards that help your money grow over time.",
-    buttonText: "Cool!",
+    heading: "What's your main investment goal?",
+    description: "Understanding your goals helps us recommend the right investment strategy.",
+    options: [
+      "Build long-term wealth",
+      "Generate passive income",
+      "Save for a specific goal"
+    ],
     backgroundImageType: 'rewards' as const
   },
   {
-    heading: "Flexible Access Whenever You Need",
-    description: "Your money isn't locked away. Withdraw your investments anytime without penalties or waiting periods. Complete flexibility, complete control.",
-    buttonText: "I see",
+    heading: "How much risk are you comfortable with?",
+    description: "Your risk tolerance helps us suggest appropriate investment options.",
+    options: [
+      "Low risk - preserve my capital",
+      "Medium risk - balanced growth",
+      "High risk - maximize returns"
+    ],
     backgroundImageType: 'freedom' as const
-  },
-  {
-    heading: "Full Transparency",
-    description: "Every transaction is clear and traceable. While processing may take a few minutes, we keep you informed every step of the way.",
-    buttonText: "Let's go!",
-    backgroundImageType: 'transparent' as const
   }
 ];
 
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<(string | null)[]>(new Array(onboardingSteps.length).fill(null));
   const totalSteps = onboardingSteps.length;
+
+  const handleAnswerSelect = (answer: string) => {
+    const newAnswers = [...answers];
+    newAnswers[currentStep] = answer;
+    setAnswers(newAnswers);
+  };
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Move to welcome screen
+      // Move to personalization step after all questions are answered
       setCurrentStep(totalSteps);
     }
   };
 
-  // Show welcome screen after all steps
-  if (currentStep >= totalSteps) {
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handlePersonalizationComplete = () => {
+    // Move to welcome screen after personalization
+    setCurrentStep(totalSteps + 1);
+  };
+
+  const canProceed = answers[currentStep] !== null;
+
+  // Show welcome screen after personalization
+  if (currentStep >= totalSteps + 1) {
     return <OnboardingWelcome />;
+  }
+
+  // Show personalization step after all questions
+  if (currentStep === totalSteps) {
+    return <OnboardingPersonalization onComplete={handlePersonalizationComplete} />;
   }
 
   const step = onboardingSteps[currentStep];
@@ -58,9 +90,13 @@ export function Onboarding() {
         totalSteps={totalSteps}
         heading={step.heading}
         description={step.description}
-        buttonText={step.buttonText}
+        options={step.options}
+        selectedAnswer={answers[currentStep]}
         backgroundImageType={step.backgroundImageType}
+        onAnswerSelect={handleAnswerSelect}
         onNext={handleNext}
+        onBack={handleBack}
+        canProceed={canProceed}
       />
     </AnimatePresence>
   );

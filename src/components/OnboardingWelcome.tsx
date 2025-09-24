@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Heading1 } from "@/components/ui/typography";
+import { Heading1, BodyText } from "@/components/ui/typography";
+import { useUserProfile } from '../contexts/UserProfileContext';
 
 export function OnboardingWelcome() {
   const navigate = useNavigate();
+  const { profile } = useUserProfile();
 
   const handleStartInvesting = () => {
     navigate('/invest-empty');
@@ -23,7 +25,10 @@ export function OnboardingWelcome() {
         <div className="text-center space-y-8">
           {/* Welcome Text */}
           <div className="space-y-4">
-            <Heading1>Welcome to Your Financial Freedom</Heading1>
+            <BodyText className="text-lg text-muted-foreground">
+              Welcome to Your Financial Freedom
+            </BodyText>
+            <Heading1>Your Account is Tailored for You, {profile?.name || 'User'}</Heading1>
           </div>
 
           {/* Video Placeholder */}
