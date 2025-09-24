@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check } from 'lucide-react';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
   Area, 
   XAxis, 
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ReferenceLine
 } from 'recharts';
 import {
@@ -36,10 +36,26 @@ import type { Transaction, TransactionType } from '@/types';
 import { cn } from "@/lib/utils";
 import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/components/ui/typography';
 import { TransactionRow } from '@/components/TransactionRow';
+import { CurrencySelect } from "@/components/CurrencySelect";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+// Exchange rates relative to USD
+const exchangeRates = {
+  USD: 1,
+  ETH: 0.0004, // 1 USD = 0.0004 ETH (assuming ETH ~$2500)
+  ATOM: 0.1, // 1 USD = 0.1 ATOM (assuming ATOM ~$10)
+  SOL: 0.007, // 1 USD = 0.007 SOL (assuming SOL ~$140)
+};
 
 export function Dashboard() {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
   const [investAmount, setInvestAmount] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const navigate = useNavigate();
   const { transactions, addTransaction } = useTransactions();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
@@ -49,6 +65,28 @@ export function Dashboard() {
   useEffect(() => {
     setChartData(generateChartData(timeRange));
   }, [timeRange]);
+
+  // Convert amount between currencies
+  const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string) => {
+    if (!amount || fromCurrency === toCurrency) return amount;
+    
+    // Convert to USD first, then to target currency
+    const usdAmount = amount / exchangeRates[fromCurrency as keyof typeof exchangeRates];
+    const convertedAmount = usdAmount * exchangeRates[toCurrency as keyof typeof exchangeRates];
+    
+    return Math.round(convertedAmount * 100) / 100; // Round to 2 decimal places
+  };
+
+  const handleCurrencyChange = (newCurrency: string) => {
+    if (investAmount && selectedCurrency !== newCurrency) {
+      const currentAmount = Number(investAmount.replace(/[^0-9]/g, ''));
+      if (currentAmount > 0) {
+        const convertedAmount = convertCurrency(currentAmount, selectedCurrency, newCurrency);
+        setInvestAmount(convertedAmount.toString());
+      }
+    }
+    setSelectedCurrency(newCurrency);
+  };
 
   // Calculate total rewards (sum of all rewards)
   const totalRewards = rewardTransactions.reduce((sum, tx) => sum + tx.amount, 0);
@@ -158,7 +196,7 @@ export function Dashboard() {
                     tickMargin={8}
                     tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <RechartsTooltip content={<CustomTooltip />} />
                   {chartData.map((entry, index) => 
                     entry.reward > 0 ? (
                       <ReferenceLine
@@ -226,11 +264,23 @@ export function Dashboard() {
               <CardContent>
             <div className="space-y-4">
               <div>
+                <CurrencySelect 
+                  value={selectedCurrency} 
+                  onChange={handleCurrencyChange}
+                />
+              </div>
+              
+              <div>
                 <div className="relative">
                   <Input
                     type="text"
-                    value={investAmount ? `$${Number(investAmount).toLocaleString()}` : ''}
-                    placeholder="$10,000"
+                    value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
+                    placeholder={(() => {
+                      const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
+                      return selectedCurrency === 'USD' 
+                        ? `$${defaultAmount.toLocaleString()}` 
+                        : `${defaultAmount.toLocaleString()} ${selectedCurrency}`;
+                    })()}
                     onChange={(e) => {
                       const value = e.target.value.replace(/[^0-9]/g, '');
                       setInvestAmount(value);
@@ -238,7 +288,7 @@ export function Dashboard() {
                     className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
                     autoFocus
                   />
-                  <span className="text-caption absolute left-4 top-2 font-medium">
+                  <span className="text-xs text-muted-foreground font-medium absolute left-4 top-2">
                     Amount
                   </span>
                 </div>
@@ -252,12 +302,44 @@ export function Dashboard() {
 
               <div>
                 <div className="relative">
-                  <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-muted rounded-md flex items-center text-primary">
-                    {investAmount ? `$${(Number(investAmount) * 1.078).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '$10,780'}
+                  <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
+                    {(() => {
+                      const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
+                      const currentAmount = Number(investAmount) || defaultAmount;
+                      const returnAmount = currentAmount * 1.078;
+                      
+                      return selectedCurrency === 'USD' 
+                        ? `$${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                        : `${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+                    })()}
                   </div>
-                  <span className="text-caption absolute left-4 top-2 font-medium">
-                    Estimated Return (APY 7.8%)
-                  </span>
+                  <div className="flex items-center gap-2 absolute left-4 top-2">
+                    <Caption className="font-medium">
+                      Estimated Return (APY 7.8%)
+                    </Caption>
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Info className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs bg-foreground p-4">
+                          <div>
+                            <p className="text-sm mb-2">
+                              APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
+                              This is an estimated return based on current market conditions.
+                            </p>
+                            <a 
+                              href="#" 
+                              className="text-primary-foreground text-sm underline hover:no-underline"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              Learn more
+                            </a>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
               </div>
             </div>
@@ -270,7 +352,7 @@ export function Dashboard() {
                 className="w-full h-12"
                 variant="default"
                 size="lg">
-                Review Order
+                Continue Setup
               </Button>
 
               <div className=" rounded-lg space-y-4">
@@ -278,19 +360,27 @@ export function Dashboard() {
                   <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                     <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-caption">You'll receive $2,13 every 24h</span>
+                  <Caption>You'll receive {(() => {
+                    const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
+                    const currentAmount = Number(investAmount) || defaultAmount;
+                    const dailyReturn = (currentAmount * 0.078) / 365; // Daily return from 7.8% APY
+                    
+                    return selectedCurrency === 'USD' 
+                      ? `$${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })}` 
+                      : `${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${selectedCurrency}`;
+                  })()} every 24h</Caption>
                 </div>
                 <div className="flex items-center gap-3 ">
                   <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                     <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-caption">Your funds are securely stored</span>
+                  <Caption>Your funds are securely stored</Caption>
                 </div>
                 <div className="flex items-center gap-3 ">
                   <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                     <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-caption">You can withdraw your funds anytime</span>
+                  <Caption>You can withdraw your funds anytime</Caption>
                 </div>
               </div>
             </div>

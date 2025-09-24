@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, Check, TrendingUp, Shield, Clock, DollarSign } from 'lucide-react';
+import { ArrowRight, Check, TrendingUp, Shield, Clock, DollarSign, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Card,
@@ -11,11 +11,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/PageHeader";
+import { CurrencySelect } from "@/components/CurrencySelect";
+import { Caption } from "@/components/ui/typography";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+// Exchange rates relative to USD
+const exchangeRates = {
+  USD: 1,
+  ETH: 0.0004, // 1 USD = 0.0004 ETH (assuming ETH ~$2500)
+  ATOM: 0.1, // 1 USD = 0.1 ATOM (assuming ATOM ~$10)
+  SOL: 0.007, // 1 USD = 0.007 SOL (assuming SOL ~$140)
+};
 
 export function NewInvestment() {
   const navigate = useNavigate();
   const location = useLocation();
   const [investAmount, setInvestAmount] = useState(10000);
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [showOffering, setShowOffering] = useState(false);
   const [selectedOption, setSelectedOption] = useState(1); // Solana is selected by default
   const [hoveredOption, setHoveredOption] = useState<number | null>(null);
@@ -112,6 +129,24 @@ export function NewInvestment() {
     }
   ];
 
+  // Convert amount between currencies
+  const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string) => {
+    if (!amount || fromCurrency === toCurrency) return amount;
+    
+    // Convert to USD first, then to target currency
+    const usdAmount = amount / exchangeRates[fromCurrency as keyof typeof exchangeRates];
+    const convertedAmount = usdAmount * exchangeRates[toCurrency as keyof typeof exchangeRates];
+    
+    return Math.round(convertedAmount * 100) / 100; // Round to 2 decimal places
+  };
+
+  const handleCurrencyChange = (newCurrency: string) => {
+    if (investAmount && selectedCurrency !== newCurrency) {
+      const convertedAmount = convertCurrency(investAmount, selectedCurrency, newCurrency);
+      setInvestAmount(convertedAmount);
+    }
+    setSelectedCurrency(newCurrency);
+  };
 
   const handleReviewOrder = () => {
     const originalSource = location.state?.originalSource || 'investments'; // Default to investments if no source
@@ -191,10 +226,17 @@ export function NewInvestment() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
+                    <CurrencySelect 
+                      value={selectedCurrency} 
+                      onChange={handleCurrencyChange}
+                    />
+                  </div>
+                  
+                  <div>
                     <div className="relative">
                       <Input
                         type="text"
-                        value={`$${investAmount.toLocaleString()}`}
+                        value={selectedCurrency === 'USD' ? `$${investAmount.toLocaleString()}` : `${investAmount.toLocaleString()} ${selectedCurrency}`}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           setInvestAmount(Number(value) || 0);
@@ -215,12 +257,39 @@ export function NewInvestment() {
 
                   <div>
                     <div className="relative">
-                      <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-muted rounded-md flex items-center text-primary">
-                        ${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}
+                      <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
+                        {selectedCurrency === 'USD' 
+                          ? `$${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}`
+                          : `${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 2 }) || '0'} ${selectedCurrency}`
+                        }
                       </div>
-                      <span className="absolute left-4 top-2 text-xs text-muted-foreground font-medium">
-                        Estimated Return (APY {rewardInfo.apy})
-                      </span>
+                      <div className="flex items-center gap-2 absolute left-4 top-2">
+                        <span className="text-xs text-muted-foreground font-medium">
+                          Estimated Return (APY {rewardInfo.apy})
+                        </span>
+                        <TooltipProvider>
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <Info className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs bg-foreground p-4">
+                              <div>
+                                <p className="text-sm mb-2">
+                                  APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
+                                  This is an estimated return based on current market conditions.
+                                </p>
+                                <a 
+                                  href="#" 
+                                  className="text-primary-foreground text-sm underline hover:no-underline"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Learn more
+                                </a>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -232,7 +301,7 @@ export function NewInvestment() {
                     variant="default"
                     size="lg"
                   >
-                    Review Order
+                    Continue Setup
                   </Button>
 
                   <div className="bg-subtle/50 rounded-lg space-y-4">
@@ -240,7 +309,10 @@ export function NewInvestment() {
                       <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                         <Check className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      <span>You'll receive ${rewardInfo.amount.toFixed(2)} every {rewardInfo.frequency}</span>
+                      <span>You'll receive {selectedCurrency === 'USD' 
+                        ? `$${rewardInfo.amount.toFixed(2)}` 
+                        : `${rewardInfo.amount.toFixed(4)} ${selectedCurrency}`
+                      } every {rewardInfo.frequency}</span>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
