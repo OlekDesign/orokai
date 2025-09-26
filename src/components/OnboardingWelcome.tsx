@@ -20,9 +20,9 @@ export function OnboardingWelcome() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="max-w-[40rem] w-full space-y-8"
+        className="max-w-[40rem] w-full space-y-6 sm:space-y-8"
       >
-        <div className="text-center space-y-8">
+        <div className="text-center space-y-6 sm:space-y-8">
           {/* Welcome Text */}
           <div className="space-y-4">
             <BodyText className="text-lg text-muted-foreground">
@@ -37,7 +37,7 @@ export function OnboardingWelcome() {
             <Button
               variant="secondary"
               size="lg"
-              className="relative z-10 rounded-full w-16 h-16 p-0"
+              className="relative z-10 rounded-full w-16 h-16 p-0 min-h-[44px] min-w-[44px]"
             >
               <Play className="w-6 h-6 ml-1" />
             </Button>
@@ -47,6 +47,7 @@ export function OnboardingWelcome() {
           <Button 
             onClick={handleStartInvesting}
             size="lg"
+            className="min-h-[44px] py-3"
           >
             Start Investing
           </Button>

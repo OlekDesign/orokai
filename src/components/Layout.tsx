@@ -20,8 +20,8 @@ export function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       <main className={
         !isTransactionReview 
-          ? "md:ml-64 pb-20 md:pb-6 mt-16 bg-background" 
-          : "mt-16 bg-background"
+          ? "md:ml-64 pb-20 md:pb-6 mt-3 md:mt-8 bg-background" 
+          : "mt-3 md:mt-16 bg-background"
       }>
         <motion.div
           key={location.pathname}
@@ -29,7 +29,7 @@ export function Layout({ children }: LayoutProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="mx-auto px-4 py-6 max-w-[900px] bg-background"
+          className="mx-auto px-4 py-4 sm:py-6 max-w-[900px] bg-background"
         >
           {children}
         </motion.div>

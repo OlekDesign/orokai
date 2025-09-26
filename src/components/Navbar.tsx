@@ -52,7 +52,7 @@ export function Navbar() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors w-full ${
+                  className={`flex items-center space-x-3 px-4 py-3 min-h-[44px] rounded-lg transition-colors w-full ${
                     isActive
                       ? 'bg-secondary text-foreground border-t border-primary/15'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -69,7 +69,7 @@ export function Navbar() {
         {/* Wallet Info & Logout */}
         <div className="p-4 border-t border-border">
           <div 
-            className="flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
+            className="flex items-center space-x-3 px-4 py-3 min-h-[44px] cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
             onClick={() => navigate('/wallet')}
           >
               <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
@@ -108,7 +108,7 @@ export function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center space-y-1 p-2 ${
+                className={`flex flex-col items-center space-y-1 p-2 min-h-[44px] min-w-[44px] ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >

@@ -23,7 +23,7 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-auto pt-6 pb-2 px-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+        className="w-full h-auto pt-6 pb-2 px-4 min-h-[44px] bg-muted rounded-lg hover:bg-muted/80 transition-colors"
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
       </span>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-card rounded-lg shadow-lg border border-border py-1 z-50">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-secondary rounded-lg shadow-md border border-border py-1 z-50">
           {currencies.map(currency => (
             <button
               key={currency.symbol}
@@ -49,7 +49,7 @@ export function CurrencySelect({ value, onChange }: CurrencySelectProps) {
                 onChange(currency.symbol);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center justify-between px-4 py-2 hover:bg-muted transition-colors ${
+              className={`w-full flex items-center justify-between px-4 py-3 min-h-[44px] hover:bg-muted transition-colors ${
                 currency.symbol === value ? 'bg-muted' : ''
               }`}
             >

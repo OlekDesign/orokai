@@ -78,7 +78,7 @@ export function Investments() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       
       {/* Banner Section */}
       <motion.div
@@ -126,7 +126,7 @@ export function Investments() {
 
       {/* Passive Income Cards Grid - Hidden */}
       {false && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="flex justify-between items-center">
             <Heading2>Investment Options</Heading2>
             <BodyTextSmall className="text-muted-foreground">
@@ -134,7 +134,7 @@ export function Investments() {
             </BodyTextSmall>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {passiveIncomeOptions.map((option) => {
               const IconComponent = option.icon;
               return (
@@ -211,7 +211,7 @@ export function Investments() {
           animate="visible"
           variants={cardVariants}
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-          className="space-y-6"
+          className="space-y-4 sm:space-y-6"
         >
           <motion.div
             initial="hidden"
@@ -220,7 +220,7 @@ export function Investments() {
             transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
           >
             <Heading2>Your Passive Income</Heading2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
               {[...investments]
               .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
               .map((investment) => (

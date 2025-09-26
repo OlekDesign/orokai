@@ -24,16 +24,6 @@ const onboardingSteps = [
       "Save for a specific goal"
     ],
     backgroundImageType: 'rewards' as const
-  },
-  {
-    heading: "How much risk are you comfortable with?",
-    description: "Your risk tolerance helps us suggest appropriate investment options.",
-    options: [
-      "Low risk - preserve my capital",
-      "Medium risk - balanced growth",
-      "High risk - maximize returns"
-    ],
-    backgroundImageType: 'freedom' as const
   }
 ];
 

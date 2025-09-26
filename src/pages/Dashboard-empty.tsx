@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Check, ClipboardList } from 'lucide-react';
+import { ArrowRight, Check, ClipboardList, X, Play } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 export default function DashboardEmpty() {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
   const [investAmount, setInvestAmount] = useState(10000);
+  const [showBanner, setShowBanner] = useState(true);
   const navigate = useNavigate();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
 
@@ -60,6 +61,49 @@ export default function DashboardEmpty() {
 
   return (
     <div className="space-y-6">
+      {/* Banner */}
+      {showBanner && (
+        <div 
+          className="h-12 rounded-lg border border-border flex items-center justify-between px-2 bg-cover bg-center bg-no-repeat bg-primary cursor-pointer relative group overflow-hidden"
+          style={{
+            backgroundImage: 'url("./banner.png")',
+            backgroundSize: '100%',
+            transition: 'background-size 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundSize = '105%';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundSize = '100%';
+          }}
+          onClick={() => {
+            // Banner click handler - add your navigation logic here
+            console.log('Banner clicked');
+          }}
+        >
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-lg pointer-events-none"></div>
+          
+          <div className="flex-1 flex items-center justify-center relative z-10">
+            <div className="flex items-center gap-2">
+              <Play className="h-3 w-3 text-white" />
+              <span className="text-caption text-white">Get Started with Orokai</span>
+            </div>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white hover:bg-white/10 h-8 px-3 relative z-10"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent banner click when closing
+              setShowBanner(false);
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-8 gap-6">
         <Card className="lg:col-span-5">
           <CardHeader>
