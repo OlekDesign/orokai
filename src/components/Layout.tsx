@@ -20,7 +20,7 @@ export function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       <main className={
         !isTransactionReview 
-          ? "md:ml-64 pb-20 md:pb-6 mt-3 md:mt-8 bg-background" 
+          ? "md:ml-64 pb-28 md:pb-6 mt-3 md:mt-8 bg-background" 
           : "mt-3 md:mt-16 bg-background"
       }>
         <motion.div

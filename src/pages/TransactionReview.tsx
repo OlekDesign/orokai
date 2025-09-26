@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check } from 'lucide-react';
+import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X } from 'lucide-react';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ export function TransactionReview() {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit_card');
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<CryptoCurrency>('ETH');
   const [investInUSDT, setInvestInUSDT] = useState(true);
   const [saveCard, setSaveCard] = useState(true);
@@ -52,6 +53,12 @@ export function TransactionReview() {
   // Saved card details (persisted in sessionStorage)
   const [savedCard, setSavedCard] = useState(() => {
     const saved = sessionStorage.getItem('savedCard');
+    return saved ? JSON.parse(saved) : null;
+  });
+  
+  // Saved wallet details (persisted in sessionStorage)
+  const [savedWallet, setSavedWallet] = useState(() => {
+    const saved = sessionStorage.getItem('savedWallet');
     return saved ? JSON.parse(saved) : null;
   });
   const { addInvestment } = useUserProfile();
@@ -93,6 +100,24 @@ export function TransactionReview() {
   useEffect(() => {
     setShowCardForm(!savedCard);
   }, [savedCard]);
+
+  // Initialize payment method based on saved data
+  useEffect(() => {
+    if (savedCard && !savedWallet) {
+      setPaymentMethod('credit_card');
+    } else if (savedWallet && !savedCard) {
+      setPaymentMethod('crypto_wallet');
+      setSelectedCurrency(savedWallet.currency);
+      setInvestInUSDT(savedWallet.investInUSDT);
+    } else if (savedWallet && savedCard) {
+      // Keep current selection if both are saved
+      // Or you could implement logic to prefer one over the other
+      if (savedWallet.currency) {
+        setSelectedCurrency(savedWallet.currency);
+        setInvestInUSDT(savedWallet.investInUSDT);
+      }
+    }
+  }, [savedCard, savedWallet]);
 
   const handleClose = () => {
     if (cameFromNewInvestment) {
@@ -175,9 +200,9 @@ export function TransactionReview() {
       <div className="h-full grid grid-cols-1 lg:grid-cols-2">
         {/* Left Column */}
         <div className="bg-background overflow-auto scrollbar-hide">
-          <div className="p-6 lg:p-12 max-w-xl ml-auto mr-4 space-y-6">
+          <div className="p-4 lg:p-12 max-w-xl mx-auto lg:ml-auto lg:mr-4 space-y-6">
             {/* Empty space to account for header */}
-            <div className="h-16" />
+            <div className="h-8 md:h-16" />
             
             {/* Back Button */}
             <Button
@@ -214,7 +239,7 @@ export function TransactionReview() {
               </tbody>
             </table>
 
-            <Card>
+            <Card className="hidden md:block">
               <CardContent className="pt-8 pb-8">
                 <img
                   src="https://randomuser.me/api/portraits/women/44.jpg"
@@ -232,16 +257,16 @@ export function TransactionReview() {
 
         {/* Right Column */}
         <div className="bg-background overflow-auto scrollbar-hide">
-          <div className="p-6 lg:p-12 max-w-xl ml-4 space-y-6">
+          <div className="p-6 lg:p-12 max-w-xl ml-4 space-y-6 pb-2 md:pb-6">
             {/* Empty space to account for header */}
             <div className="h-16" />
             
             {/* Empty space to align with back button in left column */}
             <div className="h-8 mb-4" />
             
-            <Heading2>Payment Details</Heading2>
+            <Heading2 className="hidden md:block">Payment Details</Heading2>
 
-            <Card>
+            <Card className="hidden md:block">
               <CardContent className="pt-6">
                 <div className="space-y-6">
                   {/* Payment Method Switch */}
@@ -452,9 +477,364 @@ export function TransactionReview() {
                 </div>
               </CardContent>
             </Card>
+
           </div>
         </div>
       </div>
+
+      {/* Mobile buttons - positioned outside the grid layout */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 space-y-4 flex flex-col bg-background border-t border-border">
+        {/* Show saved payment method or Add Payment Details button */}
+        {(savedCard && paymentMethod === 'credit_card') || (savedWallet && paymentMethod === 'crypto_wallet') ? (
+          <div className="space-y-4">
+            {/* Saved Credit Card Display */}
+            {savedCard && paymentMethod === 'credit_card' && (
+              <div className="p-4 border-2 border-primary bg-primary/5 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-8 bg-gradient-to-r from-red-500 to-yellow-500 rounded flex items-center justify-center text-white text-xs font-bold">
+                      MC
+                    </div>
+                    <div>
+                      <div className="font-medium">{savedCard.ownerName}</div>
+                      <div className="text-sm text-muted-foreground">•••• •••• •••• {savedCard.lastFour}</div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {savedCard.expiryDate}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Saved Wallet Display */}
+            {savedWallet && paymentMethod === 'crypto_wallet' && (
+              <div className="p-4 border-2 border-primary bg-primary/5 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xl">
+                      {savedWallet.currencyIcon}
+                    </div>
+                    <div>
+                      <div className="font-medium">{savedWallet.currency} Wallet</div>
+                      <div className="text-sm text-muted-foreground">
+                        {savedWallet.investInUSDT ? 'Converting to USDT' : `Using ${savedWallet.currency}`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <Button 
+              variant="ghost"
+              className="w-full"
+              size="lg"
+              onClick={() => setShowPaymentDrawer(true)}
+            >
+              Change Payment Method
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            variant="secondary"
+            className="w-full"
+            size="lg"
+            onClick={() => setShowPaymentDrawer(true)}
+          >
+            Add Payment Details
+          </Button>
+        )}
+        
+        <Button 
+          className="w-full"
+          size="lg"
+          onClick={handleConfirmTransaction}
+        >
+          Confirm Transaction
+        </Button>
+        
+        <div className="flex items-center justify-center text-sm text-muted-foreground space-x-2">
+          <Shield className="h-4 w-4" />
+          <span>Secure transaction provided by Stripe</span>
+        </div>
+      </div>
+
+      {/* Payment Details Drawer */}
+      <AnimatePresence>
+        {showPaymentDrawer && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+              onClick={() => setShowPaymentDrawer(false)}
+            />
+
+            {/* Drawer */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border rounded-t-lg overflow-hidden"
+            >
+              <div className="p-4 border-b border-border">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Payment Details</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowPaymentDrawer(false)}
+                    className="rounded-full"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="p-4 pb-8">
+                <div className="space-y-6">
+                  {/* Payment Method Switch */}
+                  <div className="flex p-1 bg-muted rounded-lg">
+                    <button
+                      onClick={() => setPaymentMethod('credit_card')}
+                      className={cn(
+                        "flex items-center justify-center space-x-2 w-1/2 py-2 rounded-md transition-colors",
+                        paymentMethod === 'credit_card'
+                          ? 'bg-background shadow-sm'
+                          : 'text-muted-foreground'
+                      )}
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      <span>Credit Card</span>
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('crypto_wallet')}
+                      className={cn(
+                        "flex items-center justify-center space-x-2 w-1/2 py-2 rounded-md transition-colors",
+                        paymentMethod === 'crypto_wallet'
+                          ? 'bg-background shadow-sm'
+                          : 'text-muted-foreground'
+                      )}
+                    >
+                      <Wallet className="h-4 w-4" />
+                      <span>Crypto Wallet</span>
+                    </button>
+                  </div>
+
+                  {/* Credit Card Section */}
+                  {paymentMethod === 'credit_card' && (
+                    <div className="space-y-4">
+                      {/* Saved Card Display */}
+                      {!showCardForm && savedCard && (
+                        <div className="space-y-4">
+                          <div className="p-4 border-2 border-primary bg-primary/5 rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-12 h-8 bg-gradient-to-r from-red-500 to-yellow-500 rounded flex items-center justify-center text-white text-xs font-bold">
+                                  MC
+                                </div>
+                                <div>
+                                  <div className="font-medium">{savedCard.ownerName}</div>
+                                  <div className="text-sm text-muted-foreground">•••• •••• •••• {savedCard.lastFour}</div>
+                                </div>
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {savedCard.expiryDate}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <Button
+                            variant="ghost"
+                            onClick={() => setShowCardForm(true)}
+                            className="w-full"
+                          >
+                            Add New Card
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Credit Card Form */}
+                      {showCardForm && (
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              Card Number
+                            </label>
+                            <Input
+                              type="text"
+                              placeholder="1234 5678 9012 3456"
+                              value={cardNumber}
+                              onChange={(e) => setCardNumber(e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              Owner's Name
+                            </label>
+                            <Input
+                              type="text"
+                              placeholder="John Doe"
+                              value={ownerName}
+                              onChange={(e) => setOwnerName(e.target.value)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Expiry Date
+                              </label>
+                              <Input
+                                type="text"
+                                placeholder="MM/YY"
+                                value={expiryDate}
+                                onChange={(e) => setExpiryDate(e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                CVC
+                              </label>
+                              <Input
+                                type="text"
+                                placeholder="123"
+                                value={cvc}
+                                onChange={(e) => setCvc(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Save Card Button */}
+                          <Button
+                            onClick={() => {
+                              if (!saveCard) {
+                                // Save card details and hide drawer
+                                if (cardNumber && ownerName) {
+                                  const cardToSave = {
+                                    ownerName,
+                                    lastFour: cardNumber.slice(-4),
+                                    expiryDate,
+                                    savedAt: new Date().toISOString()
+                                  };
+                                  setSavedCard(cardToSave);
+                                  sessionStorage.setItem('savedCard', JSON.stringify(cardToSave));
+                                  setSaveCard(true);
+                                }
+                                setShowPaymentDrawer(false);
+                              } else {
+                                setSaveCard(false);
+                              }
+                            }}
+                            variant={saveCard ? "default" : "outline"}
+                            className="w-full"
+                            size="lg"
+                          >
+                            Save
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Crypto Wallet Options */}
+                  {paymentMethod === 'crypto_wallet' && (
+                    <div className="space-y-6">
+                      {/* Currency Selection Cards */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium leading-none">
+                          Select Currency
+                        </label>
+                        <div className="space-y-3">
+                          {currencies.map((currency) => (
+                            <button
+                              key={currency.symbol}
+                              onClick={() => setSelectedCurrency(currency.symbol)}
+                              className={cn(
+                                "w-full p-4 rounded-lg border-2 flex items-center justify-between transition-all text-left",
+                                selectedCurrency === currency.symbol
+                                  ? "border-primary bg-primary/5 shadow-sm"
+                                  : "border-border hover:border-primary/50 hover:bg-muted/30"
+                              )}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xl">
+                                  {currency.icon}
+                                </div>
+                                <div>
+                                  <div className="font-medium text-base">{currency.symbol}</div>
+                                  <div className="text-sm text-muted-foreground">{currency.name}</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-medium">{currency.balance} {currency.symbol}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  ${(currency.balance * currency.usdValue).toLocaleString()}
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Invest in USDT Checkbox */}
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => setInvestInUSDT(!investInUSDT)}
+                          className={cn(
+                            "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                            investInUSDT
+                              ? "bg-primary border-primary text-primary-foreground"
+                              : "border-border hover:border-primary"
+                          )}
+                        >
+                          {investInUSDT && <Check className="h-3 w-3" />}
+                        </button>
+                        <label className="text-sm font-medium cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
+                          Invest in USDT
+                        </label>
+                      </div>
+
+                      {/* Save Wallet Button */}
+                      <Button
+                        onClick={() => {
+                          if (!saveCard) {
+                            // Save wallet details and hide drawer
+                            const selectedCurrencyData = currencies.find(c => c.symbol === selectedCurrency);
+                            if (selectedCurrencyData) {
+                              const walletToSave = {
+                                currency: selectedCurrency,
+                                currencyName: selectedCurrencyData.name,
+                                currencyIcon: selectedCurrencyData.icon,
+                                investInUSDT,
+                                savedAt: new Date().toISOString()
+                              };
+                              setSavedWallet(walletToSave);
+                              sessionStorage.setItem('savedWallet', JSON.stringify(walletToSave));
+                              setSaveCard(true);
+                            }
+                            setShowPaymentDrawer(false);
+                          } else {
+                            setSaveCard(false);
+                          }
+                        }}
+                        variant={saveCard ? "default" : "outline"}
+                        className="w-full"
+                        size="lg"
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Confirmation Dialog */}
       <AnimatePresence>

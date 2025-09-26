@@ -18,7 +18,7 @@ export function EmptyStateToggle() {
   };
 
   return (
-    <div className="fixed bottom-20 md:bottom-4 right-4 z-50">
+    <div className="hidden md:block fixed bottom-20 md:bottom-4 right-4 z-50">
       <div className="flex items-center space-x-2 bg-card rounded-lg p-2 shadow-lg border border-border">
         <span className={`text-xs ${!isEmptyState ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
           Regular

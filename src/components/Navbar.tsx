@@ -1,14 +1,19 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, PiggyBank, History, LogOut, Wallet, Users, User } from 'lucide-react';
+import { Home, Gem, Clock8, LogOut, Wallet, Users, User } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
 import { Heading3 } from './ui/typography';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: PiggyBank, label: 'Passive Income', path: '/invest' },
-  { icon: History, label: 'Transactions', path: '/transactions' },
+const navItems: Array<{
+  icon: any;
+  label: string;
+  mobileLabel?: string;
+  path: string;
+}> = [
+  { icon: Home, label: 'Home', path: '/dashboard' },
+  { icon: Gem, label: 'Passive Income', mobileLabel: 'Income', path: '/invest' },
+  { icon: Clock8, label: 'Transactions', path: '/transactions' },
   { icon: Wallet, label: 'Wallet', path: '/wallet' },
   { icon: Users, label: 'Affiliate', path: '/affiliate' },
 ];
@@ -52,7 +57,7 @@ export function Navbar() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-3 px-4 py-3 min-h-[44px] rounded-lg transition-colors w-full ${
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors w-full ${
                     isActive
                       ? 'bg-secondary text-foreground border-t border-primary/15'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -69,7 +74,7 @@ export function Navbar() {
         {/* Wallet Info & Logout */}
         <div className="p-4 border-t border-border">
           <div 
-            className="flex items-center space-x-3 px-4 py-3 min-h-[44px] cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
+            className="flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
             onClick={() => navigate('/wallet')}
           >
               <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
@@ -98,7 +103,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Navigation (Bottom) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-24 bg-background border-t border-border z-50 pb-4">
         <div className="h-full grid grid-cols-5 items-center">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -108,12 +113,12 @@ export function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center space-y-1 p-2 min-h-[44px] min-w-[44px] ${
+                className={`flex flex-col items-center space-y-2 p-2 min-h-[44px] min-w-[44px] ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 <Icon size={20} />
-                <span className={`text-xs leading-none ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{item.label}</span>
+                <span className={`text-xs leading-none ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{item.mobileLabel || item.label}</span>
               </Link>
             );
           })}

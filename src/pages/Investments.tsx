@@ -118,8 +118,8 @@ export function Investments() {
             </div>
             
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 right-8 w-64 h-64 bg-gradient-to-tl from-primary/5 to-transparent rounded-full blur-2xl translate-y-1/2" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 right-8 w-64 h-64 bg-gradient-to-tl from-primary/5 to-transparent rounded-full blur-2xl translate-y-1/2 pointer-events-none" />
           </motion.div>
         </div>
       </motion.div>

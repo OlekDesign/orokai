@@ -25,7 +25,7 @@ export function PageHeader({
   };
 
   return (
-    <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-10">
+    <div className="fixed top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-background">
       <Heading3>{title}</Heading3>
       {showCloseButton && (
         <Button

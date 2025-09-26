@@ -150,17 +150,18 @@ export function Dashboard() {
       {/* Banner */}
         {showBanner && (
           <div 
-            className="h-12 rounded-lg border border-border flex items-center justify-between px-2 bg-cover bg-center bg-no-repeat bg-primary cursor-pointer relative group overflow-hidden"
+            className="h-12 rounded-lg border border-border flex items-center justify-between px-2 bg-cover md:bg-[length:100%] bg-center bg-no-repeat bg-primary cursor-pointer relative group overflow-hidden"
             style={{
               backgroundImage: 'url("./banner.png")',
-              backgroundSize: '100%',
               transition: 'background-size 0.3s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundSize = '105%';
+              const isMobile = window.innerWidth < 768;
+              e.currentTarget.style.backgroundSize = isMobile ? 'cover' : '105%';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundSize = '100%';
+              const isMobile = window.innerWidth < 768;
+              e.currentTarget.style.backgroundSize = isMobile ? 'cover' : '100%';
             }}
             onClick={() => {
               // Banner click handler - add your navigation logic here
@@ -279,7 +280,7 @@ export function Dashboard() {
             <Button
               onClick={() => navigate('/transactions?filter=rewards')}
               variant="link"
-              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0"
+              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start"
             >
               <span>See rewards history</span>
               <ExternalLink className="ml-1 h-4 w-4" />
@@ -396,7 +397,7 @@ export function Dashboard() {
                   onClick={() => navigate('/transaction-review', { 
                     state: { amount: investAmount ? Number(investAmount) : 10000 } 
                   })} 
-                  className="w-full h-12 min-h-[44px]"
+                  className="w-full h-12"
                   variant="default"
                   size="lg">
                   Continue Setup
@@ -468,10 +469,6 @@ export function Dashboard() {
               <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                {/* Mobile Header (simplified single column) */}
-                <TableRow className="md:hidden">
-                  <TableHead><Caption>Recent Transactions</Caption></TableHead>
-                </TableRow>
                 {/* Desktop Header (full columns) */}
                 <TableRow className="hidden md:table-row">
                   <TableHead><Caption>Type</Caption></TableHead>

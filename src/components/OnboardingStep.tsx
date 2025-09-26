@@ -136,7 +136,7 @@ export function OnboardingStep({
                     transition={{ delay: 0.1 + index * 0.1, duration: 0.3 }}
                     onClick={() => onAnswerSelect(option)}
                     className={cn(
-                      "w-full py-3 px-4 min-h-[44px] text-left rounded-lg border-2 transition-all duration-200",
+                      "w-full py-3 px-4 min-h-[44px] md:min-h-0 md:py-4 text-left rounded-lg border-2 transition-all duration-200",
                       selectedAnswer === option
                         ? "border-primary bg-primary/10"
                         : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -185,7 +185,7 @@ export function OnboardingStep({
                         variant="secondary"
                         size="lg"
                         onClick={onBack}
-                        className="px-6 py-3 min-h-[44px]"
+                        className="px-6 py-3 min-h-[44px] md:min-h-0 md:py-2"
                       >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back
@@ -198,7 +198,7 @@ export function OnboardingStep({
                     onClick={onNext}
                     disabled={!canProceed}
                     className={cn(
-                      "shadow-lg px-6 py-3 min-h-[44px]",
+                      "shadow-lg px-6 py-3 min-h-[44px] md:min-h-0 md:py-2",
                       !canProceed && "opacity-50 bg-muted text-muted-foreground cursor-not-allowed"
                     )}
                     size="lg"

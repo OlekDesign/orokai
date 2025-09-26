@@ -37,7 +37,7 @@ export function OnboardingWelcome() {
             <Button
               variant="secondary"
               size="lg"
-              className="relative z-10 rounded-full w-16 h-16 p-0 min-h-[44px] min-w-[44px]"
+              className="relative z-10 rounded-full w-16 h-16 p-0 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
             >
               <Play className="w-6 h-6 ml-1" />
             </Button>
@@ -47,7 +47,7 @@ export function OnboardingWelcome() {
           <Button 
             onClick={handleStartInvesting}
             size="lg"
-            className="min-h-[44px] py-3"
+            className="min-h-[44px] py-3 md:min-h-0 md:py-0"
           >
             Start Investing
           </Button>
