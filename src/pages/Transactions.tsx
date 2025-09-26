@@ -146,7 +146,8 @@ export function Transactions() {
               <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
+                {/* Desktop Header (full columns) */}
+                <TableRow className="hidden md:table-row">
                   <TableHead><Caption>Type</Caption></TableHead>
                   <TableHead><Caption>Amount</Caption></TableHead>
                   <TableHead><Caption>Status</Caption></TableHead>

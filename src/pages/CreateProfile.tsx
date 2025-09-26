@@ -39,92 +39,188 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        transition={{ duration: 0.2 }}
-        className="max-w-[20rem] w-full space-y-8"
-      >
-        <div className="text-center">
-          <Heading1>Create Profile</Heading1>
-        </div>
+    <div className="min-h-screen bg-muted/50 px-4">
+      {/* Desktop Layout - Centered */}
+      <div className="hidden md:flex min-h-screen items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.2 }}
+          className="max-w-[20rem] w-full space-y-8"
+        >
+          <div className="text-center">
+            <Heading1>Create Profile</Heading1>
+          </div>
 
-        <div className="space-y-6">
-          {/* Avatar Section */}
-          <div className="flex flex-col items-center space-y-4">
-            <div 
-              className={cn(
-                "w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors",
-                avatar && "p-0"
-              )}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {avatar ? (
-                <img 
-                  src={avatar} 
-                  alt="Profile avatar" 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-8 h-8 text-muted-foreground" />
+          <div className="space-y-6">
+            {/* Avatar Section */}
+            <div className="flex flex-col items-center space-y-4">
+              <div 
+                className={cn(
+                  "w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors",
+                  avatar && "p-0"
+                )}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {avatar ? (
+                  <img 
+                    src={avatar} 
+                    alt="Profile avatar" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8 text-muted-foreground" />
+                )}
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2"
+              >
+                <Camera className="w-4 h-4" />
+                Add a photo
+              </Button>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
+            </div>
+
+            {/* Name Input */}
+            <div className="space-y-2">
+              <Label htmlFor="name">Enter your name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setShowWarning(false);
+                }}
+                className={cn(
+                  "h-12",
+                  showWarning && "border-destructive"
+                )}
+              />
+              {showWarning && (
+                <p className="text-sm text-destructive">
+                  Please enter your name to continue
+                </p>
               )}
             </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2"
+
+            {/* Continue Button */}
+            <Button 
+              onClick={handleContinue}
+              className="w-full"
+              size="lg"
             >
-              <Camera className="w-4 h-4" />
-              Add a photo
+              Continue
             </Button>
-            
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarUpload}
-              className="hidden"
-            />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Mobile Layout - Content at top, form at bottom */}
+      <div className="md:hidden min-h-screen flex flex-col">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 flex flex-col"
+        >
+          {/* Header and Avatar at top */}
+          <div className="flex-1 flex flex-col justify-center max-w-[20rem] w-full mx-auto">
+            <div className="text-center mb-8">
+              <Heading1>Create Profile</Heading1>
+            </div>
+
+            {/* Avatar Section */}
+            <div className="flex flex-col items-center space-y-4">
+              <div 
+                className={cn(
+                  "w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors",
+                  avatar && "p-0"
+                )}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {avatar ? (
+                  <img 
+                    src={avatar} 
+                    alt="Profile avatar" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8 text-muted-foreground" />
+                )}
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2"
+              >
+                <Camera className="w-4 h-4" />
+                Add a photo
+              </Button>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
+            </div>
           </div>
 
-          {/* Name Input */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Enter your name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setShowWarning(false);
-              }}
-              className={cn(
-                "h-12",
-                showWarning && "border-destructive"
+          {/* Form at bottom */}
+          <div className="max-w-[20rem] w-full mx-auto pb-8 space-y-6">
+            {/* Name Input */}
+            <div className="space-y-2">
+              <Label htmlFor="name-mobile">Enter your name</Label>
+              <Input
+                id="name-mobile"
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setShowWarning(false);
+                }}
+                className={cn(
+                  "h-12",
+                  showWarning && "border-destructive"
+                )}
+              />
+              {showWarning && (
+                <p className="text-sm text-destructive">
+                  Please enter your name to continue
+                </p>
               )}
-            />
-            {showWarning && (
-              <p className="text-sm text-destructive">
-                Please enter your name to continue
-              </p>
-            )}
-          </div>
+            </div>
 
-          {/* Continue Button */}
-          <Button 
-            onClick={handleContinue}
-            className="w-full"
-            size="lg"
-          >
-            Continue
-          </Button>
-        </div>
-      </motion.div>
+            {/* Continue Button */}
+            <Button 
+              onClick={handleContinue}
+              className="w-full"
+              size="lg"
+            >
+              Continue
+            </Button>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

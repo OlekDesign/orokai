@@ -96,60 +96,197 @@ export function OnboardingStep({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4 py-8">
-      <motion.div
-        key={`step-${step}`}
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="w-full max-w-6xl"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center h-full">
-          {/* Left Column - Content */}
-          <div className="flex flex-col space-y-4 sm:space-y-6 max-w-lg">
-            {/* Main Content */}
-            <motion.div 
-              key={`content-${step}`}
-              variants={contentVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="space-y-6 sm:space-y-8 flex-1 flex flex-col"
-            >
-              <div className="space-y-4">
-                <Heading1 as="h1" className="text-4xl font-bold">{heading}</Heading1>
-                <BodyText className="text-muted-foreground leading-relaxed text-lg">
-                  {description}
-                </BodyText>
-              </div>
+    <div className="min-h-screen bg-muted/50 px-4 lg:py-8">
+      {/* Desktop Layout - Centered with image */}
+      <div className="hidden lg:flex min-h-screen items-center justify-center">
+        <motion.div
+          key={`step-${step}`}
+          variants={containerVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="w-full max-w-6xl"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center h-full">
+            {/* Left Column - Content */}
+            <div className="flex flex-col space-y-4 sm:space-y-6 max-w-lg">
+              {/* Main Content */}
+              <motion.div 
+                key={`content-${step}`}
+                variants={contentVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-6 sm:space-y-8 flex-1 flex flex-col"
+              >
+                <div className="space-y-4">
+                  <Heading1 as="h1" className="text-4xl font-bold">{heading}</Heading1>
+                  <BodyText className="text-muted-foreground leading-relaxed text-lg">
+                    {description}
+                  </BodyText>
+                </div>
 
-              {/* Answer Options */}
-              <div className="space-y-2 sm:space-y-3 flex-1">
-                {options.map((option, index) => (
-                  <motion.button
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
+                {/* Answer Options */}
+                <div className="space-y-2 sm:space-y-3 flex-1">
+                  {options.map((option, index) => (
+                    <motion.button
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + index * 0.1, duration: 0.3 }}
+                      onClick={() => onAnswerSelect(option)}
+                      className={cn(
+                        "w-full py-3 px-4 min-h-[44px] md:min-h-0 md:py-4 text-left rounded-lg border-2 transition-all duration-200",
+                        selectedAnswer === option
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <BodyText className="font-medium">
+                        {option}
+                      </BodyText>
+                    </motion.button>
+                  ))}
+                </div>
+
+                {/* Bottom Section - Progress Bar and Buttons */}
+                <div className="flex justify-between items-center">
+                  {/* Progress Dots - Bottom Left */}
+                  <motion.div 
+                    className="flex justify-start space-x-2"
+                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.1, duration: 0.3 }}
-                    onClick={() => onAnswerSelect(option)}
-                    className={cn(
-                      "w-full py-3 px-4 min-h-[44px] md:min-h-0 md:py-4 text-left rounded-lg border-2 transition-all duration-200",
-                      selectedAnswer === option
-                        ? "border-primary bg-primary/10"
-                        : "border-border hover:border-primary/50 hover:bg-muted/50"
-                    )}
+                    transition={{ delay: 0.2, duration: 0.3 }}
                   >
-                    <BodyText className="font-medium">
-                      {option}
-                    </BodyText>
-                  </motion.button>
-                ))}
-              </div>
+                    {Array.from({ length: totalSteps }, (_, index) => (
+                      <motion.div
+                        key={index}
+                        className={cn(
+                          "w-2 h-2 rounded-full transition-colors duration-300",
+                          index < step ? "bg-primary" : "bg-muted-foreground/40"
+                        )}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.1 + index * 0.05, duration: 0.2 }}
+                      />
+                    ))}
+                  </motion.div>
 
-              {/* Bottom Section - Progress Bar and Buttons */}
+                  {/* Buttons Group - Bottom Right */}
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Back Button */}
+                    {step > 1 && onBack && (
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1, duration: 0.3 }}
+                      >
+                        <Button
+                          variant="secondary"
+                          size="lg"
+                          onClick={onBack}
+                          className="px-6 py-3 min-h-[44px] md:min-h-0 md:py-2"
+                        >
+                          <ArrowLeft className="h-4 w-4 mr-2" />
+                          Back
+                        </Button>
+                      </motion.div>
+                    )}
+
+                    {/* Continue Button */}
+                    <Button
+                      onClick={onNext}
+                      disabled={!canProceed}
+                      className={cn(
+                        "shadow-lg px-6 py-3 min-h-[44px] md:min-h-0 md:py-2",
+                        !canProceed && "opacity-50 bg-muted text-muted-foreground cursor-not-allowed"
+                      )}
+                      size="lg"
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right Column - Standalone Image */}
+            <div 
+              className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl"
+              style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Mobile Layout - Content at top, controls at bottom */}
+      <div className="lg:hidden min-h-screen flex flex-col">
+        <motion.div
+          key={`step-${step}`}
+          variants={containerVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="flex-1 flex flex-col min-h-0"
+        >
+          {/* Content at top - scrollable if needed */}
+          <div className="flex-1 overflow-y-auto pt-8 pb-4">
+            <div className="max-w-lg mx-auto w-full">
+              <motion.div 
+                key={`content-${step}`}
+                variants={contentVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-6 sm:space-y-8"
+              >
+                <div className="space-y-4">
+                  <Heading1 as="h1" className="text-4xl font-bold">{heading}</Heading1>
+                  <BodyText className="text-muted-foreground leading-relaxed text-lg">
+                    {description}
+                  </BodyText>
+                </div>
+
+                {/* Answer Options */}
+                <div className="space-y-2 sm:space-y-3">
+                  {options.map((option, index) => (
+                    <motion.button
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + index * 0.1, duration: 0.3 }}
+                      onClick={() => onAnswerSelect(option)}
+                      className={cn(
+                        "w-full py-3 px-4 min-h-[44px] text-left rounded-lg border-2 transition-all duration-200",
+                        selectedAnswer === option
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <BodyText className="font-medium">
+                        {option}
+                      </BodyText>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Controls at bottom - fixed position */}
+          <div className="flex-shrink-0">
+            <div className="w-full px-2 py-4 pb-8">
               <div className="flex justify-between items-center">
                 {/* Progress Dots - Bottom Left */}
                 <motion.div 
@@ -185,7 +322,7 @@ export function OnboardingStep({
                         variant="secondary"
                         size="lg"
                         onClick={onBack}
-                        className="px-6 py-3 min-h-[44px] md:min-h-0 md:py-2"
+                        className="px-6 py-3 min-h-[44px]"
                       >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back
@@ -198,7 +335,7 @@ export function OnboardingStep({
                     onClick={onNext}
                     disabled={!canProceed}
                     className={cn(
-                      "shadow-lg px-6 py-3 min-h-[44px] md:min-h-0 md:py-2",
+                      "shadow-lg px-6 py-3 min-h-[44px]",
                       !canProceed && "opacity-50 bg-muted text-muted-foreground cursor-not-allowed"
                     )}
                     size="lg"
@@ -207,23 +344,10 @@ export function OnboardingStep({
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-
-          {/* Right Column - Standalone Image */}
-          <div 
-            className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl"
-            style={{
-              backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }
