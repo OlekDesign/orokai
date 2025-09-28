@@ -15,7 +15,8 @@ import {
   ArrowDownLeft,
   User,
   Edit3,
-  Save
+  Save,
+  ChevronRight
 } from 'lucide-react';
 import { CryptoIcon } from '../components/CryptoIcon';
 import { Tooltip } from '../components/Tooltip';
@@ -212,7 +213,7 @@ export function Wallet() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6">
       {/* Profile Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -329,24 +330,29 @@ export function Wallet() {
             animate="visible"
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            className="h-full flex flex-col"
           >
             <CardHeader className="pb-6">
               <CardDescription>Cash</CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 flex-1 flex flex-col justify-between">
             <Button
               variant="secondary"
               onClick={() => setShowCardModal(true)}
-              className="w-full justify-start h-auto py-4"
+              className="w-full justify-between"
+              style={{ height: '80px' }}
             >
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                <CreditCard className="w-5 h-5 text-primary" />
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                  <CreditCard className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">•••• {selectedCard?.last4}</p>
+                  <p className="text-sm text-muted-foreground">{selectedCard?.bank}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="font-medium">•••• {selectedCard?.last4}</p>
-                <p className="text-sm text-muted-foreground">{selectedCard?.bank}</p>
-              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </Button>
 
             {/* Show available cash only if there's a closed investment */}
@@ -459,16 +465,19 @@ export function Wallet() {
               <CardContent className="space-y-6">
               <Button
                 variant="secondary"
-                className="w-full justify-start h-auto py-4"
+                className="w-full justify-between"
+                style={{ height: '80px' }}
               >
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                  <MetaMaskIcon size={24} />
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                    <MetaMaskIcon size={24} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</p>
+                    <p className="text-sm text-muted-foreground">MetaMask</p>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <p className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</p>
-                  <p className="text-sm text-muted-foreground">MetaMask</p>
-                </div>
-                <div className="flex items-center ml-auto space-x-2">
+                <div className="flex items-center space-x-2">
                   <div className="relative">
                     <Button
                       variant="ghost"
@@ -483,7 +492,7 @@ export function Wallet() {
                     </Button>
                     <Tooltip show={showCopiedTooltip} message="Address copied" />
                   </div>
-                 
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
                 </div>
               </Button>
 

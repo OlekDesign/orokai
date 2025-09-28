@@ -54,7 +54,7 @@ export function InvestmentCard({ investment, onWithdraw }: InvestmentCardProps) 
   return (
     <motion.div className="w-full">
       <Card className="w-full">
-        <CardContent className="p-6 flex flex-col">
+        <CardContent className="px-6 pb-6 pt-8 sm:pt-8 flex flex-col">
           {isWithdrawing ? (
             <div className="flex flex-col">
               {/* Back button */}
@@ -70,10 +70,10 @@ export function InvestmentCard({ investment, onWithdraw }: InvestmentCardProps) 
               </div>
               
               {/* Content */}
-              <div className="flex flex-col justify-center text-center space-y-6 px-4">
+              <div className="flex flex-col space-y-6">
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-bold">Close Investment</h2>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <h2 className="text-heading-2 font-bold text-white text-left">Close Investment</h2>
+                  <p className="text-muted-foreground text-sm leading-relaxed text-left">
                     Your funds will be available in Wallet once you close the investment within a couple of minutes. Do you want to proceed?
                   </p>
                 </div>

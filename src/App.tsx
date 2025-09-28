@@ -4,6 +4,7 @@ import { UserProfileProvider, useUserProfile } from './contexts/UserProfileConte
 import { TransactionsProvider } from './contexts/TransactionsContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
 import { Layout } from './components/Layout';
+import { ScrollToTop } from './components/ScrollToTop';
 import { Login } from './pages/Login';
 import CreateProfile from './pages/CreateProfile';
 import { Onboarding } from './pages/Onboarding';
@@ -75,7 +76,9 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       {/* Public routes */}
       <Route
         path="/login"
@@ -256,7 +259,8 @@ function AppRoutes() {
 
       {/* Redirect root to login, profile creation, or dashboard */}
       <Route path="/" element={<Navigate to="/dashboard" />} />
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

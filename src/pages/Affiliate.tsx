@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
-import { Caption, BodyText } from '@/components/ui/typography';
+import { Caption, BodyText, Heading1, BodyTextLarge } from '@/components/ui/typography';
 import { Copy, Check, ChevronDown } from 'lucide-react';
 import { Avatar } from '@/components/Avatar';
 import {
@@ -110,6 +110,37 @@ export function Affiliate() {
         variants={cardVariants}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
+        <Card className="relative overflow-hidden rounded-2xl border border-border">
+          <div 
+            className="absolute inset-0 bg-cover bg-center z-0" 
+            style={{ 
+              backgroundImage: `url(${import.meta.env.BASE_URL}affiliate.png)`,
+            }} 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/60 pointer-events-none" />
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            className="relative px-8 pb-8 flex items-end justify-center min-h-[300px]"
+          >
+            <div className="max-w-md text-center">
+              <Heading1 className="mb-4 ">They Win and You Win</Heading1>
+              <BodyTextLarge className="mb-6">
+                Share your affiliate link with friends and earn a percentage of their transactions. 
+              </BodyTextLarge>
+            </div>
+          </motion.div>
+        </Card>
+      </motion.div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+      >
         <Card>
           <motion.div
             initial="hidden"
@@ -134,22 +165,22 @@ export function Affiliate() {
               type="text"
               value={affiliateLink}
               readOnly
-              className="flex-1 px-3 py-2 bg-accent rounded-md text-sm"
+              className="flex-1 px-3 py-2 bg-accent rounded-md text-sm h-10"
             />
             <Button
               onClick={copyToClipboard}
               variant="secondary"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 h-10 px-4"
             >
               {copied ? (
                 <>
                   <Check className="h-4 w-4" />
-                  Copied
+                  <span className="hidden sm:inline">Copied</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  Copy link
+                  <span className="hidden sm:inline">Copy link</span>
                 </>
               )}
             </Button>
@@ -172,19 +203,18 @@ export function Affiliate() {
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
           >
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardDescription>Your Affiliation History</CardDescription>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setHideInactive(!hideInactive)}
-                    className="text-sm"
-                  >
-                    {hideInactive ? 'Show Inactive' : 'Hide Inactive'}
-                  </Button>
-                  <div className="relative w-48">
+            <CardHeader className="space-y-4">
+              <CardDescription>Your Affiliation History</CardDescription>
+              <div className="flex items-center justify-between gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setHideInactive(!hideInactive)}
+                  className="text-sm"
+                >
+                  {hideInactive ? 'Show Inactive' : 'Hide Inactive'}
+                </Button>
+                <div className="relative w-48">
                   <button
                     onClick={() => setIsLevelDropdownOpen(!isLevelDropdownOpen)}
                     className="w-full px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
@@ -217,7 +247,6 @@ export function Affiliate() {
                       ))}
                     </div>
                   )}
-                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -226,9 +255,9 @@ export function Affiliate() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead><Caption>Affiliated User</Caption></TableHead>
-                  <TableHead><Caption>Level of Affiliation</Caption></TableHead>
-                  <TableHead><Caption>Total Rewards</Caption></TableHead>
+                  <TableHead><Caption>Affiliate</Caption></TableHead>
+                  <TableHead><Caption>Level</Caption></TableHead>
+                  <TableHead><Caption>Rewards</Caption></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -275,37 +304,6 @@ export function Affiliate() {
         </Card>
       </motion.div>
 
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={cardVariants}
-        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
-      >
-        <Card className="relative overflow-hidden min-h-[300px] flex items-end">
-          <div 
-            className="absolute inset-0 bg-cover bg-center z-0" 
-            style={{ 
-              backgroundImage: `url(${import.meta.env.BASE_URL}affiliate.png)`,
-            }} 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10" />
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
-          >
-            <CardHeader className="relative z-20 pb-12">
-              <CardTitle className="text-left text-2xl text-white">Grow Your Passive Income Network</CardTitle>
-              <CardDescription className="text-left mt-3 max-w-[40%] text-white/80">
-                Share your affiliate link with friends and earn a percentage of their transactions. The more friends you bring, 
-                the more passive income you generate. Your affiliates help you earn while they earn - it's a win-win for everyone 
-                in your network.
-              </CardDescription>
-            </CardHeader>
-          </motion.div>
-        </Card>
-      </motion.div>
     </div>
   );
 }

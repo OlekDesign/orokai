@@ -233,15 +233,16 @@ export function NewInvestment() {
 
       {/* Content container */}
       <div className="h-full flex p-4 md:p-6 items-center justify-center">
-        <div className="relative w-full max-w-7xl flex justify-center">
-          {/* New Investment Card */}
-          <motion.div
-            animate={{
-              marginTop: showOffering ? '-328px' : '0px',
-            }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center flex-shrink-0 z-10 w-full max-w-md"
-          >
+        <div className="relative w-full max-w-7xl">
+          <div className="flex justify-center md:justify-start md:ml-[calc(50%-240px)]">
+            {/* New Investment Card */}
+            <motion.div
+              animate={{
+                marginTop: showOffering ? '-328px' : '0px',
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center flex-shrink-0 z-10 w-full max-w-md"
+            >
             {/* Mobile: Direct content, Desktop: Card wrapper */}
             <div className="md:hidden w-full pb-32">
               <div className="mb-6">
@@ -501,6 +502,7 @@ export function NewInvestment() {
               )}
             </div>
           </motion.div>
+          </div>
 
           {/* Desktop: Investment Options Cards */}
           <AnimatePresence>
@@ -514,7 +516,7 @@ export function NewInvestment() {
                 style={{ 
                   height: 'calc(100vh - 80px)',
                   top: '-328px',
-                  left: 'calc(50% + 128px + 48px)'
+                  left: 'calc(50% + 32px)'
                 }}
               >
                 <div className="flex flex-col gap-4">

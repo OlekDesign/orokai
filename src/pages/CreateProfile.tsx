@@ -129,63 +129,66 @@ export default function CreateProfile() {
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Content at top, form at bottom */}
+      {/* Mobile Layout - Content scrollable, form fixed at bottom */}
       <div className="md:hidden min-h-screen flex flex-col">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 flex flex-col"
+          className="flex-1 overflow-y-auto px-4 pt-8"
         >
-          {/* Header and Avatar at top */}
-          <div className="flex-1 flex flex-col justify-center max-w-[20rem] w-full mx-auto">
-            <div className="text-center mb-8">
-              <Heading1>Create Profile</Heading1>
-            </div>
-
-            {/* Avatar Section */}
-            <div className="flex flex-col items-center space-y-4">
-              <div 
-                className={cn(
-                  "w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors",
-                  avatar && "p-0"
-                )}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {avatar ? (
-                  <img 
-                    src={avatar} 
-                    alt="Profile avatar" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-8 h-8 text-muted-foreground" />
-                )}
+          <div className="max-w-[20rem] mx-auto w-full">
+            <div className="flex flex-col justify-center space-y-8">
+              <div className="text-center">
+                <Heading1>Create Profile</Heading1>
               </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2"
-              >
-                <Camera className="w-4 h-4" />
-                Add a photo
-              </Button>
-              
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-                className="hidden"
-              />
+
+              {/* Avatar Section */}
+              <div className="flex flex-col items-center space-y-4">
+                <div 
+                  className={cn(
+                    "w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors",
+                    avatar && "p-0"
+                  )}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {avatar ? (
+                    <img 
+                      src={avatar} 
+                      alt="Profile avatar" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-8 h-8 text-muted-foreground" />
+                  )}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2"
+                >
+                  <Camera className="w-4 h-4" />
+                  Add a photo
+                </Button>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+              </div>
             </div>
           </div>
+        </motion.div>
 
-          {/* Form at bottom */}
-          <div className="max-w-[20rem] w-full mx-auto pb-8 space-y-6">
+        {/* Fixed form at bottom */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-background border-t border-border">
+          <div className="max-w-[20rem] w-full mx-auto space-y-4">
             {/* Name Input */}
             <div className="space-y-2">
               <Label htmlFor="name-mobile">Enter your name</Label>
@@ -213,13 +216,13 @@ export default function CreateProfile() {
             {/* Continue Button */}
             <Button 
               onClick={handleContinue}
-              className="w-full"
+              className="w-full min-h-[44px] py-3"
               size="lg"
             >
               Continue
             </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

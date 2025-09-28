@@ -87,22 +87,23 @@ export function Investments() {
         variants={cardVariants}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-[url('/invest.png')] bg-cover bg-center">
+          {/* Black gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 pointer-events-none" />
           <motion.div
             initial="hidden"
             animate="visible"
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-            className="relative px-8 py-12"
+            className="relative px-8 py-12 flex items-end justify-center min-h-[300px]"
           >
-            <div className="max-w-2xl">
+              <div className="max-w-md text-center">
               <Heading1 className="mb-4">
                 Passive Income Starts Here
               </Heading1>
-              <BodyTextLarge className="text-muted-foreground mb-8">
+              <BodyTextLarge className="text-foreground mb-6">
                 Define how much you want to invest and choose from our carefully curated investment options. 
-                Our platform automatically manages your portfolio, reinvests earnings, and optimizes returns 
-                so you can earn passive income without the complexity of managing individual positions.
+                
               </BodyTextLarge>
               <Button 
                 onClick={() => navigate('/new-investment', {
@@ -117,9 +118,6 @@ export function Investments() {
               </Button>
             </div>
             
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <div className="absolute bottom-0 right-8 w-64 h-64 bg-gradient-to-tl from-primary/5 to-transparent rounded-full blur-2xl translate-y-1/2 pointer-events-none" />
           </motion.div>
         </div>
       </motion.div>
