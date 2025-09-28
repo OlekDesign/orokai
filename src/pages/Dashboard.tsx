@@ -211,12 +211,12 @@ export function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardDescription>Total Rewards</CardDescription>
-                    <h1 className="text-heading-1 text-foreground mt-1">
+                    <Heading1 className="mt-1">
                       ${totalRewards.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
-                    </h1>
+                    </Heading1>
                     <BodyText className="mt-1 text-success">
                       +$17.49
                     </BodyText>
@@ -333,10 +333,10 @@ export function Dashboard() {
                         const value = e.target.value.replace(/[^0-9]/g, '');
                         setInvestAmount(value);
                       }}
-                      className="h-auto pt-6 pb-2 text-lg sm:text-xl font-semibold px-4 placeholder:opacity-50"
+                      className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
                       autoFocus
                     />
-                    <span className="text-xs text-muted-foreground font-medium absolute left-4 top-2">
+                    <span className="absolute left-4 top-2 text-xs text-muted-foreground font-medium">
                       Amount
                     </span>
                   </div>
@@ -362,9 +362,9 @@ export function Dashboard() {
                       })()}
                     </div>
                     <div className="flex items-center gap-2 absolute left-4 top-2">
-                      <Caption className="font-medium">
+                      <span className="text-xs text-muted-foreground font-medium">
                         Estimated Return (APY 7.8%)
-                      </Caption>
+                      </span>
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>

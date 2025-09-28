@@ -92,14 +92,14 @@ export default function InvestmentsEmpty() {
                   setInvestAmount(Number(value) || 0);
                   setShowWarning(false);
                 }}
-                className="h-14 text-2xl font-semibold placeholder:text-muted-foreground"
+                className="h-14 text-heading-2 placeholder:text-muted-foreground"
               />
               {showWarning && (
-                <div className="text-warning text-sm mt-2">
+                <Caption className="text-warning mt-2">
                   Fill in your investment
-                </div>
+                </Caption>
               )}
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+              <div className="flex items-center gap-3 text-caption mt-2">
                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                   <Check className="w-3.5 h-3.5 text-primary" />
                 </div>
@@ -150,7 +150,7 @@ export default function InvestmentsEmpty() {
                     : `${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
                 })()}
               </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+              <div className="flex items-center gap-3 text-caption mt-2">
                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                   <Check className="w-3.5 h-3.5 text-primary" />
                 </div>

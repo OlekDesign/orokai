@@ -96,8 +96,8 @@ export function OnboardingStep({
                 className="space-y-6 sm:space-y-8 flex-1 flex flex-col"
               >
                 <div className="space-y-4">
-                  <Heading1 as="h1" className="text-4xl font-bold">{heading}</Heading1>
-                  <BodyText className="text-muted-foreground leading-relaxed text-lg">
+                  <Heading1 as="h1">{heading}</Heading1>
+                  <BodyText className="text-muted-foreground leading-relaxed text-body-large">
                     {description}
                   </BodyText>
                 </div>

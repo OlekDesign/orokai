@@ -8,7 +8,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heading1, Heading2, BodyTextLarge, BodyTextSmall, Caption } from '@/components/ui/typography';
+import { Heading1, Heading2, Heading3, Heading4, BodyTextLarge, BodyTextSmall, Caption } from '@/components/ui/typography';
 import { motion } from 'framer-motion';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { InvestmentCard } from "@/components/InvestmentCard";
@@ -157,11 +157,11 @@ export function Investments() {
                           <IconComponent className={`h-6 w-6 ${option.color}`} />
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-primary">{option.apy}</div>
-                          <span className="text-caption">APY</span>
+                          <Heading2 className="text-primary">{option.apy}</Heading2>
+                          <Caption>APY</Caption>
                         </div>
                       </div>
-                      <CardTitle className="text-xl">{option.title}</CardTitle>
+                      <CardTitle className="text-heading-3">{option.title}</CardTitle>
                     </CardHeader>
                     
                     <CardContent className="space-y-4">
@@ -217,7 +217,7 @@ export function Investments() {
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
           >
-            <Heading2>Your Passive Income</Heading2>
+            <Heading4>Your Passive Income</Heading4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
               {[...investments]
               .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())

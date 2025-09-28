@@ -11,6 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -117,75 +118,45 @@ export function Affiliate() {
               backgroundImage: `url(${import.meta.env.BASE_URL}affiliate.png)`,
             }} 
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/60 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 pointer-events-none" />
           <motion.div
             initial="hidden"
             animate="visible"
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-            className="relative px-8 pb-8 flex items-end justify-center min-h-[300px]"
+            className="relative px-8 pb-8 flex flex-col items-center justify-end min-h-[300px]"
           >
-            <div className="max-w-md text-center">
+            <div className="max-w-md text-center ">
               <Heading1 className="mb-4 ">They Win and You Win</Heading1>
-              <BodyTextLarge className="mb-6">
+              <BodyText className="mb-6">
                 Share your affiliate link with friends and earn a percentage of their transactions. 
-              </BodyTextLarge>
+              </BodyText>
             </div>
-          </motion.div>
-        </Card>
-      </motion.div>
-
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={cardVariants}
-        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-      >
-        <Card>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-          >
-            <CardHeader>
-              <div>
-                <CardDescription>Total Affiliate Rewards</CardDescription>
-                <h1 className="text-heading-1 text-foreground mt-1">
-                  ${(3112).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </h1>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <input
-              type="text"
-              value={affiliateLink}
-              readOnly
-              className="flex-1 px-3 py-2 bg-accent rounded-md text-sm h-10"
-            />
-            <Button
-              onClick={copyToClipboard}
-              variant="secondary"
-              className="flex items-center gap-2 h-10 px-4"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  <span className="hidden sm:inline">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  <span className="hidden sm:inline">Copy link</span>
-                </>
-              )}
-            </Button>
-          </div>
-            </CardContent>
+            <div className="flex items-center space-x-4 w-full max-w-md">
+              <input
+                type="text"
+                value={affiliateLink}
+                readOnly
+                className="flex-1 px-3 py-2 bg-white/10 backdrop-blur-md border border-white/10 rounded-md text-sm h-10 text-white placeholder-white/70 shadow-lg"
+              />
+              <Button
+                onClick={copyToClipboard}
+                variant="default"
+                className="flex items-center gap-2 h-10 px-4"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    <span className="hidden sm:inline">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    <span className="hidden sm:inline">Copy link</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </motion.div>
         </Card>
       </motion.div>
@@ -203,8 +174,19 @@ export function Affiliate() {
             variants={contentVariants}
             transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
           >
-            <CardHeader className="space-y-4">
-              <CardDescription>Your Affiliation History</CardDescription>
+            <CardHeader className="pb-4">
+              <div>
+                <CardDescription>Total Affiliate Rewards</CardDescription>
+                <Heading1 className="mt-1">
+                  ${(3112).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </Heading1>
+              </div>
+            </CardHeader>
+            <Separator />
+            <div className="px-6 py-4">
               <div className="flex items-center justify-between gap-3">
                 <Button
                   variant="ghost"
@@ -249,7 +231,7 @@ export function Affiliate() {
                   )}
                 </div>
               </div>
-            </CardHeader>
+            </div>
             <CardContent>
           <div className="overflow-x-auto">
             <Table>

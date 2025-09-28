@@ -14,7 +14,7 @@ import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X } from 'lu
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { cn } from "@/lib/utils";
-import { Heading1, Heading2, BodyText, BodyTextSmall, Caption, Label } from '@/components/ui/typography';
+import { Heading1, Heading2, Heading4, BodyText, BodyTextSmall, Caption, Label } from '@/components/ui/typography';
 import { PageHeader } from "@/components/PageHeader";
 
 type PaymentMethod = 'credit_card' | 'crypto_wallet';
@@ -246,7 +246,7 @@ export function TransactionReview() {
                   alt="Sarah Mitchell"
                   className="w-10 h-10 rounded-full object-cover mb-12"
                 />
-                <h3 className="text-lg font-semibold mb-3">Sarah Mitchell</h3>
+                <Heading4 className="mb-3">Sarah Mitchell</Heading4>
                 <p className="text-muted-foreground leading-relaxed">
                   I've been using this platform for over a year now. The returns are consistent and the process is incredibly transparent. Definitely recommend it!
                 </p>
@@ -334,9 +334,9 @@ export function TransactionReview() {
                       {showCardForm && (
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                               Card Number
-                            </label>
+                            </Label>
                             <Input
                               type="text"
                               placeholder="1234 5678 9012 3456"
@@ -345,9 +345,9 @@ export function TransactionReview() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                               Owner's Name
-                            </label>
+                            </Label>
                             <Input
                               type="text"
                               placeholder="John Doe"
@@ -357,9 +357,9 @@ export function TransactionReview() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Expiry Date
-                              </label>
+                              </Label>
                               <Input
                                 type="text"
                                 placeholder="MM/YY"
@@ -368,9 +368,9 @@ export function TransactionReview() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 CVC
-                              </label>
+                              </Label>
                               <Input
                                 type="text"
                                 placeholder="123"
@@ -393,9 +393,9 @@ export function TransactionReview() {
                             >
                               {saveCard && <Check className="h-3 w-3" />}
                             </button>
-                            <label className="text-sm font-medium cursor-pointer" onClick={() => setSaveCard(!saveCard)}>
+                            <Label className="cursor-pointer" onClick={() => setSaveCard(!saveCard)}>
                               Save the card
-                            </label>
+                            </Label>
                           </div>
                         </div>
                       )}
@@ -407,9 +407,9 @@ export function TransactionReview() {
                     <div className="space-y-6">
                       {/* Currency Selection Cards */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none">
+                        <Label>
                           Select Currency
-                        </label>
+                        </Label>
                         <div className="space-y-3">
                           {currencies.map((currency) => (
                             <button
@@ -455,9 +455,9 @@ export function TransactionReview() {
                         >
                           {investInUSDT && <Check className="h-3 w-3" />}
                         </button>
-                        <label className="text-sm font-medium cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
+                        <Label className="cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
                           Invest in USDT
-                        </label>
+                        </Label>
                       </div>
                     </div>
                   )}
@@ -583,7 +583,7 @@ export function TransactionReview() {
             >
               <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Payment Details</h2>
+                  <Heading4>Payment Details</Heading4>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -662,9 +662,9 @@ export function TransactionReview() {
                       {showCardForm && (
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                               Card Number
-                            </label>
+                            </Label>
                             <Input
                               type="text"
                               placeholder="1234 5678 9012 3456"
@@ -673,9 +673,9 @@ export function TransactionReview() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                               Owner's Name
-                            </label>
+                            </Label>
                             <Input
                               type="text"
                               placeholder="John Doe"
@@ -685,9 +685,9 @@ export function TransactionReview() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Expiry Date
-                              </label>
+                              </Label>
                               <Input
                                 type="text"
                                 placeholder="MM/YY"
@@ -696,9 +696,9 @@ export function TransactionReview() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              <Label className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 CVC
-                              </label>
+                              </Label>
                               <Input
                                 type="text"
                                 placeholder="123"
@@ -745,9 +745,9 @@ export function TransactionReview() {
                     <div className="space-y-6">
                       {/* Currency Selection Cards */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none">
+                        <Label>
                           Select Currency
-                        </label>
+                        </Label>
                         <div className="space-y-3">
                           {currencies.map((currency) => (
                             <button
@@ -793,9 +793,9 @@ export function TransactionReview() {
                         >
                           {investInUSDT && <Check className="h-3 w-3" />}
                         </button>
-                        <label className="text-sm font-medium cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
+                        <Label className="cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
                           Invest in USDT
-                        </label>
+                        </Label>
                       </div>
 
                       {/* Save Wallet Button */}

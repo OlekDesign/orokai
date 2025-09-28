@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heading1 } from "@/components/ui/typography";
+import { Heading1, Caption } from "@/components/ui/typography";
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { cn } from "@/lib/utils";
 
@@ -111,9 +111,9 @@ export default function CreateProfile() {
                 )}
               />
               {showWarning && (
-                <p className="text-sm text-destructive">
+                <Caption className="text-destructive">
                   Please enter your name to continue
-                </p>
+                </Caption>
               )}
             </div>
 
@@ -207,9 +207,9 @@ export default function CreateProfile() {
                 )}
               />
               {showWarning && (
-                <p className="text-sm text-destructive">
+                <Caption className="text-destructive">
                   Please enter your name to continue
-                </p>
+                </Caption>
               )}
             </div>
 

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from '../contexts/AuthContext';
 import { cn } from "@/lib/utils";
-import { Heading1, Heading2, BodyText, Caption, Overline } from "@/components/ui/typography";
+import { Heading1, Heading2, Heading4, BodyText, Caption, Overline } from "@/components/ui/typography";
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ export function Login() {
       >
         <div className="space-y-16">
           <div className="text-center">
-            <h1 className="text-xl font-bold text-foreground mb-4">Orokai</h1>
+            <Heading4 className="text-foreground mb-4">Orokai</Heading4>
             <Heading1 className="text-center">Passive Income<br></br> Made Simple</Heading1>
           </div>
 
@@ -195,7 +195,7 @@ export function Login() {
                   </div>
                   <span>All Wallets</span>
                 </div>
-                <span className="text-caption">480+</span>
+                <Caption>480+</Caption>
               </Button>
             </div>
           </div>

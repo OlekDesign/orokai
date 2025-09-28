@@ -46,7 +46,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Caption, BodyText, Heading3 } from "@/components/ui/typography";
+import { Caption, BodyText, Heading2, Heading3 } from "@/components/ui/typography";
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
@@ -263,7 +263,7 @@ export function Wallet() {
                   <Input
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
-                    className="h-8 text-lg font-semibold"
+                    className="h-8 text-heading-4"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleNameSave();
                       if (e.key === 'Escape') handleNameCancel();
@@ -348,7 +348,7 @@ export function Wallet() {
                   <CreditCard className="w-5 h-5 text-primary" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium">•••• {selectedCard?.last4}</p>
+                  <BodyText className="font-medium">•••• {selectedCard?.last4}</BodyText>
                   <p className="text-sm text-muted-foreground">{selectedCard?.bank}</p>
                 </div>
               </div>
@@ -359,10 +359,10 @@ export function Wallet() {
             {closedInvestmentAmount !== null && closedInvestmentAmount > 0 ? (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
+                  <Caption className="text-muted-foreground">
                     Available Cash
-                  </label>
-                  <p className="text-heading-2 font-semibold mt-1">${availableFunds.toLocaleString()}</p>
+                  </Caption>
+                  <Heading2 className="mt-1 !text-xl !md:text-2xl !font-semibold">${availableFunds.toLocaleString()}</Heading2>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -384,10 +384,10 @@ export function Wallet() {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
+                  <Caption className="text-muted-foreground">
                     Available Cash
-                  </label>
-                  <p className="text-heading-2 font-semibold mt-1 text-muted-foreground">$0</p>
+                  </Caption>
+                  <Heading2 className="mt-1 text-muted-foreground !text-xl !md:text-2xl !font-semibold">$0</Heading2>
                   <p className="text-sm text-muted-foreground mt-2">
                     Your rewards & closed investments
                   </p>
@@ -473,7 +473,7 @@ export function Wallet() {
                     <MetaMaskIcon size={24} />
                   </div>
                   <div className="text-left">
-                    <p className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</p>
+                    <BodyText className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</BodyText>
                     <p className="text-sm text-muted-foreground">MetaMask</p>
                   </div>
                 </div>
@@ -565,7 +565,7 @@ export function Wallet() {
                         <CreditCard className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-medium">{card.fullNumber}</p>
+                        <BodyText className="font-medium">{card.fullNumber}</BodyText>
                         <p className="text-sm text-muted-foreground">
                           {card.bank} • {card.holder}
                         </p>

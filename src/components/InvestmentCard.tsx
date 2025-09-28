@@ -90,7 +90,7 @@ export function InvestmentCard({ investment, onWithdraw }: InvestmentCardProps) 
               <div className="space-y-6">
                 <div>
                   <CardDescription>{investment.chain}</CardDescription>
-                  <p className="text-heading-2 font-bold mt-1 text-white">
+                  <p className="text-heading-2  mt-1 text-white">
                     ${investment.amount.toLocaleString()}
                   </p>
                 </div>
