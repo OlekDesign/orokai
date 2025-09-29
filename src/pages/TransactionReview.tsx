@@ -240,7 +240,7 @@ export function TransactionReview() {
             </table>
 
             <Card className="hidden md:block">
-              <CardContent className="pt-8 pb-8">
+              <CardContent className="!pt-6 pb-8">
                 <img
                   src="https://randomuser.me/api/portraits/women/44.jpg"
                   alt="Sarah Mitchell"
@@ -267,7 +267,7 @@ export function TransactionReview() {
             <Heading2 className="hidden md:block">Payment Details</Heading2>
 
             <Card className="hidden md:block">
-              <CardContent className="pt-6">
+              <CardContent className="!pt-6 pb-6">
                 <div className="space-y-6">
                   {/* Payment Method Switch */}
                   <div className="flex p-1 bg-muted rounded-lg">

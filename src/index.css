@@ -5,7 +5,8 @@
 @layer base {
   :root {
     --background: 0 0% 100%;           /* neutral-50 */
-    --foreground: 0 0% 20.5%;          /* neutral-900 */
+    --foreground: 0 0% 20.5%;  
+    --faded: 0 0% 90%;        /* neutral-900 */
     --card: 0 0% 100%;                 /* neutral-50 */
     --card-foreground: 0 0% 20.5%;     /* neutral-900 */
     --popover: 0 0% 100%;              /* neutral-50 */
@@ -34,7 +35,8 @@
 
   .dark {
     --background: 0 0% 9%;             /* darker than neutral-950 for comfortable dark mode */
-    --foreground: 0 0% 98%;            /* neutral-50 */
+    --foreground: 0 0% 98%;  
+    --faded: 0 0% 90%;          /* neutral-50 */
     --card: 0 0% 10%;                   /* match background for consistent dark mode */
     --card-foreground: 0 0% 98%;       /* neutral-50 */
     --popover: 0 0% 9%;               /* darker than neutral-950 for comfortable dark mode */
@@ -91,19 +93,19 @@
   }
   
   .text-heading-2 {
-    @apply text-xl md:text-2xl font-semibold leading-tight;
+    @apply text-xl md:text-2xl font-medium leading-tight;
   }
   
   .text-heading-3 {
-    @apply text-xl font-semibold leading-snug;
+    @apply text-lg md:text-xl font-medium leading-snug;
   }
   
   .text-heading-4 {
-    @apply text-lg font-medium leading-snug;
+    @apply text-base md:text-lg font-medium leading-snug;
   }
   
   .text-body-large {
-    @apply text-lg leading-relaxed;
+    @apply text-base leading-relaxed;
   }
   
   .text-body {

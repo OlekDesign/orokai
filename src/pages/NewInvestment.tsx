@@ -13,12 +13,7 @@ import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/PageHeader";
 import { CurrencySelect } from "@/components/CurrencySelect";
 import { Caption, Label, Heading4 } from "@/components/ui/typography";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 // Exchange rates relative to USD
 const exchangeRates = {
@@ -266,11 +261,11 @@ export function NewInvestment() {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           setInvestAmount(Number(value) || 0);
                         }}
-                        className="h-auto pt-6 pb-2 text-body-large px-4"
+                        className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
                       />
-                      <Label className="absolute left-4 top-2 text-muted-foreground">
+                      <span className="absolute left-4 top-2 text-xs text-muted-foreground font-medium">
                         Amount
-                      </Label>
+                      </span>
                     </div>
                   </div>
 
@@ -282,38 +277,33 @@ export function NewInvestment() {
 
                 <div>
                   <div className="relative">
-                    <div className="w-full h-auto pt-6 pb-2 px-4 text-body-large bg-accent/50 rounded-md flex items-center text-primary">
+                    <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
                       {selectedCurrency === 'USD' 
                         ? `$${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}`
                         : `${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 2 }) || '0'} ${selectedCurrency}`
                       }
                     </div>
                     <div className="flex items-center gap-2 absolute left-4 top-2">
-                      <Label className="text-muted-foreground">
+                      <span className="text-xs text-muted-foreground font-medium">
                         Estimated Return (APY {rewardInfo.apy})
-                      </Label>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={0}>
-                          <TooltipTrigger asChild>
-                            <Info className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs bg-foreground p-4">
-                            <div>
-                              <p className="text-sm mb-2">
-                                APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
-                                This is an estimated return based on current market conditions.
-                              </p>
-                              <a 
-                                href="#" 
-                                className="text-primary-foreground text-sm underline hover:no-underline"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Learn more
-                              </a>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      </span>
+                      <InfoTooltip
+                        content={
+                          <div>
+                            <p className="text-sm mb-2">
+                              APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
+                              This is an estimated return based on current market conditions.
+                            </p>
+                            <a 
+                              href="#" 
+                              className="text-primary-foreground text-sm underline hover:no-underline"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              Learn more
+                            </a>
+                          </div>
+                        }
+                      />
                     </div>
                   </div>
                 </div>
@@ -395,11 +385,11 @@ export function NewInvestment() {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           setInvestAmount(Number(value) || 0);
                         }}
-                        className="h-auto pt-6 pb-2 text-body-large px-4"
+                        className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
                       />
-                      <Label className="absolute left-4 top-2 text-muted-foreground">
+                      <span className="absolute left-4 top-2 text-xs text-muted-foreground font-medium">
                         Amount
-                      </Label>
+                      </span>
                     </div>
                   </div>
 
@@ -411,38 +401,33 @@ export function NewInvestment() {
 
                   <div>
                     <div className="relative">
-                      <div className="w-full h-auto pt-6 pb-2 px-4 text-body-large bg-accent/50 rounded-md flex items-center text-primary">
+                      <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
                         {selectedCurrency === 'USD' 
                           ? `$${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}`
                           : `${rewardInfo.yearlyReturn?.toLocaleString(undefined, { maximumFractionDigits: 2 }) || '0'} ${selectedCurrency}`
                         }
                       </div>
                       <div className="flex items-center gap-2 absolute left-4 top-2">
-                        <Label className="text-muted-foreground">
+                        <span className="text-xs text-muted-foreground font-medium">
                           Estimated Return (APY {rewardInfo.apy})
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip delayDuration={0}>
-                            <TooltipTrigger asChild>
-                              <Info className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs bg-foreground p-4">
-                              <div>
-                                <p className="text-sm mb-2">
-                                  APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
-                                  This is an estimated return based on current market conditions.
-                                </p>
-                                <a 
-                                  href="#" 
-                                  className="text-primary-foreground text-sm underline hover:no-underline"
-                                  onClick={(e) => e.preventDefault()}
-                                >
-                                  Learn more
-                                </a>
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        </span>
+                        <InfoTooltip
+                          content={
+                            <div>
+                              <p className="text-sm mb-2">
+                                APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
+                                This is an estimated return based on current market conditions.
+                              </p>
+                              <a 
+                                href="#" 
+                                className="text-primary-foreground text-sm underline hover:no-underline"
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                Learn more
+                              </a>
+                            </div>
+                          }
+                        />
                       </div>
                     </div>
                   </div>
@@ -516,7 +501,7 @@ export function NewInvestment() {
                 style={{ 
                   height: 'calc(100vh - 80px)',
                   top: '-328px',
-                  left: 'calc(50% + 32px)'
+                  left: 'calc(50% + 232px)'
                 }}
               >
                 <div className="flex flex-col gap-4">
@@ -544,6 +529,11 @@ export function NewInvestment() {
                             <div className={`p-3 rounded-xl ${option.bgColor}`}>
                               <IconComponent className={`h-6 w-6 ${option.color}`} />
                             </div>
+                            {index === 0 && (
+                              <div className="bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full">
+                                Recommended
+                              </div>
+                            )}
                           </div>
                           <CardDescription className="text-heading-4">{option.title}</CardDescription>
                         </CardHeader>
@@ -610,7 +600,7 @@ export function NewInvestment() {
                   
                   <div className="p-4 pb-8 overflow-y-auto">
                     <div className="space-y-4">
-                      {investmentOptions.map((option) => {
+                      {investmentOptions.map((option, index) => {
                         const IconComponent = option.icon;
                         return (
                           <Card 
@@ -627,6 +617,11 @@ export function NewInvestment() {
                                 <div className={`p-3 rounded-xl ${option.bgColor}`}>
                                   <IconComponent className={`h-6 w-6 ${option.color}`} />
                                 </div>
+                                {index === 0 && (
+                                  <div className="bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full">
+                                    Recommended
+                                  </div>
+                                )}
                               </div>
                               <CardDescription className="text-heading-4">{option.title}</CardDescription>
                             </CardHeader>

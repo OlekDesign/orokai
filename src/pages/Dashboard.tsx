@@ -37,12 +37,7 @@ import { cn } from "@/lib/utils";
 import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/components/ui/typography';
 import { TransactionRow } from '@/components/TransactionRow';
 import { CurrencySelect } from "@/components/CurrencySelect";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 // Exchange rates relative to USD
 const exchangeRates = {
@@ -365,28 +360,23 @@ export function Dashboard() {
                       <span className="text-xs text-muted-foreground font-medium">
                         Estimated Return (APY 7.8%)
                       </span>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={0}>
-                          <TooltipTrigger asChild>
-                            <Info className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs bg-foreground p-4">
-                            <div>
-                              <p className="text-sm mb-2">
-                                APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
-                                This is an estimated return based on current market conditions.
-                              </p>
-                              <a 
-                                href="#" 
-                                className="text-primary-foreground text-sm underline hover:no-underline"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Learn more
-                              </a>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <InfoTooltip
+                        content={
+                          <div>
+                            <p className="text-sm mb-2">
+                              APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
+                              This is an estimated return based on current market conditions.
+                            </p>
+                            <a 
+                              href="#" 
+                              className="text-primary-foreground text-sm underline hover:no-underline"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              Learn more
+                            </a>
+                          </div>
+                        }
+                      />
                     </div>
                   </div>
                 </div>

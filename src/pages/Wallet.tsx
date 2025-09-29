@@ -384,13 +384,11 @@ export function Wallet() {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <Caption className="text-muted-foreground">
+                  <Caption>
                     Available Cash
                   </Caption>
-                  <Heading2 className="mt-1 text-muted-foreground !text-xl !md:text-2xl !font-semibold">$0</Heading2>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Your rewards & closed investments
-                  </p>
+                  <Heading2 className=" !text-xl !md:text-2xl !font-semibold">$0</Heading2>
+                  
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button

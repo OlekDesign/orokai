@@ -189,7 +189,7 @@ export function Affiliate() {
             <div className="px-6 py-4">
               <div className="flex items-center justify-between gap-3">
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   onClick={() => setHideInactive(!hideInactive)}
                   className="text-sm"
@@ -199,7 +199,7 @@ export function Affiliate() {
                 <div className="relative w-48">
                   <button
                     onClick={() => setIsLevelDropdownOpen(!isLevelDropdownOpen)}
-                    className="w-full px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+                    className="w-full px-4 py-2 bg-secondary rounded-lg hover:bg-muted/80 transition-colors"
                   >
                     <div className="flex items-center justify-between w-full">
                       <span className="text-sm font-medium">{selectedOption.label}</span>

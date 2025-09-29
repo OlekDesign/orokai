@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Heading2 } from "@/components/ui/typography";
 
 interface Investment {
   id: string;
@@ -72,7 +73,7 @@ export function InvestmentCard({ investment, onWithdraw }: InvestmentCardProps) 
               {/* Content */}
               <div className="flex flex-col space-y-6">
                 <div className="space-y-4">
-                  <h2 className="text-heading-2 font-bold text-white text-left">Close Investment</h2>
+                  <Heading2 >Close Investment</Heading2>
                   <p className="text-muted-foreground text-sm leading-relaxed text-left">
                     Your funds will be available in Wallet once you close the investment within a couple of minutes. Do you want to proceed?
                   </p>
