@@ -21,6 +21,7 @@ import {
 import { CryptoIcon } from '../components/CryptoIcon';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
+import { ConfirmationModal } from '../components/ConfirmationModal';
 import confetti from 'canvas-confetti';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,7 @@ import { Caption, BodyText, Heading2, Heading3 } from "@/components/ui/typograph
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
+import { useToast } from '../contexts/ToastContext';
 import { cn } from "@/lib/utils";
 
 // Demo data
@@ -99,6 +101,7 @@ export function Wallet() {
   const { logout } = useAuth();
   const { addTransaction } = useTransactions();
   const { closedInvestmentAmount, profile, setProfile } = useUserProfile();
+  const { showToast } = useToast();
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [hasWallet, setHasWallet] = useState(true);
@@ -107,6 +110,7 @@ export function Wallet() {
   const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [availableFunds, setAvailableFunds] = useState(closedInvestmentAmount || 0);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
   
   // Profile editing states
   const [isEditingName, setIsEditingName] = useState(false);
@@ -145,6 +149,30 @@ export function Wallet() {
 
   const handleDisconnectWallet = async () => {
     setHasWallet(false);
+  };
+
+  const handleWithdrawModalCancel = () => {
+    setShowWithdrawModal(false);
+  };
+
+  const handleWithdrawModalConfirm = async () => {
+    setIsWithdrawing(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      addTransaction('withdrawals', availableFunds, 'USDT');
+      setAvailableFunds(0);
+      
+      // Show success toast
+      showToast(
+        'success',
+        'Funds Withdrawn',
+        'Your funds have been successfully withdrawn to your wallet.'
+      );
+      
+      setIsWithdrawing(false);
+      setShowWithdrawModal(false);
+    }, 1500);
   };
 
   const handleAddCard = () => {
@@ -359,7 +387,7 @@ export function Wallet() {
             {closedInvestmentAmount !== null && closedInvestmentAmount > 0 ? (
               <div className="space-y-4">
                 <div>
-                  <Caption className="text-muted-foreground">
+                  <Caption className="!text-muted-foreground">
                     Available Cash
                   </Caption>
                   <Heading2 className="mt-1 !text-xl !md:text-2xl !font-semibold">${availableFunds.toLocaleString()}</Heading2>
@@ -609,57 +637,16 @@ export function Wallet() {
       </Dialog>
 
       {/* Withdraw Funds Modal */}
-      <AnimatePresence>
-        {showWithdrawModal && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-lg z-40"
-            onClick={() => setShowWithdrawModal(false)}
-          />
-
-          {/* Dialog */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-          >
-            <Card className="w-full max-w-md rounded-3xl">
-              <CardContent className="p-12 relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowWithdrawModal(false)}
-                  className="absolute right-4 top-4 rounded-full hover:bg-accent/30"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <h2 className="text-2xl font-bold mb-6">Withdraw Funds</h2>
-                <div className="space-y-6">
-                  <p className="text-center text-muted-foreground">
-                    All funds will be available to you in your wallet within a couple of minutes. Do you want to proceed?
-                  </p>
-                  <Button 
-                    className="w-full"
-                    onClick={() => {
-                      addTransaction('withdrawals', availableFunds, 'USDT');
-                      setAvailableFunds(0);
-                      setShowWithdrawModal(false);
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </>
-      )}
-      </AnimatePresence>
+      <ConfirmationModal
+        isOpen={showWithdrawModal}
+        onClose={handleWithdrawModalCancel}
+        onConfirm={handleWithdrawModalConfirm}
+        isLoading={isWithdrawing}
+        title="Withdraw Funds"
+        message="All funds will be available to you in your wallet within a couple of minutes. Do you want to proceed?"
+        confirmText="Confirm"
+        cancelText="Cancel"
+      />
 
     </div>
   );

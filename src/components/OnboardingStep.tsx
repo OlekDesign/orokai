@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Heading1, BodyText } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react';
 import setupImage from '/setup.png';
 import rewardsImage from '/rewards.png';
 import freedomImage from '/freedom.png';
@@ -37,6 +38,49 @@ export function OnboardingStep({
   onBack,
   canProceed
 }: OnboardingStepProps) {
+  const [focusedOptionIndex, setFocusedOptionIndex] = useState<number>(-1);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault();
+          setFocusedOptionIndex(prev => 
+            prev < options.length - 1 ? prev + 1 : 0
+          );
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          setFocusedOptionIndex(prev => 
+            prev > 0 ? prev - 1 : options.length - 1
+          );
+          break;
+        case 'Enter':
+          event.preventDefault();
+          if (focusedOptionIndex >= 0 && focusedOptionIndex < options.length) {
+            // Select the focused option
+            onAnswerSelect(options[focusedOptionIndex]);
+          } else if (canProceed) {
+            // If no option is focused but an answer is selected, proceed
+            onNext();
+          }
+          break;
+        case 'Escape':
+          // Clear focus
+          setFocusedOptionIndex(-1);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [focusedOptionIndex, options, onAnswerSelect, onNext, canProceed]);
+
+  // Reset focused option when step changes
+  useEffect(() => {
+    setFocusedOptionIndex(-1);
+  }, [step]);
   const getBackgroundImage = () => {
     switch (backgroundImageType) {
       case 'setup':
@@ -115,6 +159,8 @@ export function OnboardingStep({
                         "w-full py-3 px-4 min-h-[44px] md:min-h-0 md:py-4 text-left rounded-lg border-2 transition-all duration-200",
                         selectedAnswer === option
                           ? "border-primary bg-primary/10"
+                          : focusedOptionIndex === index
+                          ? "border-primary/70 bg-primary/5 ring-2 ring-primary/20"
                           : "border-border hover:border-primary/50 hover:bg-muted/50"
                       )}
                     >
@@ -179,7 +225,7 @@ export function OnboardingStep({
                       )}
                       size="lg"
                     >
-                      Continue
+                      {step === 2 ? 'Personalize' : 'Continue'}
                     </Button>
                   </div>
                 </div>
@@ -243,6 +289,8 @@ export function OnboardingStep({
                       "w-full py-3 px-4 min-h-[44px] text-left rounded-lg border-2 transition-all duration-200",
                       selectedAnswer === option
                         ? "border-primary bg-primary/10"
+                        : focusedOptionIndex === index
+                        ? "border-primary/70 bg-primary/5 ring-2 ring-primary/20"
                         : "border-border hover:border-primary/50 hover:bg-muted/50"
                     )}
                   >
@@ -311,7 +359,7 @@ export function OnboardingStep({
                 )}
                 size="lg"
               >
-                Continue
+                {step === 2 ? 'Personalize' : 'Continue'}
               </Button>
             </div>
           </div>

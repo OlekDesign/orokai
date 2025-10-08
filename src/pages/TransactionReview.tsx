@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X } from 'lucide-react';
+import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X, CheckCircle } from 'lucide-react';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { cn } from "@/lib/utils";
@@ -43,6 +43,7 @@ export function TransactionReview() {
   const [investInUSDT, setInvestInUSDT] = useState(true);
   const [saveCard, setSaveCard] = useState(true);
   const [showCardForm, setShowCardForm] = useState(true);
+  const [isFirstInvestment, setIsFirstInvestment] = useState(false);
   
   // Card form inputs
   const [cardNumber, setCardNumber] = useState('');
@@ -61,7 +62,7 @@ export function TransactionReview() {
     const saved = sessionStorage.getItem('savedWallet');
     return saved ? JSON.parse(saved) : null;
   });
-  const { addInvestment } = useUserProfile();
+  const { addInvestment, hasInvestments } = useUserProfile();
   const { addTransaction } = useTransactions();
   
   const location = useLocation();
@@ -134,6 +135,10 @@ export function TransactionReview() {
   };
 
   const handleConfirmTransaction = () => {
+    // Capture if this is the first investment before adding the new one
+    const wasFirstInvestment = !hasInvestments;
+    setIsFirstInvestment(wasFirstInvestment);
+
     // Save card details if checkbox is checked and payment method is credit card
     if (paymentMethod === 'credit_card' && saveCard && cardNumber && ownerName) {
       const cardToSave = {
@@ -202,19 +207,9 @@ export function TransactionReview() {
         <div className="bg-background overflow-auto scrollbar-hide">
           <div className="p-4 lg:p-12 max-w-xl mx-auto lg:ml-auto lg:mr-4 space-y-6">
             {/* Empty space to account for header */}
-            <div className="h-8 md:h-16" />
+            <div className="h-8 md:h-4" />
             
-            {/* Back Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="flex items-center gap-2 -ml-2 mb-4"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Modify the Order
-            </Button>
-            
+         
             {/* Review Order Headline */}
             <Heading2>Review Order</Heading2>
             
@@ -259,12 +254,12 @@ export function TransactionReview() {
         <div className="bg-background overflow-auto scrollbar-hide">
           <div className="p-6 lg:p-12 max-w-xl ml-4 space-y-6 pb-2 md:pb-6">
             {/* Empty space to account for header */}
-            <div className="h-16" />
+            <div className="h-2" />
             
             {/* Empty space to align with back button in left column */}
-            <div className="h-8 mb-4" />
             
-            <Heading2 className="hidden md:block">Payment Details</Heading2>
+            
+            <Heading2 className="hidden md:block pt-2">Payment Details</Heading2>
 
             <Card className="hidden md:block">
               <CardContent className="!pt-6 pb-6">
@@ -856,6 +851,8 @@ export function TransactionReview() {
               exit={{ opacity: 0, scale: 0.9 }}
               className="fixed inset-0 flex items-center justify-center z-50 p-4"
             >
+              {isFirstInvestment ? (
+                // First Investment Dialog - with background image
                 <div 
                   className="w-full max-w-sm rounded-3xl bg-cover bg-center bg-no-repeat border shadow h-[624px]" 
                   style={{backgroundImage: `url(${import.meta.env.BASE_URL}oak.png)`}}
@@ -880,6 +877,35 @@ export function TransactionReview() {
                   </Button>
                   </div>
                 </div>
+              ) : (
+                // Subsequent Investment Dialog - with card background
+                <Card className="w-full max-w-sm">
+                  <CardContent className="!px-8 !py-8 !pt-12 text-center">
+                    <div className="flex flex-col items-center space-y-6">
+                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CheckCircle className="w-8 h-8 text-primary" />
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h2 className="text-2xl font-bold">Transaction Successful</h2>
+                        
+                        <p className="text-muted-foreground">
+                          Great choice! Your investment is being processed and will be ready in a couple of minutes.
+                          Don't worry, your funds are safe and secure with us.
+                        </p>
+                      </div>
+
+                      <Button
+                        onClick={() => navigate('/dashboard')}
+                        className="w-full"
+                        size="lg"
+                      >
+                        Go to Dashboard
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </motion.div>
           </>
         )}

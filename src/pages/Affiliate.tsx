@@ -252,7 +252,7 @@ export function Affiliate() {
                           <BodyText >
                             {affiliate.profileName}
                           </BodyText>
-                          <Caption className="text-muted-foreground">
+                          <Caption >
                             {affiliate.walletAddress}
                           </Caption>
                         </div>

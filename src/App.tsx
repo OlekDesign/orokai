@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { TransactionsProvider } from './contexts/TransactionsContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
+import { ToastProvider } from './contexts/ToastContext';
 import { Layout } from './components/Layout';
 import { ScrollToTop } from './components/ScrollToTop';
 import { Login } from './pages/Login';
@@ -271,7 +272,9 @@ export default function App() {
         <UserProfileProvider>
           <TransactionsProvider>
             <OnboardingProvider>
-              <AppRoutes />
+              <ToastProvider>
+                <AppRoutes />
+              </ToastProvider>
             </OnboardingProvider>
           </TransactionsProvider>
         </UserProfileProvider>

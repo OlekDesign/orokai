@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, User } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -16,6 +16,8 @@ export default function CreateProfile() {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [showWarning, setShowWarning] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const nameMobileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,6 +39,29 @@ export default function CreateProfile() {
     setProfile({ name: name.trim(), avatar });
     navigate('/onboarding');
   };
+
+  useEffect(() => {
+    // Focus the appropriate input field based on screen size
+    const focusInput = () => {
+      if (window.innerWidth >= 768) {
+        // Desktop: focus the desktop input
+        nameInputRef.current?.focus();
+      } else {
+        // Mobile: focus the mobile input
+        nameMobileInputRef.current?.focus();
+      }
+    };
+
+    // Focus on mount
+    focusInput();
+
+    // Also focus when window is resized (in case user switches between layouts)
+    window.addEventListener('resize', focusInput);
+    
+    return () => {
+      window.removeEventListener('resize', focusInput);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-muted/50 px-4">
@@ -98,12 +123,18 @@ export default function CreateProfile() {
               <Label htmlFor="name">Enter your name</Label>
               <Input
                 id="name"
+                ref={nameInputRef}
                 type="text"
                 placeholder="Name"
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
                   setShowWarning(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleContinue();
+                  }
                 }}
                 className={cn(
                   "h-12",
@@ -194,12 +225,18 @@ export default function CreateProfile() {
               <Label htmlFor="name-mobile">Enter your name</Label>
               <Input
                 id="name-mobile"
+                ref={nameMobileInputRef}
                 type="text"
                 placeholder="Name"
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
                   setShowWarning(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleContinue();
+                  }
                 }}
                 className={cn(
                   "h-12",

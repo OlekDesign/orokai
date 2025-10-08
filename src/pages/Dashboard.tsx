@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play } from 'lucide-react';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, Loader2, Settings2 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -18,6 +18,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -38,6 +45,7 @@ import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/c
 import { TransactionRow } from '@/components/TransactionRow';
 import { CurrencySelect } from "@/components/CurrencySelect";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import { CryptoIcon } from "@/components/CryptoIcon";
 
 // Exchange rates relative to USD
 const exchangeRates = {
@@ -47,20 +55,181 @@ const exchangeRates = {
   SOL: 0.007, // 1 USD = 0.007 SOL (assuming SOL ~$140)
 };
 
+// Currency data with card numbers and balances
+const currencies = [
+  { symbol: 'USD', name: 'USD', type: 'fiat', cardNumber: '···· 4242', balance: null },
+  { symbol: 'ETH', name: 'ETH', type: 'crypto', cardNumber: null, balance: '2.42 ETH' },
+  { symbol: 'ATOM', name: 'ATOM', type: 'crypto', cardNumber: null, balance: '10,242.49 ATOM' },
+  { symbol: 'SOL', name: 'SOL', type: 'crypto', cardNumber: null, balance: '39,312.09 SOL' }
+];
+
+// Investment options data
+const investmentOptions = [
+  {
+    id: 'ethereum',
+    chain: 'Ethereum',
+    tags: ['Low Fee', 'High Frequency'],
+    rewardFrequency: '24h',
+    rewardValue: '$2.43',
+    apy: '7.8%',
+    estimatedAnnualReturn: '$780',
+    transactionFee: '2.5%',
+    isPersonalized: true
+  },
+  {
+    id: 'solana',
+    chain: 'Solana',
+    tags: ['High Frequency', 'High APY'],
+    rewardFrequency: '12h',
+    rewardValue: '$3.21',
+    apy: '9.2%',
+    estimatedAnnualReturn: '$920',
+    transactionFee: '1.8%',
+    isPersonalized: false
+  },
+  {
+    id: 'agoric',
+    chain: 'Agoric',
+    tags: ['High APY'],
+    rewardFrequency: '24h',
+    rewardValue: '$2.89',
+    apy: '8.5%',
+    estimatedAnnualReturn: '$850',
+    transactionFee: '3.2%',
+    isPersonalized: false
+  },
+  {
+    id: 'aptos',
+    chain: 'Aptos',
+    tags: ['High Frequency'],
+    rewardFrequency: '8h',
+    rewardValue: '$1.95',
+    apy: '7.1%',
+    estimatedAnnualReturn: '$710',
+    transactionFee: '2.8%',
+    isPersonalized: false
+  },
+  {
+    id: 'avalanche',
+    chain: 'Avalanche',
+    tags: ['Low Fee'],
+    rewardFrequency: '24h',
+    rewardValue: '$2.67',
+    apy: '8.1%',
+    estimatedAnnualReturn: '$810',
+    transactionFee: '1.5%',
+    isPersonalized: false
+  },
+  {
+    id: 'axelar',
+    chain: 'Axelar',
+    tags: ['High APY'],
+    rewardFrequency: '24h',
+    rewardValue: '$3.45',
+    apy: '10.2%',
+    estimatedAnnualReturn: '$1020',
+    transactionFee: '3.8%',
+    isPersonalized: false
+  },
+  {
+    id: 'bnb',
+    chain: 'BNB Smart Chain',
+    tags: ['Low Fee', 'High Frequency'],
+    rewardFrequency: '6h',
+    rewardValue: '$2.12',
+    apy: '7.6%',
+    estimatedAnnualReturn: '$760',
+    transactionFee: '1.2%',
+    isPersonalized: false
+  },
+  {
+    id: 'cardano',
+    chain: 'Cardano',
+    tags: ['Low Fee'],
+    rewardFrequency: '24h',
+    rewardValue: '$2.34',
+    apy: '7.4%',
+    estimatedAnnualReturn: '$740',
+    transactionFee: '2.1%',
+    isPersonalized: false
+  },
+  {
+    id: 'celo',
+    chain: 'Celo',
+    tags: ['High Frequency'],
+    rewardFrequency: '12h',
+    rewardValue: '$2.78',
+    apy: '8.3%',
+    estimatedAnnualReturn: '$830',
+    transactionFee: '2.7%',
+    isPersonalized: false
+  },
+  {
+    id: 'cosmos',
+    chain: 'Cosmos',
+    tags: ['High APY'],
+    rewardFrequency: '24h',
+    rewardValue: '$3.12',
+    apy: '9.5%',
+    estimatedAnnualReturn: '$950',
+    transactionFee: '3.1%',
+    isPersonalized: false
+  },
+  {
+    id: 'flow',
+    chain: 'Flow',
+    tags: ['Low Fee', 'High APY'],
+    rewardFrequency: '24h',
+    rewardValue: '$2.98',
+    apy: '8.9%',
+    estimatedAnnualReturn: '$890',
+    transactionFee: '2.3%',
+    isPersonalized: false
+  }
+];
+
 export function Dashboard() {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
-  const [investAmount, setInvestAmount] = useState('');
+  const [investAmount, setInvestAmount] = useState('10000');
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [showBanner, setShowBanner] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEstimating, setIsEstimating] = useState(false);
+  const [showEstimatedReturn, setShowEstimatedReturn] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(investmentOptions[0]);
+  const [sortBy, setSortBy] = useState<'provider' | 'frequency' | 'rewards' | 'apy' | 'annualReturn' | 'fee'>('annualReturn');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const navigate = useNavigate();
   const { transactions, addTransaction } = useTransactions();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const selectedCurrencyData = currencies.find(c => c.symbol === selectedCurrency) || currencies[0];
 
 
   // Update chart data when time range changes
   useEffect(() => {
     setChartData(generateChartData(timeRange));
   }, [timeRange]);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   // Convert amount between currencies
   const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string) => {
@@ -82,6 +251,96 @@ export function Dashboard() {
       }
     }
     setSelectedCurrency(newCurrency);
+    setIsDropdownOpen(false);
+  };
+
+  const handleEstimateReturns = async () => {
+    const currentAmount = Number(investAmount) || (selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency));
+    
+    // Start loading state
+    setIsEstimating(true);
+    
+    // Simulate 2-second delay
+    setTimeout(() => {
+      setIsEstimating(false);
+      setShowEstimatedReturn(true);
+    }, 2000);
+  };
+
+  const handleContinueSetup = () => {
+    const currentAmount = Number(investAmount) || (selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency));
+    navigate('/transaction-review', { 
+      state: { amount: currentAmount } 
+    });
+  };
+
+  const handleShowDifferentOptions = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalContinue = () => {
+    setIsModalOpen(false);
+    // The selected option is already stored in selectedOption state
+  };
+
+  const handleSort = (column: typeof sortBy) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('desc');
+    }
+  };
+
+  const getSortedOptions = () => {
+    const currentAmount = Number(investAmount) || 10000;
+    
+    return [...investmentOptions].sort((a, b) => {
+      let aValue: number | string;
+      let bValue: number | string;
+
+      switch (sortBy) {
+        case 'provider':
+          aValue = a.chain;
+          bValue = b.chain;
+          break;
+        case 'frequency':
+          // Convert frequency to hours for sorting
+          aValue = parseInt(a.rewardFrequency.replace('h', ''));
+          bValue = parseInt(b.rewardFrequency.replace('h', ''));
+          break;
+        case 'rewards':
+          aValue = parseFloat(a.rewardValue.replace('$', ''));
+          bValue = parseFloat(b.rewardValue.replace('$', ''));
+          break;
+        case 'apy':
+          aValue = parseFloat(a.apy.replace('%', ''));
+          bValue = parseFloat(b.apy.replace('%', ''));
+          break;
+        case 'annualReturn':
+          const aAPY = parseFloat(a.apy.replace('%', '')) / 100;
+          const bAPY = parseFloat(b.apy.replace('%', '')) / 100;
+          aValue = currentAmount + (currentAmount * aAPY);
+          bValue = currentAmount + (currentAmount * bAPY);
+          break;
+        case 'fee':
+          aValue = parseFloat(a.transactionFee.replace('%', ''));
+          bValue = parseFloat(b.transactionFee.replace('%', ''));
+          break;
+        default:
+          return 0;
+      }
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortOrder === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      } else {
+        return sortOrder === 'asc' 
+          ? (aValue as number) - (bValue as number)
+          : (bValue as number) - (aValue as number);
+      }
+    });
   };
 
   // Calculate total rewards (sum of all rewards)
@@ -304,123 +563,273 @@ export function Dashboard() {
                 <CardDescription>Passive Income</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">
+                {/* Amount Input - Top Position (when showEstimatedReturn is true) */}
+                {showEstimatedReturn && (
+                  <div className="mb-4">
+                    <div className="relative" ref={dropdownRef}>
+                      {/* Main Input Field */}
+                      <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
+                        {/* Amount Input */}
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
+                          placeholder="$0"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            setInvestAmount(value);
+                          }}
+                          className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground pr-20"
+                          autoFocus
+                        />
+                        
+                        {/* Currency Selector */}
+                        <button
+                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-end hover:bg-muted p-2 rounded transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <CryptoIcon symbol={selectedCurrencyData.symbol} size={16} />
+                            <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
+                            <ChevronDown size={12} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                          </div>
+                          <span className="text-xs text-muted-foreground text-right">
+                            {selectedCurrencyData.type === 'fiat' 
+                              ? selectedCurrencyData.cardNumber 
+                              : selectedCurrencyData.balance
+                            }
+                          </span>
+                        </button>
+                        
+                        {/* Amount Label */}
+                        <Caption className="absolute left-4 top-2">
+                          Amount
+                        </Caption>
+                      </div>
+                      
+                      {/* Dropdown */}
+                      {isDropdownOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
+                          {currencies.map(currency => (
+                            <button
+                              key={currency.symbol}
+                              onClick={() => handleCurrencyChange(currency.symbol)}
+                              className={cn(
+                                "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                                currency.symbol === selectedCurrency && "bg-muted"
+                              )}
+                            >
+                              <div className="flex items-center gap-3">
+                                <CryptoIcon symbol={currency.symbol} size={20} />
+                                <div className="flex flex-col items-start">
+                                  <span className="font-medium text-foreground">{currency.name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
             <div className="flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
               <div className="space-y-4">
-                <div>
-                  <CurrencySelect 
-                    value={selectedCurrency} 
-                    onChange={handleCurrencyChange}
-                  />
-                </div>
-                
-                <div>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
-                      placeholder={(() => {
-                        const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
-                        return selectedCurrency === 'USD' 
-                          ? `$${defaultAmount.toLocaleString()}` 
-                          : `${defaultAmount.toLocaleString()} ${selectedCurrency}`;
-                      })()}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '');
-                        setInvestAmount(value);
-                      }}
-                      className="h-auto pt-6 pb-2 text-xl font-semibold px-4 placeholder:opacity-50"
-                      autoFocus
-                    />
-                    <span className="absolute left-4 top-2 text-xs text-muted-foreground font-medium">
-                      Amount
-                    </span>
-                  </div>
-                </div>
 
-                <div className="relative -my-6">
-                  <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[calc(50%+8px)] bg-card rounded-full p-2 z-50">
-                    <ArrowRight className="text-primary rotate-90" size={18} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="relative">
-                    <div className="w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
-                      {(() => {
-                        const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
-                        const currentAmount = Number(investAmount) || defaultAmount;
-                        const returnAmount = currentAmount * 1.078;
+                {/* Estimated Return Section */}
+                {showEstimatedReturn && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4"
+                  >
+                    {/* Estimated Return Display */}
+                    <div>
+                      <div className="relative w-full h-auto pt-6 pb-2 px-4 text-xl font-semibold bg-accent/50 rounded-md flex items-center text-primary">
+                        {(() => {
+                          const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
+                          const currentAmount = Number(investAmount) || defaultAmount;
+                          const returnAmount = currentAmount * 1.078;
+                          
+                          return selectedCurrency === 'USD' 
+                            ? `$${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                            : `${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+                        })()}
                         
-                        return selectedCurrency === 'USD' 
-                          ? `$${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
-                          : `${returnAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
-                      })()}
+                        {/* Estimated Return Label */}
+                        <Caption className="absolute left-4 top-2">
+                          Estimated Return
+                        </Caption>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 absolute left-4 top-2">
-                      <span className="text-xs text-muted-foreground font-medium">
-                        Estimated Return (APY 7.8%)
-                      </span>
-                      <InfoTooltip
-                        content={
-                          <div>
-                            <p className="text-sm mb-2">
-                              APY (Annual Percentage Yield) shows your total yearly returns including compound interest. 
-                              This is an estimated return based on current market conditions.
-                            </p>
-                            <a 
-                              href="#" 
-                              className="text-primary-foreground text-sm underline hover:no-underline"
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              Learn more
-                            </a>
-                          </div>
-                        }
-                      />
+
+                    {/* Investment Details Table */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Caption>APY</Caption>
+                          <InfoTooltip 
+                            content="Annual Percentage Yield - your yearly returns including compound interest"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                          />
+                        </div>
+                        <Caption className="!text-white">7.8%</Caption>
+                      </div>
+                      
+                      <div className="h-[1px] bg-border opacity-30" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Caption>Reward frequency</Caption>
+                          <InfoTooltip 
+                            content="How often you receive your investment rewards"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                          />
+                        </div>
+                        <Caption className="!text-white">24h</Caption>
+                      </div>
+                      
+                      <div className="h-[1px] bg-border opacity-30" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Caption>Reward value</Caption>
+                          <InfoTooltip 
+                            content="The amount you earn every 24 hours based on your investment"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                          />
+                        </div>
+                        <Caption className="!text-white">
+                          {(() => {
+                            const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
+                            const currentAmount = Number(investAmount) || defaultAmount;
+                            const dailyReturn = (currentAmount * 0.078) / 365;
+                            return selectedCurrency === 'USD' 
+                              ? `$${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })}` 
+                              : `${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${selectedCurrency}`;
+                          })()} 
+                        </Caption>
+                      </div>
+                      
+                      <div className="h-[1px] bg-border opacity-30" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Caption>Transaction fee</Caption>
+                          <InfoTooltip 
+                            content="One-time fee charged when you start your investment"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                          />
+                        </div>
+                        <Caption className="!text-white">2.5%</Caption>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                )}
               </div>
               
-                <div className="space-y-4 sm:space-y-6 flex-shrink-0">
-                <Button 
-                  onClick={() => navigate('/transaction-review', { 
-                    state: { amount: investAmount ? Number(investAmount) : 10000 } 
-                  })} 
-                  className="w-full h-12"
-                  variant="default"
-                  size="lg">
-                  Continue Setup
-                </Button>
-
-                <div className=" rounded-lg space-y-4">
-                  <div className="flex items-center gap-3 ">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                    <Caption>You'll receive {(() => {
-                      const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
-                      const currentAmount = Number(investAmount) || defaultAmount;
-                      const dailyReturn = (currentAmount * 0.078) / 365; // Daily return from 7.8% APY
+                <div className="space-y-6 flex-shrink-0">
+                {/* Amount Input - Bottom Position (when showEstimatedReturn is false) */}
+                {!showEstimatedReturn && (
+                  <div className="relative" ref={dropdownRef}>
+                    {/* Main Input Field */}
+                    <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
+                      {/* Amount Input */}
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
+                        placeholder="$0"
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          setInvestAmount(value);
+                        }}
+                        className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground pr-20"
+                        autoFocus
+                      />
                       
-                      return selectedCurrency === 'USD' 
-                        ? `$${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })}` 
-                        : `${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${selectedCurrency}`;
-                    })()} every 24h</Caption>
-                  </div>
-                  <div className="flex items-center gap-3 ">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-primary" />
+                      {/* Currency Selector */}
+                      <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-end hover:bg-muted p-2 rounded transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <CryptoIcon symbol={selectedCurrencyData.symbol} size={16} />
+                          <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
+                          <ChevronDown size={12} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                        <span className="text-xs text-muted-foreground text-right">
+                          {selectedCurrencyData.type === 'fiat' 
+                            ? selectedCurrencyData.cardNumber 
+                            : selectedCurrencyData.balance
+                          }
+                        </span>
+                      </button>
+                      
+                      {/* Amount Label */}
+                      <Caption className="absolute left-4 top-2">
+                        Amount
+                      </Caption>
                     </div>
-                    <Caption>Your funds are securely stored</Caption>
+                    
+                    {/* Dropdown */}
+                    {isDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
+                        {currencies.map(currency => (
+                          <button
+                            key={currency.symbol}
+                            onClick={() => handleCurrencyChange(currency.symbol)}
+                            className={cn(
+                              "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                              currency.symbol === selectedCurrency && "bg-muted"
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              <CryptoIcon symbol={currency.symbol} size={20} />
+                              <div className="flex flex-col items-start">
+                                <span className="font-medium text-foreground">{currency.name}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 ">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                    <Caption>You can withdraw your funds anytime</Caption>
-                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button 
+                    variant="secondary"
+                    size="lg"
+                    className="h-12 px-4"
+                    onClick={handleShowDifferentOptions}
+                  >
+                    <Settings2 className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    onClick={showEstimatedReturn ? handleContinueSetup : handleEstimateReturns}
+                    disabled={isEstimating}
+                    className="flex-1 h-12"
+                    variant="default"
+                    size="lg">
+                    {isEstimating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Estimating...
+                      </>
+                    ) : showEstimatedReturn ? (
+                      'Continue Setup'
+                    ) : (
+                      'Estimate My Returns'
+                    )}
+                  </Button>
                 </div>
+
               </div>
             </div>
               </CardContent>
@@ -481,6 +890,204 @@ export function Dashboard() {
           </motion.div>
         </Card>
       </motion.div>
+
+      {/* Investment Options Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Calculated for {(() => {
+                const amount = Number(investAmount) || 10000;
+                return selectedCurrency === 'USD' 
+                  ? `$${amount.toLocaleString()}` 
+                  : `${amount.toLocaleString()} ${selectedCurrency}`;
+              })()}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('provider')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'provider' ? 'white' : undefined }}
+                        >
+                          Provider
+                        </Caption>
+                        <InfoTooltip 
+                          content="The blockchain network where your investment will be deployed"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('frequency')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'frequency' ? 'white' : undefined }}
+                        >
+                          Frequency
+                        </Caption>
+                        <InfoTooltip 
+                          content="How often you receive your investment rewards"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('rewards')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'rewards' ? 'white' : undefined }}
+                        >
+                          Rewards
+                        </Caption>
+                        <InfoTooltip 
+                          content="The amount you earn per reward period"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('apy')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'apy' ? 'white' : undefined }}
+                        >
+                          APY
+                        </Caption>
+                        <InfoTooltip 
+                          content="Annual Percentage Yield - your yearly returns including compound interest"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('annualReturn')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'annualReturn' ? 'white' : undefined }}
+                        >
+                          Annual return
+                        </Caption>
+                        <InfoTooltip 
+                          content="Your total expected returns for one year based on your investment amount"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                    <th className="text-left p-4">
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => handleSort('fee')}
+                      >
+                        <Caption 
+                          className="whitespace-nowrap"
+                          style={{ color: sortBy === 'fee' ? 'white' : undefined }}
+                        >
+                          Fee
+                        </Caption>
+                        <InfoTooltip 
+                          content="One-time fee charged when you start your investment"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                        />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getSortedOptions().map((option) => (
+                    <tr 
+                      key={option.id}
+                      className={cn(
+                        "border-b border-border cursor-pointer transition-all duration-200",
+                        "hover:bg-muted/50 hover:border-white/20",
+                        selectedOption.id === option.id && "bg-primary/10"
+                      )}
+                      onClick={() => setSelectedOption(option)}
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center">
+                            <div className="relative">
+                              <input
+                                type="radio"
+                                name="investment-option"
+                                checked={selectedOption.id === option.id}
+                                onChange={() => setSelectedOption(option)}
+                                className="w-4 h-4 opacity-0 absolute cursor-pointer"
+                              />
+                              <div 
+                                className={cn(
+                                  "w-4 h-4 rounded-full border-2 border-muted-foreground flex items-center justify-center cursor-pointer",
+                                  selectedOption.id === option.id ? "bg-transparent" : "bg-white/5"
+                                )}
+                              >
+                                {selectedOption.id === option.id && (
+                                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm">{option.chain}</span>
+                            {option.isPersonalized && (
+                              <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
+                                Our reccomendation
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm">{option.rewardFrequency}</td>
+                      <td className="p-4 text-sm">{option.rewardValue}</td>
+                      <td className="p-4 text-sm ">{option.apy}</td>
+                      <td className="p-4 text-sm font-bold">
+                        {(() => {
+                          const currentAmount = Number(investAmount) || 10000;
+                          const apyValue = parseFloat(option.apy.replace('%', '')) / 100;
+                          const totalReturn = currentAmount + (currentAmount * apyValue);
+                          
+                          return selectedCurrency === 'USD' 
+                            ? `$${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                            : `${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+                        })()}
+                      </td>
+                      <td className="p-4 text-sm">{option.transactionFee}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button onClick={handleModalContinue} className="w-full sm:w-auto">
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
