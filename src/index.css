@@ -89,7 +89,7 @@
 @layer components {
   /* Typography System */
   .text-heading-1 {
-    @apply text-2xl md:text-3xl font-medium leading-tight tracking-tight;
+    @apply text-3xl md:text-3xl font-medium leading-tight tracking-tight;
   }
   
   .text-heading-2 {

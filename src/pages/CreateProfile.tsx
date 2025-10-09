@@ -90,7 +90,7 @@ export default function CreateProfile() {
               >
                 {avatar ? (
                   <img 
-                    src={avatar} 
+                    src={avatar || ''} 
                     alt="Profile avatar" 
                     className="w-full h-full object-cover"
                   />
@@ -186,7 +186,7 @@ export default function CreateProfile() {
                 >
                   {avatar ? (
                     <img 
-                      src={avatar} 
+                      src={avatar || ''} 
                       alt="Profile avatar" 
                       className="w-full h-full object-cover"
                     />

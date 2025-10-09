@@ -1,5 +1,5 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { Home, Gem, Clock8, LogOut, Wallet, Users, User } from 'lucide-react';
+import { Home, Gem, Clock8, LogOut, Users, User } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
 import { Heading3 } from './ui/typography';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,9 +12,8 @@ const navItems: Array<{
   path: string;
 }> = [
   { icon: Home, label: 'Home', path: '/dashboard' },
-  { icon: Gem, label: 'Passive Income', mobileLabel: 'Income', path: '/invest' },
+  { icon: Gem, label: 'Passive Income', mobileLabel: 'Passive Income', path: '/invest' },
   { icon: Clock8, label: 'Transactions', path: '/transactions' },
-  { icon: Wallet, label: 'Wallet', path: '/wallet' },
   { icon: Users, label: 'Affiliate', path: '/affiliate' },
 ];
 
@@ -74,7 +73,11 @@ export function Navbar() {
         {/* Wallet Info & Logout */}
         <div className="p-4 border-t border-border">
           <div 
-            className="flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-muted rounded-lg transition-colors w-full"
+            className={`flex items-center space-x-3 px-4 py-3 cursor-pointer rounded-lg transition-colors w-full ${
+              location.pathname === '/wallet'
+                ? 'bg-secondary text-foreground border-t border-primary/15'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            }`}
             onClick={() => navigate('/wallet')}
           >
               <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
@@ -90,11 +93,15 @@ export function Navbar() {
               </div>
               <div className="flex flex-col">
                 {profile?.name && (
-                  <span className="text-xs font-medium text-foreground">
+                  <span className={`text-xs font-medium ${
+                    location.pathname === '/wallet' ? 'text-white' : 'text-foreground'
+                  }`}>
                     {profile.name}
                   </span>
                 )}
-                <span className="text-xs text-muted-foreground">
+                <span className={`text-xs ${
+                  location.pathname === '/wallet' ? 'text-white' : 'text-muted-foreground'
+                }`}>
                   {DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}
                 </span>
               </div>
@@ -104,7 +111,7 @@ export function Navbar() {
 
       {/* Mobile Navigation (Bottom) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-24 bg-background border-t border-border z-50 pb-4">
-        <div className="h-full grid grid-cols-5 items-center">
+        <div className="h-full grid grid-cols-4 items-center">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -113,8 +120,8 @@ export function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center space-y-2 p-2 min-h-[44px] min-w-[44px] ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
+                className={`flex flex-col items-center space-y-2 p-2 min-h-[44px] min-w-[112px] transition-opacity ${
+                  isActive ? 'text-primary opacity-100' : 'text-muted-foreground opacity-70'
                 }`}
               >
                 <Icon size={20} />

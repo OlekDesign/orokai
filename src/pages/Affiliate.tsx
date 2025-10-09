@@ -252,7 +252,7 @@ export function Affiliate() {
                           <BodyText >
                             {affiliate.profileName}
                           </BodyText>
-                          <Caption >
+                          <Caption>
                             {affiliate.walletAddress}
                           </Caption>
                         </div>

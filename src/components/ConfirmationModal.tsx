@@ -31,10 +31,11 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="max-w-md"
-        onInteractOutside={onClose}
-      >
+      <div className="px-4 md:px-0">
+        <DialogContent 
+          className="w-full max-w-md mx-auto"
+          onInteractOutside={onClose}
+        >
         <DialogHeader>
           <DialogTitle>
             <Heading3>{title}</Heading3>
@@ -65,6 +66,7 @@ export function ConfirmationModal({
           </Button>
         </DialogFooter>
       </DialogContent>
+      </div>
     </Dialog>
   );
 }

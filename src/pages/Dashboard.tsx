@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, Loader2, Settings2 } from 'lucide-react';
+import { useUserProfile } from '@/contexts/UserProfileContext';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, Loader2, Settings2, User } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -200,8 +201,10 @@ export function Dashboard() {
   const [selectedOption, setSelectedOption] = useState(investmentOptions[0]);
   const [sortBy, setSortBy] = useState<'provider' | 'frequency' | 'rewards' | 'apy' | 'annualReturn' | 'fee'>('annualReturn');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
   const { transactions, addTransaction } = useTransactions();
+  const { profile } = useUserProfile();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -213,6 +216,16 @@ export function Dashboard() {
   useEffect(() => {
     setChartData(generateChartData(timeRange));
   }, [timeRange]);
+
+  // Handle mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -475,13 +488,30 @@ export function Dashboard() {
                       +$17.49
                     </BodyText>
                   </div>
-                  <div className="scale-90 origin-top-right">
+                  <div className="hidden md:block scale-90 origin-top-right">
                     <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                  </div>
+                  {/* Mobile Avatar - Top right corner */}
+                  <div className="md:hidden">
+                    <div 
+                      className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => navigate('/wallet')}
+                    >
+                      {profile?.avatar ? (
+                        <img 
+                          src={profile.avatar} 
+                          alt={profile.name || "Profile"} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User size={20} className="text-muted-foreground" />
+                      )}
+                    </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col space-y-4 sm:space-y-6">
-            <div className="flex-1 min-h-[200px]">
+            <div className="flex-1 min-h-[130px] md:min-h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
@@ -495,6 +525,7 @@ export function Dashboard() {
                     stroke="hsl(var(--muted-foreground))"
                     tickMargin={8}
                     tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                    hide={isMobile}
                   />
                   <RechartsTooltip content={<CustomTooltip />} />
                   {chartData.map((entry, index) => 
@@ -523,6 +554,11 @@ export function Dashboard() {
               </ResponsiveContainer>
             </div>
 
+            {/* Mobile TimeRangeSelector - Below chart, centered */}
+            <div className="md:hidden flex justify-center">
+              <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+            </div>
+
             <div className="space-y-2 flex-shrink-0">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Next reward</span>
@@ -534,7 +570,7 @@ export function Dashboard() {
             <Button
               onClick={() => navigate('/transactions?filter=rewards')}
               variant="link"
-              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start"
+              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
             >
               <span>See rewards history</span>
               <ExternalLink className="ml-1 h-4 w-4" />
@@ -549,7 +585,7 @@ export function Dashboard() {
           animate="visible"
           variants={cardVariants}
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-          className="lg:col-span-3"
+          className="lg:col-span-3 hidden md:block"
         >
           <Card className="h-full">
             <motion.div
@@ -835,6 +871,26 @@ export function Dashboard() {
               </CardContent>
             </motion.div>
           </Card>
+        </motion.div>
+
+        {/* Mobile New Investment Button - Replaces Passive Income card */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={cardVariants}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          className="lg:col-span-3 md:hidden"
+        >
+          <div className="flex justify-center">
+            <Button 
+              onClick={() => navigate('/invest')}
+              className="w-full h-12"
+              variant="default"
+              size="lg"
+            >
+              New Investment
+            </Button>
+          </div>
         </motion.div>
       </div>
 

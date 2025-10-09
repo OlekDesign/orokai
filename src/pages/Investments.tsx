@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Shield, Clock, ChevronDown, Loader2 } from 'lucide-react';
+import { Plus, TrendingUp, Shield, Clock, ChevronDown, Loader2, X } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -54,6 +54,8 @@ export function Investments() {
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [investmentToClose, setInvestmentToClose] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [mobileSortBy, setMobileSortBy] = useState<'annualReturn' | 'frequency' | 'rewards' | 'apy' | 'fee'>('annualReturn');
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -262,6 +264,22 @@ export function Investments() {
     };
   }, [isDropdownOpen]);
 
+  // Handle body scroll lock when mobile drawer is open
+  useEffect(() => {
+    if (isMobileDrawerOpen) {
+      // Prevent body scroll when drawer is open, but allow drawer content to scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body scroll when drawer is closed
+      document.body.style.overflow = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileDrawerOpen]);
+
   // Currency conversion handler (simplified for demo)
   const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string) => {
     if (!amount || fromCurrency === toCurrency) return amount;
@@ -302,7 +320,13 @@ export function Investments() {
   };
 
   const handleShowDifferentOptions = () => {
-    setIsModalOpen(true);
+    // Check if mobile (screen width < 768px)
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setIsMobileDrawerOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const handleModalContinue = () => {
@@ -319,14 +343,16 @@ export function Investments() {
     }
   };
 
-  const getSortedOptions = () => {
+  const getSortedOptions = (useMobileSorting = false) => {
     const currentAmount = investAmount || 0;
+    const currentSortBy = useMobileSorting ? mobileSortBy : sortBy;
+    const currentSortOrder = useMobileSorting ? 'desc' : sortOrder;
     
     return [...investmentOptions].sort((a, b) => {
       let aValue: number | string;
       let bValue: number | string;
 
-      switch (sortBy) {
+      switch (currentSortBy) {
         case 'provider':
           aValue = a.chain;
           bValue = b.chain;
@@ -353,17 +379,21 @@ export function Investments() {
         case 'fee':
           aValue = parseFloat(a.transactionFee.replace('%', ''));
           bValue = parseFloat(b.transactionFee.replace('%', ''));
+          // For fee, we want ascending order for "lowest fee"
+          if (useMobileSorting && currentSortBy === 'fee') {
+            return (aValue as number) - (bValue as number);
+          }
           break;
         default:
           return 0;
       }
 
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortOrder === 'asc' 
+        return currentSortOrder === 'asc' 
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       } else {
-        return sortOrder === 'asc' 
+        return currentSortOrder === 'asc' 
           ? (aValue as number) - (bValue as number)
           : (bValue as number) - (aValue as number);
       }
@@ -437,11 +467,9 @@ export function Investments() {
         className="space-y-6"
       >
         <div className="max-w-md mx-auto space-y-6">
-          <div className="space-y-2 text-center">
-            <Heading1>Let's put your assets to work</Heading1>
-            <Caption>
-              The investment is regulated by SEC
-            </Caption>
+          <div className="space-y-2 text-left md:text-center">
+            <h1 className="text-xl md:text-3xl font-medium leading-tight tracking-tight">Let's put your assets to work</h1>
+            
           </div>
           <div className="space-y-6">
             {/* Merged Currency Select + Investment Input */}
@@ -613,7 +641,7 @@ export function Investments() {
             )}
             
             {/* Buttons Stack */}
-            <div className="space-y-3">
+            <div className="flex flex-col-reverse md:flex-col space-y-reverse space-y-3 md:space-y-reverse-0 md:space-y-3">
               {/* Show Different Options Button */}
               {showEstimatedReturn && (
                 <Button 
@@ -738,81 +766,137 @@ export function Investments() {
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
           className="space-y-4 sm:space-y-6"
         >
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
-          >
-            <Card>
-              <CardHeader>
-                <CardDescription>Your Passive Income</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead><Caption>Provider</Caption></TableHead>
-                        <TableHead><Caption>Investment</Caption></TableHead>
-                        <TableHead><Caption>Active since</Caption></TableHead>
-                        <TableHead><Caption>APY</Caption></TableHead>
-                        <TableHead><Caption>Rewards</Caption></TableHead>
-                        <TableHead><Caption>Next reward</Caption></TableHead>
-                        <TableHead><Caption>Actions</Caption></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={contentVariants}
+          transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+        >
+          {/* Desktop Card Layout */}
+          <Card className="hidden md:block">
+            <CardHeader>
+              <CardDescription>Your Passive Income</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead><Caption>Provider</Caption></TableHead>
+                      <TableHead><Caption>Investment</Caption></TableHead>
+                      <TableHead><Caption>Active since</Caption></TableHead>
+                      <TableHead><Caption>APY</Caption></TableHead>
+                      <TableHead><Caption>Rewards</Caption></TableHead>
+                      <TableHead><Caption>Next reward</Caption></TableHead>
+                      <TableHead><Caption>Actions</Caption></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+            {[...investments]
+            .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                    .map((investment) => {
+                      const timeSince = getTimeSince(investment.startDate);
+                      return (
+                        <TableRow key={investment.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <CryptoIcon symbol={investment.chain === 'Ethereum' ? 'ETH' : 'BTC'} size={16} />
+                              <span className="font-medium">{investment.chain}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-medium">${investment.amount.toLocaleString()}</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-medium">{timeSince.days}d {timeSince.hours}h</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-medium">{investment.apy}%</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-medium text-success">
+                              ${investment.earned.toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-medium">3h 32min</span>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleWithdraw(investment.id)}
+                            >
+                              Close
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Mobile Flex Layout */}
+          <div className="md:hidden flex flex-col space-y-4">
+            <Heading4>Your Passive Income</Heading4>
+            <div className="space-y-3">
               {[...investments]
-              .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-                      .map((investment) => {
-                        const timeSince = getTimeSince(investment.startDate);
-                        return (
-                          <TableRow key={investment.id}>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <CryptoIcon symbol={investment.chain === 'Ethereum' ? 'ETH' : 'BTC'} size={16} />
-                                <span className="font-medium">{investment.chain}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <span className="font-medium">${investment.amount.toLocaleString()}</span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="font-medium">{timeSince.days}d {timeSince.hours}h</span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="font-medium">{investment.apy}%</span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="font-medium text-success">
-                                ${investment.earned.toLocaleString(undefined, {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2
-                                })}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="font-medium">3h 32min</span>
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleWithdraw(investment.id)}
-                              >
-                                Close
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+                .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                .map((investment) => {
+                  const timeSince = getTimeSince(investment.startDate);
+                  return (
+                    <Card key={investment.id} className="border">
+                      <CardContent className="p-4">
+                        {/* Title */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <CryptoIcon symbol={investment.chain === 'Ethereum' ? 'ETH' : 'BTC'} size={16} />
+                            <Heading4>{investment.chain}</Heading4>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleWithdraw(investment.id)}
+                          >
+                            Close
+                          </Button>
+                        </div>
+
+                        {/* Two Column Layout */}
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                          <div className="text-muted-foreground">Investment</div>
+                          <div className="font-medium text-right">${investment.amount.toLocaleString()}</div>
+                          
+                          <div className="text-muted-foreground">Active since</div>
+                          <div className="font-medium text-right">{timeSince.days}d {timeSince.hours}h</div>
+                          
+                          <div className="text-muted-foreground">APY</div>
+                          <div className="font-medium text-right">{investment.apy}%</div>
+                          
+                          <div className="text-muted-foreground">Rewards</div>
+                          <div className="font-bold text-right text-success">
+                            ${investment.earned.toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
+                          </div>
+                          
+                          <div className="text-muted-foreground">Next reward</div>
+                          <div className="font-medium text-right">3h 32min</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
             </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          </div>
+        </motion.div>
         </motion.div>
       )}
 
@@ -1016,6 +1100,150 @@ export function Investments() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Mobile Drawer */}
+      {isMobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setIsMobileDrawerOpen(false)}
+          />
+          
+          {/* Drawer */}
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed top-12 bottom-0 left-0 right-0 bg-background rounded-t-2xl flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 flex-shrink-0">
+              <div className="relative flex-1 max-w-xs">
+                <select
+                  value={mobileSortBy}
+                  onChange={(e) => setMobileSortBy(e.target.value as typeof mobileSortBy)}
+                  className="w-full h-10 px-3 py-2 bg-background border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring appearance-none"
+                >
+                  <option value="annualReturn">Highest return</option>
+                  <option value="frequency">Highest frequency</option>
+                  <option value="rewards">Highest rewards</option>
+                  <option value="apy">Highest APY</option>
+                  <option value="fee">Lowest fee</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsMobileDrawerOpen(false)}
+                className="h-8 w-8 p-0 ml-3"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Cards List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+              {getSortedOptions(true).map((option) => (
+                <Card
+                  key={option.id}
+                  className={cn(
+                    "cursor-pointer transition-all duration-200",
+                    selectedOption?.id === option.id && "ring-2 ring-primary"
+                  )}
+                  onClick={() => setSelectedOption(option)}
+                >
+                  <CardContent className="p-4">
+                    {/* Title and Badge */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input
+                              type="radio"
+                              name="mobile-investment-option"
+                              checked={selectedOption?.id === option.id}
+                              onChange={() => setSelectedOption(option)}
+                              className="w-4 h-4 opacity-0 absolute cursor-pointer"
+                            />
+                            <div 
+                              className={cn(
+                                "w-4 h-4 rounded-full border-2 border-muted-foreground flex items-center justify-center cursor-pointer",
+                                selectedOption?.id === option.id ? "bg-transparent" : "bg-white/5"
+                              )}
+                            >
+                              {selectedOption?.id === option.id && (
+                                <div className="w-2 h-2 rounded-full bg-primary"></div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <Heading4>{option.chain}</Heading4>
+                      </div>
+                      {option.isPersonalized && (
+                        <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
+                          Our recommendation
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Two Column Layout */}
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div className="text-muted-foreground">Frequency</div>
+                      <div className="font-medium text-right">{option.rewardFrequency}</div>
+                      
+                      <div className="text-muted-foreground">Rewards</div>
+                      <div className="font-medium text-right">{option.rewardValue}</div>
+                      
+                      <div className="text-muted-foreground">APY</div>
+                      <div className="font-medium text-right">{option.apy}</div>
+                      
+                      <div className="text-muted-foreground">Annual return</div>
+                      <div className="font-bold text-right">
+                        {(() => {
+                          const currentAmount = investAmount || 0;
+                          const apyValue = parseFloat(option.apy.replace('%', '')) / 100;
+                          const totalReturn = currentAmount + (currentAmount * apyValue);
+                          
+                          return selectedCurrency === 'USD' 
+                            ? `$${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                            : `${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+                        })()}
+                      </div>
+                      
+                      <div className="text-muted-foreground">Fee</div>
+                      <div className="font-medium text-right">{option.transactionFee}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+          </motion.div>
+          
+          {/* Floating Continue Button */}
+          <div className="fixed bottom-0 left-0 right-0 pointer-events-none">
+            {/* Gradient backdrop */}
+            <div className="h-16 bg-gradient-to-t from-background/80 via-background/80 to-transparent" />
+            
+            {/* Button container */}
+            <div className="p-4 bg-background pointer-events-auto">
+              <Button 
+                onClick={() => {
+                  setIsMobileDrawerOpen(false);
+                  // The selected option is already stored in selectedOption state
+                }}
+                className="w-full"
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Close Investment Modal */}
       <ConfirmationModal
