@@ -236,7 +236,8 @@ export function Affiliate() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="hover:bg-transparent">
+                {/* Desktop Header (full columns) */}
+                <TableRow className="hidden md:table-row hover:bg-transparent">
                   <TableHead><Caption>Affiliate</Caption></TableHead>
                   <TableHead><Caption>Level</Caption></TableHead>
                   <TableHead><Caption>Rewards</Caption></TableHead>
@@ -244,39 +245,79 @@ export function Affiliate() {
               </TableHeader>
               <TableBody>
                 {filteredAffiliates.map((affiliate) => (
-                  <TableRow key={affiliate.id} className="hover:bg-transparent">
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <Avatar name={affiliate.profileName} size="sm" className="w-8 h-8" />
-                        <div className="space-y-1">
-                          <BodyText >
-                            {affiliate.profileName}
-                          </BodyText>
-                          <Caption>
-                            {affiliate.walletAddress}
-                          </Caption>
+                  <>
+                    {/* Mobile Layout (default) */}
+                    <TableRow key={`${affiliate.id}-mobile`} className="md:hidden hover:bg-transparent">
+                      <TableCell className="py-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Avatar name={affiliate.profileName} size="sm" className="w-8 h-8" />
+                            <div>
+                              <BodyText className="text-foreground font-medium">
+                                {affiliate.profileName}
+                              </BodyText>
+                              <Caption className="text-muted-foreground">
+                                {affiliate.walletAddress}
+                              </Caption>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <BodyText className="text-foreground font-medium">
+                              ${affiliate.totalRewards.toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </BodyText>
+                            <div className="flex justify-end mt-1">
+                              <span className={cn(
+                                "inline-block px-2 py-1 rounded-full w-fit text-xs font-light leading-none",
+                                affiliate.level === 1 && "bg-primary/30 text-primary",
+                                affiliate.level === 2 && "bg-primary/20 text-primary",
+                                affiliate.level === 3 && "bg-primary/10 text-primary"
+                              )}>
+                                Level {affiliate.level}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="w-fit">
-                      <BodyText className={cn(
-                        "px-2 py-1 rounded-full font-medium inline-block",
-                        affiliate.level === 1 && "bg-primary/30 text-primary",
-                        affiliate.level === 2 && "bg-primary/20 text-primary",
-                        affiliate.level === 3 && "bg-primary/10 text-primary"
-                      )}>
-                        {affiliate.level}
-                      </BodyText>
-                    </TableCell>
-                    <TableCell className="w-fit">
-                      <BodyText>
-                        ${affiliate.totalRewards.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
-                        })}
-                      </BodyText>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                    </TableRow>
+
+                    {/* Desktop Layout (md and up) */}
+                    <TableRow key={`${affiliate.id}-desktop`} className="hidden md:table-row hover:bg-transparent">
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Avatar name={affiliate.profileName} size="sm" className="w-8 h-8" />
+                          <div className="space-y-1">
+                            <BodyText>
+                              {affiliate.profileName}
+                            </BodyText>
+                            <Caption>
+                              {affiliate.walletAddress}
+                            </Caption>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="w-fit">
+                        <BodyText className={cn(
+                          "px-2 py-1 rounded-full font-medium inline-block",
+                          affiliate.level === 1 && "bg-primary/30 text-primary",
+                          affiliate.level === 2 && "bg-primary/20 text-primary",
+                          affiliate.level === 3 && "bg-primary/10 text-primary"
+                        )}>
+                          Level {affiliate.level}
+                        </BodyText>
+                      </TableCell>
+                      <TableCell className="w-fit">
+                        <BodyText>
+                          ${affiliate.totalRewards.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}
+                        </BodyText>
+                      </TableCell>
+                    </TableRow>
+                  </>
                 ))}
               </TableBody>
             </Table>
