@@ -42,7 +42,7 @@ export function Navbar() {
             <img 
               src={logoOrokaiFull} 
               alt="Orokai" 
-              className="h-8 w-auto"
+              className="h-6 w-auto"
             />
           </Link>
         </div>
