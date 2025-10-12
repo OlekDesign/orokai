@@ -1,7 +1,6 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Home, Gem, Clock8, LogOut, Users, User } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
-import { Heading3 } from './ui/typography';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
 
@@ -39,9 +38,11 @@ export function Navbar() {
         {/* Logo */}
         <div className="p-6 border-b border-border">
           <Link to="/dashboard">
-            <Heading3 className="text-foreground font-bold">
-              Orokai
-            </Heading3>
+            <img 
+              src="/logo-orokai-full.svg" 
+              alt="Orokai" 
+              className="h-8 w-auto"
+            />
           </Link>
         </div>
 
