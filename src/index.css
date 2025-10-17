@@ -84,6 +84,41 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Accessibility: Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Ensure all transitions use proper timing and easing */
+  .transition-colors,
+  .transition-opacity,
+  .transition-shadow,
+  .transition-transform,
+  .transition-all {
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+  }
+
+  /* Touch device optimization - disable hover effects on touch devices */
+  @media not (hover: hover) and (pointer: coarse) {
+    .hover\\:bg-muted:hover,
+    .hover\\:bg-accent:hover,
+    .hover\\:opacity-80:hover,
+    .hover\\:shadow-md:hover,
+    .hover\\:shadow-lg:hover {
+      background-color: inherit;
+      opacity: inherit;
+      box-shadow: inherit;
+    }
+  }
 }
 
 @layer components {

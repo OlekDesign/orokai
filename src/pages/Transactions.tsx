@@ -107,7 +107,7 @@ export function Transactions() {
         initial="hidden"
         animate="visible"
         variants={contentVariants}
-        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="flex space-x-2 overflow-x-auto pb-2"
       >
         {(['all', 'rewards', 'withdrawals', 'investment', 'internal'] as const).map((type) => (
@@ -126,14 +126,14 @@ export function Transactions() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Card>
           <motion.div
             initial="hidden"
             animate="visible"
             variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.2, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <CardHeader>
               <div className="flex items-center justify-between space-x-4">

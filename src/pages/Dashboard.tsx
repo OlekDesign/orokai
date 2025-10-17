@@ -420,7 +420,7 @@ export function Dashboard() {
             className="h-12 rounded-lg border border-border flex items-center justify-between px-2 bg-cover md:bg-[length:100%] bg-center bg-no-repeat bg-primary cursor-pointer relative group overflow-hidden"
             style={{
               backgroundImage: 'url("./banner.png")',
-              transition: 'background-size 0.3s ease'
+              transition: 'background-size 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }}
             onMouseEnter={(e) => {
               const isMobile = window.innerWidth < 768;
@@ -463,7 +463,7 @@ export function Dashboard() {
           initial="hidden"
           animate="visible"
           variants={cardVariants}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="lg:col-span-5"
         >
           <Card className="h-full">
@@ -471,7 +471,7 @@ export function Dashboard() {
               initial="hidden"
               animate="visible"
               variants={contentVariants}
-              transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="h-full flex flex-col"
             >
               <CardHeader className="flex-shrink-0">
@@ -547,7 +547,7 @@ export function Dashboard() {
                     fillOpacity={1}
                     fill="url(#colorValue)"
                     isAnimationActive={true}
-                    animationDuration={1000}
+                    animationDuration={300}
                     animationBegin={0}
                   />
                 </AreaChart>
@@ -584,7 +584,7 @@ export function Dashboard() {
           initial="hidden"
           animate="visible"
           variants={cardVariants}
-          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="lg:col-span-3 hidden md:block"
         >
           <Card className="h-full">
@@ -592,7 +592,7 @@ export function Dashboard() {
               initial="hidden"
               animate="visible"
               variants={contentVariants}
-              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.2, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="h-full flex flex-col"
             >
               <CardHeader className="flex-shrink-0">
@@ -679,7 +679,7 @@ export function Dashboard() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="space-y-4"
                   >
                     {/* Estimated Return Display */}
@@ -878,7 +878,7 @@ export function Dashboard() {
           initial="hidden"
           animate="visible"
           variants={cardVariants}
-          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="lg:col-span-3 md:hidden"
         >
           <div className="flex justify-center">
@@ -898,14 +898,14 @@ export function Dashboard() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+        transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Card>
           <motion.div
             initial="hidden"
             animate="visible"
             variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.2, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <CardHeader>
               <div className="flex items-center justify-between space-x-4">

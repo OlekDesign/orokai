@@ -23,6 +23,7 @@ import { Transactions } from './pages/Transactions';
 import TransactionsEmpty from './pages/Transactions-empty';
 import { TransactionReview } from './pages/TransactionReview';
 import { TypographyDemo } from './components/TypographyDemo';
+import { ColorGuide } from './pages/ColorGuide';
 
 
 // Protected route wrapper
@@ -254,6 +255,16 @@ function AppRoutes() {
             <Layout>
               <TypographyDemo />
             </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+
+      {/* Color Guide Route */}
+      <Route
+        path="/color-guide"
+        element={
+          <ProfileProtectedRoute>
+            <ColorGuide />
           </ProfileProtectedRoute>
         }
       />

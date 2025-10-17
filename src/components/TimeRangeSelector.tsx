@@ -31,7 +31,7 @@ export function TimeRangeSelector({ value, onChange }: TimeRangeSelectorProps) {
             <motion.div
               layoutId="timeRangeIndicator"
               className="absolute inset-0 bg-muted rounded-md"
-              transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+              transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             />
           )}
           <span className="relative z-10">

@@ -573,7 +573,7 @@ export function TransactionReview() {
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border rounded-t-lg overflow-hidden"
             >
               <div className="p-4 border-b border-border">

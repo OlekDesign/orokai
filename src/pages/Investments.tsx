@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heading1, Heading2, Heading3, Heading4, BodyTextLarge, BodyTextSmall, Caption, Label } from '@/components/ui/typography';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { CryptoIcon } from "@/components/CryptoIcon";
@@ -196,8 +196,8 @@ export function Investments() {
 
   // Animation variants
   const cardVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1 }
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
   };
 
   const contentVariants = {
@@ -463,7 +463,7 @@ export function Investments() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="space-y-6"
       >
         <div className="max-w-md mx-auto space-y-6">
@@ -519,30 +519,38 @@ export function Investments() {
                   </div>
                   
                   {/* Dropdown */}
-                  {isDropdownOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
-                      {currencies.map(currency => (
-                        <button
-                          key={currency.symbol}
-                          onClick={() => handleCurrencyChange(currency.symbol)}
-                          className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
-                            currency.symbol === selectedCurrency && "bg-muted"
-                          )}
-                        >
-                          <div className="flex items-center gap-3">
-                            <CryptoIcon symbol={currency.symbol} size={20} />
-                            <div className="flex flex-col items-start">
-                              <span className="font-medium text-foreground">{currency.name}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
-                              </span>
+                  <AnimatePresence>
+                    {isDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50"
+                      >
+                        {currencies.map(currency => (
+                          <button
+                            key={currency.symbol}
+                            onClick={() => handleCurrencyChange(currency.symbol)}
+                            className={cn(
+                              "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                              currency.symbol === selectedCurrency && "bg-muted"
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              <CryptoIcon symbol={currency.symbol} size={20} />
+                              <div className="flex flex-col items-start">
+                                <span className="font-medium text-foreground">{currency.name}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
                 {showWarning && (
                   <Caption className="text-warning mt-2">
@@ -557,7 +565,7 @@ export function Investments() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="space-y-6"
               >
                 {/* Estimated Return Display */}
@@ -763,14 +771,14 @@ export function Investments() {
           initial="hidden"
           animate="visible"
           variants={cardVariants}
-          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          transition={{ duration: 0.2, delay: 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="space-y-4 sm:space-y-6"
         >
         <motion.div
           initial="hidden"
           animate="visible"
           variants={contentVariants}
-          transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           {/* Desktop Card Layout */}
           <Card className="hidden md:block">
@@ -1115,7 +1123,7 @@ export function Investments() {
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed top-12 bottom-0 left-0 right-0 bg-background rounded-t-2xl flex flex-col"
           >
             {/* Header */}

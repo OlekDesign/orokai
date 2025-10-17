@@ -349,7 +349,7 @@ export function Wallet() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="space-y-4"
       >
         <Card>
@@ -357,7 +357,7 @@ export function Wallet() {
             initial="hidden"
             animate="visible"
             variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.3, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="h-full flex flex-col"
           >
             <CardHeader className="pb-6">
@@ -448,7 +448,7 @@ export function Wallet() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+        transition={{ duration: 0.3, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="space-y-4"
       >
         {!hasWallet ? (
@@ -457,7 +457,7 @@ export function Wallet() {
               initial="hidden"
               animate="visible"
               variants={contentVariants}
-              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.3, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <CardContent className="pt-6 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/30 mb-4">
@@ -482,7 +482,7 @@ export function Wallet() {
               initial="hidden"
               animate="visible"
               variants={contentVariants}
-              transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.3, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <CardHeader className="pb-6">
                 <CardDescription>Crypto</CardDescription>

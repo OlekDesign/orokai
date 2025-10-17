@@ -109,7 +109,7 @@ export function Affiliate() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Card className="relative overflow-hidden rounded-2xl border border-border">
           <div 
@@ -123,7 +123,7 @@ export function Affiliate() {
             initial="hidden"
             animate="visible"
             variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.2, delay: 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="relative px-8 pb-8 flex flex-col items-center justify-end min-h-[300px]"
           >
             <div className="max-w-md text-center ">
@@ -165,14 +165,14 @@ export function Affiliate() {
         initial="hidden"
         animate="visible"
         variants={cardVariants}
-        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+        transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Card>
           <motion.div
             initial="hidden"
             animate="visible"
             variants={contentVariants}
-            transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.2, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <CardHeader className="pb-4">
               <div>
