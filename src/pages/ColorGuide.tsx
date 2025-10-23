@@ -218,10 +218,10 @@ const ColorCard: React.FC<{ color: ColorItem; isDark: boolean }> = ({ color, isD
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      showToast('Copied to clipboard!', 'success');
+      showToast('success', 'Copied to clipboard!');
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      showToast('Failed to copy', 'error');
+      showToast('error', 'Failed to copy');
     }
   };
 
@@ -264,10 +264,12 @@ export const ColorGuide: React.FC = () => {
     <Layout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <PageHeader 
-            title="Color Guide" 
-            subtitle="Design system colors for the crypto platform. Click any color to copy its hex value."
-          />
+          <div>
+            <PageHeader title="Color Guide" />
+            <p className="text-sm text-muted-foreground mt-2 mb-4">
+              Design system colors for the crypto platform. Click any color to copy its hex value.
+            </p>
+          </div>
           <Button 
             variant="outline" 
             onClick={toggleTheme}

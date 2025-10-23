@@ -44,6 +44,8 @@ export function TransactionReview() {
   const [saveCard, setSaveCard] = useState(true);
   const [showCardForm, setShowCardForm] = useState(true);
   const [isFirstInvestment, setIsFirstInvestment] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showTermsWarning, setShowTermsWarning] = useState(false);
   
   // Card form inputs
   const [cardNumber, setCardNumber] = useState('');
@@ -135,6 +137,15 @@ export function TransactionReview() {
   };
 
   const handleConfirmTransaction = () => {
+    // Check if terms are accepted
+    if (!acceptedTerms) {
+      setShowTermsWarning(true);
+      return;
+    }
+    
+    // Hide warning if terms are accepted
+    setShowTermsWarning(false);
+    
     // Capture if this is the first investment before adding the new one
     const wasFirstInvestment = !hasInvestments;
     setIsFirstInvestment(wasFirstInvestment);
@@ -457,6 +468,48 @@ export function TransactionReview() {
                     </div>
                   )}
 
+                  {/* Terms and Conditions Checkbox */}
+                  <div className="flex items-start space-x-3 pt-2">
+                    <button
+                      onClick={() => {
+                        setAcceptedTerms(!acceptedTerms);
+                        if (showTermsWarning) setShowTermsWarning(false);
+                      }}
+                      className={cn(
+                        "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors mt-0.5",
+                        acceptedTerms
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "border-border hover:border-primary",
+                        showTermsWarning && !acceptedTerms && "border-red-500 bg-red-50"
+                      )}
+                    >
+                      {acceptedTerms && <Check className="h-3 w-3" />}
+                    </button>
+                    <Label 
+                      className="cursor-pointer leading-relaxed" 
+                      onClick={() => {
+                        setAcceptedTerms(!acceptedTerms);
+                        if (showTermsWarning) setShowTermsWarning(false);
+                      }}
+                    >
+                      I accept the{' '}
+                      <a 
+                        href="#" 
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Terms and Conditions
+                      </a>
+                    </Label>
+                  </div>
+
+                  {/* Warning Message */}
+                  {showTermsWarning && (
+                    <div className="text-red-600 text-xs text-left">
+                      You must first accept the Terms and Conditions
+                    </div>
+                  )}
+
                   <Button 
                     className="w-full"
                     size="lg"
@@ -539,6 +592,48 @@ export function TransactionReview() {
           >
             Add Payment Details
           </Button>
+        )}
+        
+        {/* Terms and Conditions Checkbox - Mobile */}
+        <div className="flex items-start space-x-3">
+          <button
+            onClick={() => {
+              setAcceptedTerms(!acceptedTerms);
+              if (showTermsWarning) setShowTermsWarning(false);
+            }}
+            className={cn(
+              "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors mt-0.5",
+              acceptedTerms
+                ? "bg-primary border-primary text-primary-foreground"
+                : "border-border hover:border-primary",
+              showTermsWarning && !acceptedTerms && "border-red-500 bg-red-50"
+            )}
+          >
+            {acceptedTerms && <Check className="h-3 w-3" />}
+          </button>
+          <Label 
+            className="cursor-pointer leading-relaxed" 
+            onClick={() => {
+              setAcceptedTerms(!acceptedTerms);
+              if (showTermsWarning) setShowTermsWarning(false);
+            }}
+          >
+            I accept the{' '}
+            <a 
+              href="#" 
+              className="text-primary hover:underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Terms and Conditions
+            </a>
+          </Label>
+        </div>
+
+        {/* Warning Message - Mobile */}
+        {showTermsWarning && (
+          <div className="text-red-600 text-xs text-left">
+            You must first accept the Terms and Conditions
+          </div>
         )}
         
         <Button 
