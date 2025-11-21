@@ -124,19 +124,19 @@
 @layer components {
   /* Typography System */
   .text-heading-1 {
-    @apply text-3xl md:text-3xl font-medium leading-tight tracking-tight;
+    @apply text-3xl md:text-3xl font-zodiak font-medium leading-tight tracking-tight;
   }
   
   .text-heading-2 {
-    @apply text-xl md:text-2xl font-medium leading-tight;
+    @apply text-xl md:text-2xl font-zodiak font-medium leading-tight;
   }
   
   .text-heading-3 {
-    @apply text-lg md:text-xl font-medium leading-snug;
+    @apply text-lg md:text-xl font-zodiak font-medium leading-snug;
   }
   
   .text-heading-4 {
-    @apply text-base md:text-lg font-medium leading-snug;
+    @apply text-base md:text-lg font-zodiak font-medium leading-snug;
   }
   
   .text-body-large {

@@ -17,6 +17,9 @@ import { Investments } from './pages/Investments';
 import InvestmentsEmpty from './pages/Investments-empty';
 import { Affiliate } from './pages/Affiliate';
 import AffiliateEmpty from './pages/Affiliate-empty';
+import { AffiliateProgram } from './pages/AffiliateProgram';
+import { AffiliateAnalytics } from './pages/Affiliate-analytics';
+import { MyNFT } from './pages/my-nft';
 import { CreateInvestment } from './pages/CreateInvestment';
 import { NewInvestment } from './pages/NewInvestment';
 import { Transactions } from './pages/Transactions';
@@ -242,6 +245,36 @@ function AppRoutes() {
           <ProfileProtectedRoute>
             <Layout>
               <AffiliateEmpty />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/affiliate-program"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <AffiliateProgram />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/affiliate-analytics"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <AffiliateAnalytics />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-nft"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <MyNFT />
             </Layout>
           </ProfileProtectedRoute>
         }
