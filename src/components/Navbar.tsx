@@ -3,7 +3,6 @@ import { Home, Gem, Clock8, LogOut, Users, User } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
-import logoOrokaiFull from '/logo-orokai-full.png';
 
 const navItems: Array<{
   icon: any;
@@ -40,7 +39,7 @@ export function Navbar() {
         <div className="p-6 border-b border-border">
           <Link to="/dashboard">
             <img 
-              src={logoOrokaiFull} 
+              src="/logo-orokai-full.png" 
               alt="Orokai" 
               className="h-5 w-auto"
             />

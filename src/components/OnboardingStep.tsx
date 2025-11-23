@@ -4,11 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Heading1, BodyText } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from 'react';
-import setupImage from '/setup.png';
-import rewardsImage from '/rewards.png';
-import freedomImage from '/freedom.png';
-import transparentImage from '/transparent.png';
-import oakImage from '/oak.png';
 
 
 interface OnboardingStepProps {
@@ -84,16 +79,16 @@ export function OnboardingStep({
   const getBackgroundImage = () => {
     switch (backgroundImageType) {
       case 'setup':
-        return setupImage;
+        return '/setup.png';
       case 'rewards':
-        return rewardsImage;
+        return '/rewards.png';
       case 'freedom':
-        return freedomImage;
+        return '/freedom.png';
       case 'transparent':
-        return transparentImage;
+        return '/transparent.png';
       case 'oak':
       default:
-        return oakImage;
+        return '/oak.png';
     }
   };
   
