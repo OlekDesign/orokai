@@ -39,7 +39,7 @@ export function Navbar() {
         <div className="p-6 border-b border-border">
           <Link to="/dashboard">
             <img 
-              src="/logo-orokai-full-white.svg"
+              src={`${import.meta.env.BASE_URL}logo-orokai-full-white.svg`}
               alt="Orokai" 
               className="h-5 w-auto"
             />

@@ -77,18 +77,19 @@ export function OnboardingStep({
     setFocusedOptionIndex(-1);
   }, [step]);
   const getBackgroundImage = () => {
+    const baseUrl = import.meta.env.BASE_URL;
     switch (backgroundImageType) {
       case 'setup':
-        return '/setup.png';
+        return `${baseUrl}setup.png`;
       case 'rewards':
-        return '/rewards.png';
+        return `${baseUrl}rewards.png`;
       case 'freedom':
-        return '/freedom.png';
+        return `${baseUrl}freedom.png`;
       case 'transparent':
-        return '/transparent.png';
+        return `${baseUrl}transparent.png`;
       case 'oak':
       default:
-        return '/oak.png';
+        return `${baseUrl}oak.png`;
     }
   };
   
