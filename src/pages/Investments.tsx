@@ -468,7 +468,7 @@ export function Investments() {
       >
         <div className="max-w-md mx-auto space-y-6">
           <div className="space-y-2 text-left md:text-center">
-            <h1 className="text-xl md:text-3xl font-medium leading-tight tracking-tight">Let's put your assets to work</h1>
+            <h1 className="text-heading-1">Let's put your assets to work</h1>
             
           </div>
           <div className="space-y-6">

@@ -11,6 +11,14 @@ import {
   CardHeader,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
 // Mock data for affiliate history with hierarchical structure
@@ -20,7 +28,7 @@ const affiliateHistory = [
     profileName: 'Alex Johnson',
     walletAddress: 'k3m9pq...x4n2',
     level: 1,
-    percentage: 20,
+    percentage: 10,
     totalRewards: 1250.50,
     subAffiliates: [
       {
@@ -28,16 +36,16 @@ const affiliateHistory = [
         profileName: 'Megan Sandy',
         walletAddress: 'm5g2an...s4d7',
         level: 2,
-        percentage: 15,
-        totalRewards: 330.49,
+        percentage: 0,
+        totalRewards: 0.00,
         subAffiliates: [
           {
             id: '1-1-1',
             profileName: 'Luke Pachytel',
             walletAddress: 'l8k3pa...t2l9',
             level: 3,
-            percentage: 10,
-            totalRewards: 40.00,
+            percentage: 0,
+            totalRewards: 0.00,
             subAffiliates: []
           }
         ]
@@ -47,7 +55,7 @@ const affiliateHistory = [
         profileName: 'Carol Cox',
         walletAddress: 'c9r4ol...x6c8',
         level: 2,
-        percentage: 15,
+        percentage: 0,
         totalRewards: 0.00,
         subAffiliates: []
       }
@@ -58,8 +66,8 @@ const affiliateHistory = [
     profileName: 'Sarah Chen',
     walletAddress: 'r7t2nh...p9m4',
     level: 2,
-    percentage: 15,
-    totalRewards: 850.25,
+    percentage: 0,
+    totalRewards: 0.00,
     subAffiliates: []
   },
   {
@@ -67,7 +75,7 @@ const affiliateHistory = [
     profileName: 'Michael Rodriguez',
     walletAddress: 'w5h8jk...m3v7',
     level: 1,
-    percentage: 20,
+    percentage: 10,
     totalRewards: 625.75,
     subAffiliates: []
   },
@@ -76,8 +84,8 @@ const affiliateHistory = [
     profileName: 'Emma Thompson',
     walletAddress: 'f9q4dx...y2k8',
     level: 3,
-    percentage: 10,
-    totalRewards: 385.50,
+    percentage: 0,
+    totalRewards: 0.00,
     subAffiliates: []
   },
 ];
@@ -90,131 +98,64 @@ export function Affiliate() {
   const [hideInactive, setHideInactive] = useState(false);
   const affiliateLink = 'https://platform.example.com/ref/user123';
 
-  // Calculate counts for each level
-  const totalAffiliates = affiliateHistory.length;
-  const level1Count = affiliateHistory.filter(a => a.level === 1).length;
-  const level2Count = affiliateHistory.filter(a => a.level === 2).length;
-  const level3Count = affiliateHistory.filter(a => a.level === 3).length;
+  // Calculate counts for each level (flatten all affiliates including sub-affiliates)
+  const flattenAffiliates = (affiliates: any[]): any[] => {
+    return affiliates.reduce((acc: any[], affiliate: any) => {
+      acc.push(affiliate);
+      if (affiliate.subAffiliates && affiliate.subAffiliates.length > 0) {
+        acc.push(...flattenAffiliates(affiliate.subAffiliates));
+      }
+      return acc;
+    }, []);
+  };
+
+  const allAffiliates = flattenAffiliates(affiliateHistory);
+  const totalAffiliates = allAffiliates.length;
+  const level1Count = allAffiliates.filter(a => a.level === 1).length;
+  const level2Count = allAffiliates.filter(a => a.level === 2).length;
+  const level3Count = allAffiliates.filter(a => a.level === 3).length;
 
   // Filter affiliates based on selected level
   const filteredAffiliates = selectedLevel === 'all' 
-    ? affiliateHistory 
-    : affiliateHistory.filter(affiliate => affiliate.level === selectedLevel);
+    ? allAffiliates 
+    : allAffiliates.filter(affiliate => affiliate.level === selectedLevel);
 
   // Level options for dropdown
   const levelOptions = [
-    { key: 'all', label: 'All levels', count: totalAffiliates },
-    { key: 1, label: 'Level 1', count: level1Count },
-    { key: 2, label: 'Level 2', count: level2Count },
-    { key: 3, label: 'Level 3', count: level3Count },
+    { key: 'all', label: 'All invites', count: totalAffiliates },
+    { key: 1, label: 'Direct invites', count: level1Count },
+    { key: 2, label: 'Indirect invites', count: level2Count },
+    { key: 3, label: 'Their invites', count: level3Count },
   ];
 
   const selectedOption = levelOptions.find(option => option.key === selectedLevel) || levelOptions[0];
 
-  // Recursive component to render affiliate cards
-  const AffiliateCard = ({ affiliate, depth = 0 }: { affiliate: any; depth?: number }) => {
-    const hasSubAffiliates = affiliate.subAffiliates && affiliate.subAffiliates.length > 0;
-
+  // Component to render each affiliate as a table row
+  const AffiliateRow = ({ affiliate }: { affiliate: any }) => {
     return (
-      <Card key={affiliate.id} className="border border-border hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-0">
-          {/* Parent affiliate row */}
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center space-x-3">
-              <Avatar name={affiliate.profileName} size="sm" className="w-8 h-8" />
-              <div>
-                <BodyText className="text-foreground text-sm">
-                  {affiliate.profileName}
-                </BodyText>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="min-w-[80px]">
-                <BodyText className="text-foreground text-sm">
-                  {affiliate.percentage}%
-                </BodyText>
-              </div>
-              <div className="min-w-[100px]">
-                <BodyText className="text-foreground text-sm">
-                  ${affiliate.totalRewards.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </BodyText>
-              </div>
-            </div>
-          </div>
-          
-          {/* Render sub-affiliates inside the same card - always visible */}
-          {hasSubAffiliates && (
-            <div className="border-t border-border/50">
-              {affiliate.subAffiliates.map((subAffiliate: any, index: number) => (
-                <div key={subAffiliate.id}>
-                  <SubAffiliateRow affiliate={subAffiliate} depth={depth + 1} />
-                  {index < affiliate.subAffiliates.length - 1 && (
-                    <div className="border-t border-border mx-4" />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  // Component for rendering sub-affiliates within parent cards
-  const SubAffiliateRow = ({ affiliate, depth }: { affiliate: any; depth: number }) => {
-    const hasSubAffiliates = affiliate.subAffiliates && affiliate.subAffiliates.length > 0;
-    const paddingLeft = depth * 20 + 16; // Increased indentation per level + base padding
-
-    return (
-      <div>
-        {/* Sub-affiliate row */}
-         <div 
-           className="flex items-center justify-between py-3 pr-4" 
-           style={{ paddingLeft: `${paddingLeft}px` }}
-         >
+      <TableRow>
+        <TableCell>
           <div className="flex items-center space-x-3">
             <Avatar name={affiliate.profileName} size="sm" className="w-8 h-8" />
-            <div>
-              <BodyText className="text-foreground text-sm">
-                {affiliate.profileName}
-              </BodyText>
-            </div>
+            <BodyText className="text-foreground text-sm">
+              {affiliate.profileName}
+            </BodyText>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="min-w-[80px]">
-              <BodyText className="text-foreground text-sm">
-                {affiliate.percentage}%
-              </BodyText>
-            </div>
-            <div className="min-w-[100px]">
-              <BodyText className="text-foreground text-sm">
-                ${affiliate.totalRewards.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-              </BodyText>
-            </div>
-          </div>
-        </div>
-        
-        {/* Render nested sub-affiliates - always visible */}
-        {hasSubAffiliates && (
-          <div>
-            <div className="border-t border-border/50 mx-4" />
-            {affiliate.subAffiliates.map((nestedAffiliate: any, index: number) => (
-              <div key={nestedAffiliate.id}>
-                <SubAffiliateRow affiliate={nestedAffiliate} depth={depth + 1} />
-                {index < affiliate.subAffiliates.length - 1 && (
-                  <div className="border-t border-border/50 mx-4" />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        </TableCell>
+        <TableCell>
+          <BodyText className={affiliate.percentage === 0 ? "text-muted-foreground text-sm" : "text-foreground text-sm"}>
+            {affiliate.percentage}%
+          </BodyText>
+        </TableCell>
+        <TableCell>
+          <BodyText className={affiliate.totalRewards === 0 ? "text-muted-foreground text-sm" : "text-foreground text-sm"}>
+            ${affiliate.totalRewards.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </BodyText>
+        </TableCell>
+      </TableRow>
     );
   };
 
@@ -323,7 +264,7 @@ export function Affiliate() {
                   type="text"
                   value={affiliateLink}
                   readOnly
-                  className="w-full px-3 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-foreground truncate"
+                  className="w-full px-3 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-muted-foreground truncate"
                 />
               </div>
               <Button
@@ -361,7 +302,7 @@ export function Affiliate() {
               <CardDescription>My affiliates</CardDescription>
               <div className="flex items-center gap-3">
                 <Button
-                  variant="secondary"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setHideInactive(!hideInactive)}
                   className="text-sm"
@@ -407,26 +348,22 @@ export function Affiliate() {
           </CardHeader>
           
           <CardContent>
-            {/* Header Row */}
-            <div className="flex items-center justify-between px-4 py-3 mb-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-8"></div> {/* Avatar space */}
-                <Caption>Affiliate</Caption>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="min-w-[80px]">
-                  <Caption>Commission</Caption>
-                </div>
-                <div className="min-w-[100px]">
-                  <Caption>Total Rewards</Caption>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              {filteredAffiliates.map((affiliate) => (
-                <AffiliateCard key={affiliate.id} affiliate={affiliate} depth={0} />
-              ))}
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  {/* Desktop Header (full columns) */}
+                  <TableRow className="hidden md:table-row">
+                    <TableHead><Caption>Affiliate</Caption></TableHead>
+                    <TableHead><Caption>Commission</Caption></TableHead>
+                    <TableHead><Caption>Total Rewards</Caption></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAffiliates.map((affiliate) => (
+                    <AffiliateRow key={affiliate.id} affiliate={affiliate} />
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>

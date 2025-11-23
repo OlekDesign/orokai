@@ -167,7 +167,7 @@ export default function CreateProfile() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 overflow-y-auto px-4 pt-8"
+          className="flex-1 overflow-y-auto px-4 pt-12 flex flex-col items-center justify-start"
         >
           <div className="max-w-[20rem] mx-auto w-full">
             <div className="flex flex-col justify-center space-y-8">
@@ -218,8 +218,8 @@ export default function CreateProfile() {
         </motion.div>
 
         {/* Fixed form at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-background border-t border-border">
-          <div className="max-w-[20rem] w-full mx-auto space-y-4">
+        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 pb-8 bg-background border-t border-border">
+          <div className="w-full mx-auto space-y-4">
             {/* Name Input */}
             <div className="space-y-2">
               <Label htmlFor="name-mobile">Enter your name</Label>

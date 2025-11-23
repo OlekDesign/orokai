@@ -6,7 +6,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heading3, BodyText } from "@/components/ui/typography";
+import { Heading2, BodyText } from "@/components/ui/typography";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -31,42 +31,40 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <div className="px-4 md:px-0">
-        <DialogContent 
-          className="w-full max-w-md mx-auto"
-          onInteractOutside={onClose}
-        >
-        <DialogHeader>
-          <DialogTitle>
-            <Heading3>{title}</Heading3>
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="py-1">
-          <BodyText className="text-muted-foreground leading-relaxed">
-            {message}
-          </BodyText>
-        </div>
-
-        <DialogFooter className="flex flex-col sm:flex-row gap-3">
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            disabled={isLoading}
-            className="w-full sm:w-auto"
-          >
-            {cancelText}
-          </Button>
-          <Button
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="w-full sm:w-auto"
-          >
-            {isLoading ? "Processing..." : confirmText}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+      <DialogContent 
+        className="pt-6 px-6 pb-10 md:p-6 md:max-w-md mx-auto"
+        onInteractOutside={onClose}
+      >
+      <DialogHeader className="text-left">
+        <DialogTitle>
+          <Heading2>{title}</Heading2>
+        </DialogTitle>
+      </DialogHeader>
+      
+      <div className="py-1">
+        <BodyText className="text-muted-foreground leading-relaxed">
+          {message}
+        </BodyText>
       </div>
+
+      <DialogFooter className="flex flex-col sm:flex-row gap-3">
+        <Button
+          variant="secondary"
+          onClick={onClose}
+          disabled={isLoading}
+          className="w-full sm:w-auto"
+        >
+          {cancelText}
+        </Button>
+        <Button
+          onClick={onConfirm}
+          disabled={isLoading}
+          className="w-full sm:w-auto"
+        >
+          {isLoading ? "Processing..." : confirmText}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
     </Dialog>
   );
 }

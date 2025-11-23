@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Navbar } from './Navbar';
-import { EmptyStateToggle } from './EmptyStateToggle';
 
 interface LayoutProps {
   children: ReactNode;
@@ -34,9 +33,6 @@ export function Layout({ children }: LayoutProps) {
           {children}
         </motion.div>
       </main>
-
-      {/* Empty State Toggle - appears on all pages */}
-      {!isTransactionReview && <EmptyStateToggle />}
     </div>
   );
 }

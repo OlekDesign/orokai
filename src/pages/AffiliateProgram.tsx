@@ -309,10 +309,10 @@ export function AffiliateProgram() {
 
       {/* Commission Settings Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="pt-6 px-6 pb-10 md:p-6 md:max-w-md">
           <div className="flex flex-row items-start mb-4">
             <div className="flex flex-col">
-              <h2 className="text-heading-2 text-foreground">{pointsLeft}</h2>
+              <h2 className="text-heading-1 text-foreground">{pointsLeft}</h2>
               <Caption className="text-muted-foreground">% points left to distribute</Caption>
             </div>
           </div>
