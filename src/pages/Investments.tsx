@@ -783,7 +783,7 @@ export function Investments() {
           {/* Desktop Card Layout */}
           <Card className="hidden md:block">
             <CardHeader>
-              <CardDescription>Your Passive Income</CardDescription>
+              <CardDescription>Your passive income</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">

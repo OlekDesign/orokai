@@ -116,7 +116,7 @@ export function AffiliateAnalytics() {
             <CardHeader className="flex-shrink-0">
               <div className="flex justify-between items-start">
                 <div>
-                  <CardDescription>Total Affiliate Rewards</CardDescription>
+                  <CardDescription>Total affiliate rewards</CardDescription>
                   <Heading1 className="mt-1">
                     ${totalAffiliateRewards.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
@@ -191,7 +191,7 @@ export function AffiliateAnalytics() {
       >
         <Card>
           <CardHeader>
-            <CardDescription>Direct invites</CardDescription>
+            <CardDescription>Level 1</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -223,7 +223,7 @@ export function AffiliateAnalytics() {
       >
         <Card>
           <CardHeader>
-            <CardDescription>Indirect invites</CardDescription>
+            <CardDescription>Level 2</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -255,7 +255,7 @@ export function AffiliateAnalytics() {
       >
         <Card>
           <CardHeader>
-            <CardDescription>Their invites</CardDescription>
+            <CardDescription>Level 3</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -271,6 +271,38 @@ export function AffiliateAnalytics() {
                   <TableCell className="w-[120px]"><BodyTextSmall>3</BodyTextSmall></TableCell>
                   <TableCell><BodyTextSmall>3</BodyTextSmall></TableCell>
                   <TableCell className="text-right"><BodyTextSmall>0 USDT</BodyTextSmall></TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Total Table */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <Card>
+          <CardHeader>
+            <CardDescription>Total</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[120px]"><Caption>Affiliates</Caption></TableHead>
+                  <TableHead><Caption>Active</Caption></TableHead>
+                  <TableHead className="text-right"><Caption>Rewards</Caption></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="w-[120px]"><BodyTextSmall>136</BodyTextSmall></TableCell>
+                  <TableCell><BodyTextSmall>59</BodyTextSmall></TableCell>
+                  <TableCell className="text-right"><BodyTextSmall>7,334 USDT</BodyTextSmall></TableCell>
                 </TableRow>
               </TableBody>
             </Table>

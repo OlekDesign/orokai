@@ -477,7 +477,7 @@ export function Dashboard() {
               <CardHeader className="flex-shrink-0">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardDescription>Total Rewards</CardDescription>
+                    <CardDescription>Total rewards</CardDescription>
                     <Heading1 className="mt-1">
                       ${totalRewards.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
@@ -569,11 +569,10 @@ export function Dashboard() {
 
             <Button
               onClick={() => navigate('/transactions?filter=rewards')}
-              variant="link"
-              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
+              variant="ghost"
+              className="text-foreground hover:text-foreground/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
             >
-              <span>See rewards history</span>
-              <ExternalLink className="ml-1 h-4 w-4" />
+              See rewards history
             </Button>
               </CardContent>
             </motion.div>
@@ -596,7 +595,7 @@ export function Dashboard() {
               className="h-full flex flex-col"
             >
               <CardHeader className="flex-shrink-0">
-                <CardDescription>Passive Income</CardDescription>
+                <CardDescription>Passive income</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">
                 {/* Amount Input - Top Position (when showEstimatedReturn is true) */}

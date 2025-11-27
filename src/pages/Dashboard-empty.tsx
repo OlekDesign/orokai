@@ -109,7 +109,7 @@ export default function DashboardEmpty() {
           <CardHeader>
             <div className="flex justify-between items-start">
               <div>
-                <CardDescription>Total Rewards</CardDescription>
+                <CardDescription>Total rewards</CardDescription>
                 <CardTitle className="text-heading-1 text-foreground mt-1">
                   Let's get started
                 </CardTitle>
@@ -158,7 +158,7 @@ export default function DashboardEmpty() {
 
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardDescription>Passive Income</CardDescription>
+            <CardDescription>Passive income</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

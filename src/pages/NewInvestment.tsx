@@ -241,7 +241,7 @@ export function NewInvestment() {
             {/* Mobile: Direct content, Desktop: Card wrapper */}
             <div className="md:hidden w-full pb-32">
               <div className="mb-6">
-                <CardDescription>New Investment</CardDescription>
+                <CardDescription>New investment</CardDescription>
               </div>
               <div className="space-y-4">
                 <div>
@@ -364,7 +364,7 @@ export function NewInvestment() {
             {/* Desktop: Card wrapper */}
             <Card className="hidden md:block w-full max-w-md">
               <CardHeader>
-                <CardDescription>New Investment</CardDescription>
+                <CardDescription>New investment</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

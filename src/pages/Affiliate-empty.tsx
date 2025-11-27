@@ -37,7 +37,7 @@ export default function AffiliateEmpty() {
       <Card>
         <CardHeader>
           <div>
-            <CardDescription>Total Affiliate Rewards</CardDescription>
+            <CardDescription>Total affiliate rewards</CardDescription>
             <h1 className="text-heading-1 text-foreground mt-1">
               Let's start affiliating
             </h1>
@@ -74,7 +74,7 @@ export default function AffiliateEmpty() {
 
       <Card>
         <CardHeader>
-          <CardDescription>Your Affiliation History</CardDescription>
+          <CardDescription>Your affiliation history</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">

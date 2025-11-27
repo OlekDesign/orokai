@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Settings2, Minus, Plus } from 'lucide-react';
+import { ChevronLeft, Minus, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -170,19 +170,9 @@ export function AffiliateProgram() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Direct invites:</span>
-                  <span className="text-sm font-medium text-foreground">{directInvites}%</span>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-8 w-8"
-                  onClick={() => setIsDialogOpen(true)}
-                >
-                  <Settings2 className="h-4 w-4" />
-                </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Direct invites:</span>
+                <span className="text-sm font-medium text-foreground">{directInvites}%</span>
               </div>
               {indirectInvites > 0 && (
                 <div className="flex items-center gap-2">
