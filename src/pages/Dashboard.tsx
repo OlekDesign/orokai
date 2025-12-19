@@ -383,17 +383,28 @@ export function Dashboard() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      
+      // Add year to label if it's missing (for week view)
+      let timestampWithYear = label;
+      if (!label.match(/\d{4}/)) {
+        // If no year found, add current year
+        const currentYear = new Date().getFullYear();
+        timestampWithYear = `${label}, ${currentYear}`;
+      }
+      
       return (
-        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border">
-          <span className="text-caption mb-1">{label}</span>
-          <BodyTextSmall className="font-medium">
-            Total: ${data.value.toLocaleString()}
+        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border flex flex-col gap-1">
+          <BodyTextSmall className="text-foreground">
+            ${data.value.toLocaleString()}
           </BodyTextSmall>
           {data.reward > 0 && (
-            <BodyTextSmall className="text-success mt-1">
-              +${data.reward.toLocaleString()} reward
-            </BodyTextSmall>
+            <Caption style={{ color: 'hsl(var(--faded))' }}>
+              +${data.reward.toLocaleString()}
+            </Caption>
           )}
+          <Caption style={{ color: 'hsl(var(--faded))' }}>
+            {timestampWithYear}
+          </Caption>
         </div>
       );
     }

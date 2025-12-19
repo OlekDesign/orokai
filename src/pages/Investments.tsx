@@ -614,20 +614,7 @@ export function Investments() {
                   
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Reward frequency</span>
-                      <InfoTooltip 
-                        content="How often you receive your investment rewards"
-                        iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
-                      />
-                    </div>
-                    <span className="font-medium">24h</span>
-                  </div>
-                  
-                  <div className="h-[1px] bg-border opacity-30" />
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Reward value</span>
+                      <span className="text-muted-foreground">Reward</span>
                       <InfoTooltip 
                         content="The amount you earn every 24 hours based on your investment"
                         iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
@@ -637,9 +624,10 @@ export function Investments() {
                       {(() => {
                         const currentAmount = investAmount || 0;
                         const dailyReturn = (currentAmount * 0.078) / 365;
-                        return selectedCurrency === 'USD' 
+                        const rewardValue = selectedCurrency === 'USD' 
                           ? `$${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })}` 
                           : `${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${selectedCurrency}`;
+                        return `${rewardValue} every 24h`;
                       })()} 
                     </span>
                   </div>
@@ -923,7 +911,7 @@ export function Investments() {
       {/* Investment Options Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent 
-          className="max-w-6xl max-h-[90vh] overflow-y-auto"
+          className="w-full md:w-fit md:max-w-[90vw] max-h-[90vh] overflow-y-auto md:p-6"
           onInteractOutside={() => setIsModalOpen(false)}
         >
           <DialogHeader>

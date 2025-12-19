@@ -210,6 +210,24 @@ export function TransactionReview() {
 
   const totalDue = costs.amount + costs.fee;
 
+  // Convert USD to crypto currency
+  const convertToCrypto = (usdAmount: number) => {
+    if (paymentMethod !== 'crypto_wallet') return usdAmount;
+    const selectedCurrencyData = currencies.find(c => c.symbol === selectedCurrency);
+    if (!selectedCurrencyData) return usdAmount;
+    return usdAmount / selectedCurrencyData.usdValue;
+  };
+
+  // Format amount display
+  const formatAmount = (usdAmount: number) => {
+    if (paymentMethod === 'crypto_wallet') {
+      const cryptoAmount = convertToCrypto(usdAmount);
+      const decimals = selectedCurrency === 'BTC' ? 6 : selectedCurrency === 'ETH' ? 4 : 2;
+      return `${cryptoAmount.toFixed(decimals)} ${selectedCurrency}`;
+    }
+    return `$${usdAmount.toLocaleString()}`;
+  };
+
   return (
     <div className="fixed inset-0 overflow-hidden">
       <PageHeader onClose={handleClose} />
@@ -228,19 +246,19 @@ export function TransactionReview() {
               <tbody className="divide-y divide-border">
                 <tr>
                   <td className="py-4"><BodyTextSmall className="text-muted-foreground">Investment Amount</BodyTextSmall></td>
-                  <td className="py-4 text-right font-medium">${costs.amount.toLocaleString()}</td>
+                  <td className="py-4 text-right font-medium">{formatAmount(costs.amount)}</td>
                 </tr>
                 <tr>
                   <td className="py-4"><BodyTextSmall className="text-muted-foreground">Estimated Yearly Return</BodyTextSmall></td>
-                  <td className="py-4 text-right font-medium text-primary">+${costs.yearlyReturn.toLocaleString()}</td>
+                  <td className="py-4 text-right font-medium text-primary">+{formatAmount(costs.yearlyReturn)}</td>
                 </tr>
                 <tr>
                   <td className="py-4"><BodyTextSmall className="text-muted-foreground">Transaction Fee</BodyTextSmall></td>
-                  <td className="py-4 text-right font-medium">${costs.fee}</td>
+                  <td className="py-4 text-right font-medium">{formatAmount(costs.fee)}</td>
                 </tr>
                 <tr className="border-t-2">
                   <td className="py-4 font-semibold">Total Due Today</td>
-                  <td className="py-4 text-right font-semibold">${totalDue.toLocaleString()}</td>
+                  <td className="py-4 text-right font-semibold">{formatAmount(totalDue)}</td>
                 </tr>
               </tbody>
             </table>
