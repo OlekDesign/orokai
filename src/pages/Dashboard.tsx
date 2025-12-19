@@ -734,20 +734,7 @@ export function Dashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Caption>Reward frequency</Caption>
-                          <InfoTooltip 
-                            content="How often you receive your investment rewards"
-                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
-                          />
-                        </div>
-                        <Caption className="!text-white">24h</Caption>
-                      </div>
-                      
-                      <div className="h-[1px] bg-border opacity-30" />
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Caption>Reward value</Caption>
+                          <Caption>Reward</Caption>
                           <InfoTooltip 
                             content="The amount you earn every 24 hours based on your investment"
                             iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
@@ -758,9 +745,10 @@ export function Dashboard() {
                             const defaultAmount = selectedCurrency === 'USD' ? 10000 : convertCurrency(10000, 'USD', selectedCurrency);
                             const currentAmount = Number(investAmount) || defaultAmount;
                             const dailyReturn = (currentAmount * 0.078) / 365;
-                            return selectedCurrency === 'USD' 
+                            const rewardValue = selectedCurrency === 'USD' 
                               ? `$${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })}` 
                               : `${dailyReturn.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${selectedCurrency}`;
+                            return `${rewardValue} every 24h`;
                           })()} 
                         </Caption>
                       </div>
