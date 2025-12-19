@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
 import { useUserProfile } from '@/contexts/UserProfileContext';
 import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, Loader2, Settings2, User } from 'lucide-react';
@@ -600,11 +600,71 @@ export function Dashboard() {
               <CardContent className="flex-1 flex flex-col">
                 {/* Amount Input - Top Position (when showEstimatedReturn is true) */}
                 {showEstimatedReturn && (
-                  <div className="mb-4">
+                  <div className="mb-4 space-y-2">
+                    {/* Currency Selector - Above Amount Input */}
                     <div className="relative" ref={dropdownRef}>
-                      {/* Main Input Field */}
                       <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
-                        {/* Amount Input */}
+                        <button
+                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          className="w-full flex items-center justify-between text-left"
+                        >
+                          <div className="flex items-center gap-2">
+                            <CryptoIcon symbol={selectedCurrencyData.symbol} size={20} />
+                            <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">
+                              {selectedCurrencyData.type === 'fiat' 
+                                ? selectedCurrencyData.cardNumber 
+                                : selectedCurrencyData.balance
+                              }
+                            </span>
+                            <ChevronDown size={16} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                          </div>
+                        </button>
+                        <Caption className="absolute left-4 top-2">
+                          Currency
+                        </Caption>
+                      </div>
+                      
+                      {/* Dropdown */}
+                      <AnimatePresence>
+                        {isDropdownOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50"
+                          >
+                            {currencies.map(currency => (
+                              <button
+                                key={currency.symbol}
+                                onClick={() => handleCurrencyChange(currency.symbol)}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                                  currency.symbol === selectedCurrency && "bg-muted"
+                                )}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <CryptoIcon symbol={currency.symbol} size={20} />
+                                  <div className="flex flex-col items-start">
+                                    <span className="font-medium text-foreground">{currency.name}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
+                                    </span>
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    
+                    {/* Amount Input */}
+                    <div className="relative">
+                      <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
                         <input
                           ref={inputRef}
                           type="text"
@@ -614,59 +674,15 @@ export function Dashboard() {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             setInvestAmount(value);
                           }}
-                          className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground pr-20"
+                          className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground"
                           autoFocus
                         />
-                        
-                        {/* Currency Selector */}
-                        <button
-                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-end hover:bg-muted p-2 rounded transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <CryptoIcon symbol={selectedCurrencyData.symbol} size={16} />
-                            <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
-                            <ChevronDown size={12} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                          </div>
-                          <span className="text-xs text-muted-foreground text-right">
-                            {selectedCurrencyData.type === 'fiat' 
-                              ? selectedCurrencyData.cardNumber 
-                              : selectedCurrencyData.balance
-                            }
-                          </span>
-                        </button>
                         
                         {/* Amount Label */}
                         <Caption className="absolute left-4 top-2">
                           Amount
                         </Caption>
                       </div>
-                      
-                      {/* Dropdown */}
-                      {isDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
-                          {currencies.map(currency => (
-                            <button
-                              key={currency.symbol}
-                              onClick={() => handleCurrencyChange(currency.symbol)}
-                              className={cn(
-                                "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
-                                currency.symbol === selectedCurrency && "bg-muted"
-                              )}
-                            >
-                              <div className="flex items-center gap-3">
-                                <CryptoIcon symbol={currency.symbol} size={20} />
-                                <div className="flex flex-col items-start">
-                                  <span className="font-medium text-foreground">{currency.name}</span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
-                                  </span>
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
@@ -769,72 +785,90 @@ export function Dashboard() {
                 <div className="space-y-6 flex-shrink-0">
                 {/* Amount Input - Bottom Position (when showEstimatedReturn is false) */}
                 {!showEstimatedReturn && (
-                  <div className="relative" ref={dropdownRef}>
-                    {/* Main Input Field */}
-                    <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
-                      {/* Amount Input */}
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
-                        placeholder="$0"
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          setInvestAmount(value);
-                        }}
-                        className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground pr-20"
-                        autoFocus
-                      />
+                  <div className="space-y-2">
+                    {/* Currency Selector - Above Amount Input */}
+                    <div className="relative" ref={dropdownRef}>
+                      <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
+                        <button
+                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          className="w-full flex items-center justify-between text-left"
+                        >
+                          <div className="flex items-center gap-2">
+                            <CryptoIcon symbol={selectedCurrencyData.symbol} size={20} />
+                            <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">
+                              {selectedCurrencyData.type === 'fiat' 
+                                ? selectedCurrencyData.cardNumber 
+                                : selectedCurrencyData.balance
+                              }
+                            </span>
+                            <ChevronDown size={16} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                          </div>
+                        </button>
+                        <Caption className="absolute left-4 top-2">
+                          Currency
+                        </Caption>
+                      </div>
                       
-                      {/* Currency Selector */}
-                      <button
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-end hover:bg-muted p-2 rounded transition-colors"
-                      >
-                        <div className="flex items-center gap-2">
-                          <CryptoIcon symbol={selectedCurrencyData.symbol} size={16} />
-                          <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
-                          <ChevronDown size={12} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                        </div>
-                        <span className="text-xs text-muted-foreground text-right">
-                          {selectedCurrencyData.type === 'fiat' 
-                            ? selectedCurrencyData.cardNumber 
-                            : selectedCurrencyData.balance
-                          }
-                        </span>
-                      </button>
-                      
-                      {/* Amount Label */}
-                      <Caption className="absolute left-4 top-2">
-                        Amount
-                      </Caption>
+                      {/* Dropdown */}
+                      <AnimatePresence>
+                        {isDropdownOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50"
+                          >
+                            {currencies.map(currency => (
+                              <button
+                                key={currency.symbol}
+                                onClick={() => handleCurrencyChange(currency.symbol)}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                                  currency.symbol === selectedCurrency && "bg-muted"
+                                )}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <CryptoIcon symbol={currency.symbol} size={20} />
+                                  <div className="flex flex-col items-start">
+                                    <span className="font-medium text-foreground">{currency.name}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
+                                    </span>
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                     
-                    {/* Dropdown */}
-                    {isDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
-                        {currencies.map(currency => (
-                          <button
-                            key={currency.symbol}
-                            onClick={() => handleCurrencyChange(currency.symbol)}
-                            className={cn(
-                              "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
-                              currency.symbol === selectedCurrency && "bg-muted"
-                            )}
-                          >
-                            <div className="flex items-center gap-3">
-                              <CryptoIcon symbol={currency.symbol} size={20} />
-                              <div className="flex flex-col items-start">
-                                <span className="font-medium text-foreground">{currency.name}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
-                                </span>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
+                    {/* Amount Input */}
+                    <div className="relative">
+                      <div className="relative h-auto pt-6 pb-2 bg-background border border-input rounded-md flex items-center px-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={investAmount ? (selectedCurrency === 'USD' ? `$${Number(investAmount).toLocaleString()}` : `${Number(investAmount).toLocaleString()} ${selectedCurrency}`) : ''}
+                          placeholder="$0"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            setInvestAmount(value);
+                          }}
+                          className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:opacity-40 text-foreground"
+                          autoFocus
+                        />
+                        
+                        {/* Amount Label */}
+                        <Caption className="absolute left-4 top-2">
+                          Amount
+                        </Caption>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )}
                 <div className="flex gap-3">

@@ -472,49 +472,32 @@ export function Investments() {
             
           </div>
           <div className="space-y-6">
-            {/* Merged Currency Select + Investment Input */}
-            <div className="space-y-2">
+            {/* Currency Select + Investment Input */}
+            <div>
                 <Label className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Choose your amount
+                  Currency
                 </Label>
-                <div className="relative" ref={dropdownRef}>
-                  {/* Main Input Field */}
-                  <div className="relative h-16 bg-background border border-input rounded-md flex items-center px-4 py-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
-                    {/* Amount Input */}
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      placeholder="$0"
-                      value={investAmount ? investAmount.toLocaleString() : ''}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '');
-                        setInvestAmount(Number(value) || null);
-                        setShowWarning(false);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEstimateReturns();
-                        }
-                      }}
-                      className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:text-muted-foreground placeholder:opacity-40 text-foreground"
-                    />
-                    
-                    {/* Currency Selector */}
+                
+                {/* Currency Selector - Above Amount Input */}
+                <div className="relative mt-2" ref={dropdownRef}>
+                  <div className="relative h-auto min-h-[44px] bg-background border border-input rounded-md flex items-center px-4 py-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex flex-col items-end ml-4 hover:bg-muted p-2 rounded transition-colors"
+                      className="w-full flex items-center justify-between text-left"
                     >
                       <div className="flex items-center gap-2">
                         <CryptoIcon symbol={selectedCurrencyData.symbol} size={20} />
                         <span className="text-sm font-medium text-foreground">{selectedCurrencyData.symbol}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {selectedCurrencyData.type === 'fiat' 
+                            ? selectedCurrencyData.cardNumber 
+                            : selectedCurrencyData.balance
+                          }
+                        </span>
                         <ChevronDown size={16} className={`transition-transform text-muted-foreground ${isDropdownOpen ? 'rotate-180' : ''}`} />
                       </div>
-                      <span className="text-xs text-muted-foreground ">
-                        {selectedCurrencyData.type === 'fiat' 
-                          ? selectedCurrencyData.cardNumber 
-                          : selectedCurrencyData.balance
-                        }
-                      </span>
                     </button>
                   </div>
                   
@@ -552,12 +535,41 @@ export function Investments() {
                     )}
                   </AnimatePresence>
                 </div>
+                
+                <div className="mt-6" style={{ marginTop: '24px' }}>
+                  <Label className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Choose your amount
+                  </Label>
+                </div>
+                
+                {/* Amount Input */}
+                <div className="relative mt-2">
+                  <div className="relative h-auto min-h-[44px] bg-background border border-input rounded-md flex items-center gap-1 px-4 py-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-accent/50 transition-colors">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      placeholder="$0"
+                      value={investAmount ? investAmount.toLocaleString() : ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        setInvestAmount(Number(value) || null);
+                        setShowWarning(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEstimateReturns();
+                        }
+                      }}
+                      className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:text-muted-foreground placeholder:opacity-40 text-foreground"
+                    />
+                  </div>
+                </div>
+                
                 {showWarning && (
                   <Caption className="text-warning mt-2">
                     Fill in your investment
                   </Caption>
                 )}
-                
               </div>
             
             {/* Estimated Return Section */}
