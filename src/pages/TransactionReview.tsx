@@ -480,7 +480,7 @@ export function TransactionReview() {
                         acceptedTerms
                           ? "bg-primary border-primary text-primary-foreground"
                           : "border-border hover:border-primary",
-                        showTermsWarning && !acceptedTerms && "border-red-500 bg-red-50"
+                        showTermsWarning && !acceptedTerms && "border-destructive bg-destructive/10"
                       )}
                     >
                       {acceptedTerms && <Check className="h-3 w-3" />}
@@ -505,7 +505,7 @@ export function TransactionReview() {
 
                   {/* Warning Message */}
                   {showTermsWarning && (
-                    <div className="text-red-600 text-xs text-left">
+                    <div className="text-destructive text-xs text-left">
                       You must first accept the Terms and Conditions
                     </div>
                   )}
@@ -606,7 +606,7 @@ export function TransactionReview() {
               acceptedTerms
                 ? "bg-primary border-primary text-primary-foreground"
                 : "border-border hover:border-primary",
-              showTermsWarning && !acceptedTerms && "border-red-500 bg-red-50"
+              showTermsWarning && !acceptedTerms && "border-destructive bg-destructive/10"
             )}
           >
             {acceptedTerms && <Check className="h-3 w-3" />}
@@ -631,7 +631,7 @@ export function TransactionReview() {
 
         {/* Warning Message - Mobile */}
         {showTermsWarning && (
-          <div className="text-red-600 text-xs text-left">
+          <div className="text-destructive text-xs text-left">
             You must first accept the Terms and Conditions
           </div>
         )}

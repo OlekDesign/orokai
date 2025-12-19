@@ -49,7 +49,7 @@
     --muted-foreground: 0 0% 70.8%;   /* neutral-400 */
     --accent: 0 0% 15%;             /* neutral-700 */
     --accent-foreground: 0 0% 98%;     /* neutral-50 */
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 89.1% 71.6%;
     --destructive-foreground: 0 0% 98%;
     --success: 150 90% 60%;
     --success-foreground: 0 0% 98%;
@@ -156,7 +156,20 @@
   }
   
   .text-caption {
-    @apply text-xs font-light text-muted-foreground leading-none;
+    @apply text-xs font-light leading-none;
+    color: hsl(var(--muted-foreground));
+  }
+  
+  .text-caption.text-destructive {
+    color: hsl(var(--destructive)) !important;
+  }
+  
+  /* Ensure border-destructive overrides hover and focus states */
+  input.border-destructive,
+  input.border-destructive:hover,
+  input.border-destructive:focus,
+  input.border-destructive:focus-visible {
+    border-color: hsl(var(--destructive)) !important;
   }
   
   .text-overline {
