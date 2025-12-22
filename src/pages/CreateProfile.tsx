@@ -106,7 +106,7 @@ export default function CreateProfile() {
                 className="flex items-center gap-2"
               >
                 <Camera className="w-4 h-4" />
-                Add a photo
+                {avatar ? 'Change photo' : 'Add a photo'}
               </Button>
               
               <input
@@ -202,7 +202,7 @@ export default function CreateProfile() {
                   className="flex items-center gap-2"
                 >
                   <Camera className="w-4 h-4" />
-                  Add a photo
+                  {avatar ? 'Change photo' : 'Add a photo'}
                 </Button>
                 
                 <input

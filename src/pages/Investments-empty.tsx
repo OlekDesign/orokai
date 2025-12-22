@@ -535,7 +535,7 @@ export default function InvestmentsEmpty() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 md:min-w-[288px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('provider')}
@@ -552,24 +552,7 @@ export default function InvestmentsEmpty() {
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
-                      <div 
-                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
-                        onClick={() => handleSort('frequency')}
-                      >
-                        <Caption 
-                          className="whitespace-nowrap"
-                          style={{ color: sortBy === 'frequency' ? 'white' : undefined }}
-                        >
-                          Frequency
-                        </Caption>
-                        <InfoTooltip 
-                          content="How often you receive your investment rewards"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
-                        />
-                      </div>
-                    </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[140px] md:min-w-[168px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('rewards')}
@@ -581,12 +564,12 @@ export default function InvestmentsEmpty() {
                           Rewards
                         </Caption>
                         <InfoTooltip 
-                          content="The amount you earn per reward period"
+                          content="The amount you earn per reward period and how often you receive rewards"
                           iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[80px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('apy')}
@@ -603,7 +586,7 @@ export default function InvestmentsEmpty() {
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[120px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('annualReturn')}
@@ -650,7 +633,7 @@ export default function InvestmentsEmpty() {
                       )}
                       onClick={() => setSelectedOption(option)}
                     >
-                      <td className="p-4">
+                      <td className="p-4 md:min-w-[288px]">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center">
                             <div className="relative">
@@ -683,10 +666,9 @@ export default function InvestmentsEmpty() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-sm">{option.rewardFrequency}</td>
-                      <td className="p-4 text-sm">{option.rewardValue}</td>
-                      <td className="p-4 text-sm ">{option.apy}</td>
-                      <td className="p-4 text-sm font-bold">
+                      <td className="p-4 text-sm min-w-[140px] md:min-w-[168px]">{option.rewardValue} every {option.rewardFrequency}</td>
+                      <td className="p-4 text-sm min-w-[80px]">{option.apy}</td>
+                      <td className="p-4 text-sm font-bold min-w-[120px]">
                         {(() => {
                           const currentAmount = investAmount || 0;
                           const apyValue = parseFloat(option.apy.replace('%', '')) / 100;

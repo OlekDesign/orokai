@@ -26,7 +26,15 @@ export function PageHeader({
 
   return (
     <div className="fixed top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-background">
-      <Heading3>{title}</Heading3>
+      {title === "Orokai" ? (
+        <img 
+          src={`${import.meta.env.BASE_URL}logo-orokai-full-white.svg`}
+          alt="Orokai" 
+          className="h-7 w-auto"
+        />
+      ) : (
+        <Heading3>{title}</Heading3>
+      )}
       {showCloseButton && (
         <Button
           variant="ghost"

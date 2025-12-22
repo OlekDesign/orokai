@@ -58,6 +58,9 @@ export function Investments() {
   const [mobileSortBy, setMobileSortBy] = useState<'annualReturn' | 'frequency' | 'rewards' | 'apy' | 'fee'>('annualReturn');
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const hasMobileDrawerBeenOpened = useRef(false);
+  const initialMobileOrder = useRef<string[] | null>(null);
+  const previousSelectedCurrency = useRef<string>(selectedCurrency);
 
   // Currency data with card numbers and balances
   const currencies = [
@@ -343,12 +346,23 @@ export function Investments() {
     }
   };
 
+  // Map currency to chain
+  const getChainForCurrency = (currency: string): string | null => {
+    const currencyToChainMap: Record<string, string> = {
+      'ETH': 'Ethereum',
+      'SOL': 'Solana',
+      'ATOM': 'Cosmos',
+      'USD': 'Ethereum' // Default to Ethereum for USD
+    };
+    return currencyToChainMap[currency] || null;
+  };
+
   const getSortedOptions = (useMobileSorting = false) => {
     const currentAmount = investAmount || 0;
     const currentSortBy = useMobileSorting ? mobileSortBy : sortBy;
     const currentSortOrder = useMobileSorting ? 'desc' : sortOrder;
     
-    return [...investmentOptions].sort((a, b) => {
+    let sorted = [...investmentOptions].sort((a, b) => {
       let aValue: number | string;
       let bValue: number | string;
 
@@ -398,6 +412,41 @@ export function Investments() {
           : (bValue as number) - (aValue as number);
       }
     });
+
+    // For mobile drawer: prioritize selected currency on first load only
+    if (useMobileSorting) {
+      const currencyChanged = previousSelectedCurrency.current !== selectedCurrency;
+      
+      if (!hasMobileDrawerBeenOpened.current) {
+        // First time opening drawer: prioritize selected currency
+        const targetChain = getChainForCurrency(selectedCurrency);
+        if (targetChain) {
+          const selectedIndex = sorted.findIndex(opt => opt.chain === targetChain);
+          if (selectedIndex > 0) {
+            const selectedOption = sorted[selectedIndex];
+            sorted.splice(selectedIndex, 1);
+            sorted.unshift(selectedOption);
+          }
+        }
+        // Store the initial order
+        initialMobileOrder.current = sorted.map(opt => opt.id);
+        hasMobileDrawerBeenOpened.current = true;
+        previousSelectedCurrency.current = selectedCurrency;
+      } else if (currencyChanged && initialMobileOrder.current) {
+        // Currency changed: maintain the stored order (don't re-sort)
+        sorted.sort((a, b) => {
+          const aIndex = initialMobileOrder.current!.indexOf(a.id);
+          const bIndex = initialMobileOrder.current!.indexOf(b.id);
+          return aIndex - bIndex;
+        });
+        previousSelectedCurrency.current = selectedCurrency;
+      } else if (!currencyChanged && initialMobileOrder.current) {
+        // Normal sorting (user changed sort dropdown): update stored order for next currency change
+        initialMobileOrder.current = sorted.map(opt => opt.id);
+      }
+    }
+    
+    return sorted;
   };
 
   // Initialize selectedOption with first investment option
@@ -834,7 +883,7 @@ export function Investments() {
                           </TableCell>
                           <TableCell>
                             <Button
-                              variant="outline"
+                              variant="secondary"
                               size="sm"
                               onClick={() => handleWithdraw(investment.id)}
                             >
@@ -868,7 +917,7 @@ export function Investments() {
                             <Heading4>{investment.chain}</Heading4>
                           </div>
                           <Button
-                            variant="outline"
+                            variant="secondary"
                             size="sm"
                             onClick={() => handleWithdraw(investment.id)}
                           >
@@ -931,7 +980,7 @@ export function Investments() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 md:min-w-[288px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('provider')}
@@ -948,24 +997,7 @@ export function Investments() {
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
-                      <div 
-                        className="flex items-center gap-2 cursor-pointer hover:opacity-80"
-                        onClick={() => handleSort('frequency')}
-                      >
-                          <Caption 
-                            className="whitespace-nowrap"
-                            style={{ color: sortBy === 'frequency' ? 'white' : undefined }}
-                          >
-                          Frequency
-                        </Caption>
-                        <InfoTooltip 
-                          content="How often you receive your investment rewards"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
-                        />
-                      </div>
-                    </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[140px] md:min-w-[168px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('rewards')}
@@ -977,12 +1009,12 @@ export function Investments() {
                           Rewards
                         </Caption>
                         <InfoTooltip 
-                          content="The amount you earn per reward period"
+                          content="The amount you earn per reward period and how often you receive rewards"
                           iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[80px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('apy')}
@@ -999,7 +1031,7 @@ export function Investments() {
                         />
                       </div>
                     </th>
-                    <th className="text-left p-4">
+                    <th className="text-left p-4 min-w-[120px]">
                       <div 
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                         onClick={() => handleSort('annualReturn')}
@@ -1046,7 +1078,7 @@ export function Investments() {
                       )}
                       onClick={() => setSelectedOption(option)}
                     >
-                      <td className="p-4">
+                      <td className="p-4 md:min-w-[288px]">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center">
                             <div className="relative">
@@ -1079,10 +1111,9 @@ export function Investments() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-sm">{option.rewardFrequency}</td>
-                      <td className="p-4 text-sm">{option.rewardValue}</td>
-                      <td className="p-4 text-sm ">{option.apy}</td>
-                      <td className="p-4 text-sm font-bold">
+                      <td className="p-4 text-sm min-w-[140px] md:min-w-[168px]">{option.rewardValue} every {option.rewardFrequency}</td>
+                      <td className="p-4 text-sm min-w-[80px]">{option.apy}</td>
+                      <td className="p-4 text-sm font-bold min-w-[120px]">
                         {(() => {
                           const currentAmount = investAmount || 0;
                           const apyValue = parseFloat(option.apy.replace('%', '')) / 100;
@@ -1165,65 +1196,67 @@ export function Investments() {
                   onClick={() => setSelectedOption(option)}
                 >
                   <CardContent className="p-4">
-                    {/* Title and Badge */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center">
-                          <div className="relative">
-                            <input
-                              type="radio"
-                              name="mobile-investment-option"
-                              checked={selectedOption?.id === option.id}
-                              onChange={() => setSelectedOption(option)}
-                              className="w-4 h-4 opacity-0 absolute cursor-pointer"
-                            />
-                            <div 
-                              className={cn(
-                                "w-4 h-4 rounded-full border-2 border-muted-foreground flex items-center justify-center cursor-pointer",
-                                selectedOption?.id === option.id ? "bg-transparent" : "bg-white/5"
-                              )}
-                            >
-                              {selectedOption?.id === option.id && (
-                                <div className="w-2 h-2 rounded-full bg-primary"></div>
-                              )}
-                            </div>
+                    {/* Three Column Layout: Radio | Labels | Values */}
+                    <div className="flex items-start gap-4">
+                      {/* Radio Button - Left */}
+                      <div className="flex items-center pt-1">
+                        <div className="relative">
+                          <input
+                            type="radio"
+                            name="mobile-investment-option"
+                            checked={selectedOption?.id === option.id}
+                            onChange={() => setSelectedOption(option)}
+                            className="w-4 h-4 opacity-0 absolute cursor-pointer"
+                          />
+                          <div 
+                            className={cn(
+                              "w-4 h-4 rounded-full border border-muted-foreground flex items-center justify-center cursor-pointer",
+                              selectedOption?.id === option.id ? "bg-transparent" : "bg-white/5"
+                            )}
+                          >
+                            {selectedOption?.id === option.id && (
+                              <div className="w-2 h-2 rounded-full bg-primary"></div>
+                            )}
                           </div>
                         </div>
-                        <Heading4>{option.chain}</Heading4>
                       </div>
-                      {option.isPersonalized && (
-                        <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
-                          Our recommendation
-                        </span>
-                      )}
-                    </div>
 
-                    {/* Two Column Layout */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                      <div className="text-muted-foreground">Frequency</div>
-                      <div className="font-medium text-right">{option.rewardFrequency}</div>
-                      
-                      <div className="text-muted-foreground">Rewards</div>
-                      <div className="font-medium text-right">{option.rewardValue}</div>
-                      
-                      <div className="text-muted-foreground">APY</div>
-                      <div className="font-medium text-right">{option.apy}</div>
-                      
-                      <div className="text-muted-foreground">Annual return</div>
-                      <div className="font-bold text-right">
-                        {(() => {
-                          const currentAmount = investAmount || 0;
-                          const apyValue = parseFloat(option.apy.replace('%', '')) / 100;
-                          const totalReturn = currentAmount + (currentAmount * apyValue);
-                          
-                          return selectedCurrency === 'USD' 
-                            ? `$${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
-                            : `${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
-                        })()}
+                      {/* Labels Stack - Middle */}
+                      <div className="flex-1 space-y-2 text-sm">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Heading4 className="mb-0">{option.chain}</Heading4>
+                            {option.isPersonalized && (
+                              <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
+                                Our recommendation
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-muted-foreground">Rewards</div>
+                        <div className="text-muted-foreground">APY</div>
+                        <div className="text-muted-foreground">Annual return</div>
+                        <div className="text-muted-foreground">Fee</div>
                       </div>
-                      
-                      <div className="text-muted-foreground">Fee</div>
-                      <div className="font-medium text-right">{option.transactionFee}</div>
+
+                      {/* Values Stack - Right */}
+                      <div className="text-right space-y-2 text-sm">
+                        <div className="h-6"></div> {/* Spacer for provider name */}
+                        <div className="font-medium">{option.rewardValue} every {option.rewardFrequency}</div>
+                        <div className="font-medium">{option.apy}</div>
+                        <div className="font-bold">
+                          {(() => {
+                            const currentAmount = investAmount || 0;
+                            const apyValue = parseFloat(option.apy.replace('%', '')) / 100;
+                            const totalReturn = currentAmount + (currentAmount * apyValue);
+                            
+                            return selectedCurrency === 'USD' 
+                              ? `$${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                              : `${totalReturn.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+                          })()}
+                        </div>
+                        <div className="font-medium">{option.transactionFee}</div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

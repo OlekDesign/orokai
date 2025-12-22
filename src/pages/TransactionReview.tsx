@@ -457,7 +457,7 @@ export function TransactionReview() {
                                   : "border-border hover:border-primary"
                               )}
                             >
-                              {saveCard && <Check className="h-3 w-3" />}
+                              {saveCard && <Check className="h-4 w-4" />}
                             </button>
                             <Label className="cursor-pointer" onClick={() => setSaveCard(!saveCard)}>
                               Save the card
@@ -519,7 +519,7 @@ export function TransactionReview() {
                               : "border-border hover:border-primary"
                           )}
                         >
-                          {investInUSDT && <Check className="h-3 w-3" />}
+                          {investInUSDT && <Check className="h-4 w-4" />}
                         </button>
                         <Label className="cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
                           Invest in USDT
@@ -529,7 +529,7 @@ export function TransactionReview() {
                   )}
 
                   {/* Terms and Conditions Checkbox */}
-                  <div className="flex items-start space-x-3 pt-2">
+                  <div className="flex items-start space-x-3">
                     <button
                       onClick={() => {
                         setAcceptedTerms(!acceptedTerms);
@@ -543,7 +543,7 @@ export function TransactionReview() {
                         showTermsWarning && !acceptedTerms && "border-destructive bg-destructive/10"
                       )}
                     >
-                      {acceptedTerms && <Check className="h-3 w-3" />}
+                      {acceptedTerms && <Check className="h-4 w-4" />}
                     </button>
                     <Label 
                       className="cursor-pointer leading-relaxed" 
@@ -669,7 +669,7 @@ export function TransactionReview() {
               showTermsWarning && !acceptedTerms && "border-destructive bg-destructive/10"
             )}
           >
-            {acceptedTerms && <Check className="h-3 w-3" />}
+            {acceptedTerms && <Check className="h-4 w-4" />}
           </button>
           <Label 
             className="cursor-pointer leading-relaxed" 
@@ -941,7 +941,7 @@ export function TransactionReview() {
                               : "border-border hover:border-primary"
                           )}
                         >
-                          {investInUSDT && <Check className="h-3 w-3" />}
+                          {investInUSDT && <Check className="h-4 w-4" />}
                         </button>
                         <Label className="cursor-pointer" onClick={() => setInvestInUSDT(!investInUSDT)}>
                           Invest in USDT
