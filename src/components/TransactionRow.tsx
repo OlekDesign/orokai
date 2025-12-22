@@ -10,13 +10,15 @@ interface TransactionRowProps {
   showExpandButton?: boolean;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  onClick?: () => void;
 }
 
 export function TransactionRow({ 
   transaction, 
   showExpandButton = false, 
   isExpanded = false, 
-  onToggleExpand 
+  onToggleExpand,
+  onClick
 }: TransactionRowProps) {
   const getTransactionIcon = (type: TransactionType) => {
     switch (type) {
@@ -59,10 +61,14 @@ export function TransactionRow({
   return (
     <>
       {/* Mobile Layout (default) */}
-      <TableRow className={cn(
-        "md:hidden transition-colors",
-        isExpanded && "bg-accent/30"
-      )}>
+      <TableRow 
+        className={cn(
+          "md:hidden transition-colors",
+          isExpanded && "bg-accent/30",
+          onClick && "cursor-pointer hover:bg-accent/20"
+        )}
+        onClick={onClick}
+      >
         <TableCell className="py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -108,10 +114,14 @@ export function TransactionRow({
       </TableRow>
 
       {/* Desktop Layout (md and up) */}
-      <TableRow className={cn(
-        "hidden md:table-row transition-colors",
-        isExpanded && "bg-accent/30"
-      )}>
+      <TableRow 
+        className={cn(
+          "hidden md:table-row transition-colors",
+          isExpanded && "bg-accent/30",
+          onClick && "cursor-pointer hover:bg-accent/20"
+        )}
+        onClick={onClick}
+      >
         <TableCell>
           <div className="flex items-center space-x-3">
             <div className={cn(

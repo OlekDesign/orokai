@@ -47,6 +47,7 @@ import { TransactionRow } from '@/components/TransactionRow';
 import { CurrencySelect } from "@/components/CurrencySelect";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { CryptoIcon } from "@/components/CryptoIcon";
+import { TransactionDetailsDialog } from '@/components/TransactionDetailsDialog';
 
 // Exchange rates relative to USD
 const exchangeRates = {
@@ -208,6 +209,8 @@ export function Dashboard() {
   const [chartData, setChartData] = useState(generateChartData(timeRange));
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
 
   const selectedCurrencyData = currencies.find(c => c.symbol === selectedCurrency) || currencies[0];
 
@@ -580,8 +583,8 @@ export function Dashboard() {
 
             <Button
               onClick={() => navigate('/transactions?filter=rewards')}
-              variant="ghost"
-              className="text-foreground hover:text-foreground/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
+              variant="link"
+              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
             >
               See rewards history
             </Button>
@@ -948,7 +951,6 @@ export function Dashboard() {
                   className="text-primary hover:text-primary/80 p-0 h-auto font-normal"
                 >
                   See all
-                  <ExternalLink className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
@@ -968,7 +970,11 @@ export function Dashboard() {
                 {transactions.slice(0, 3).map((tx) => (
                   <TransactionRow 
                     key={tx.id} 
-                    transaction={tx} 
+                    transaction={tx}
+                    onClick={() => {
+                      setSelectedTransaction(tx);
+                      setIsTransactionDialogOpen(true);
+                    }}
                   />
                 ))}
               </TableBody>
@@ -981,7 +987,7 @@ export function Dashboard() {
 
       {/* Investment Options Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="md:w-auto md:max-w-fit md:max-h-[85vh] max-h-[90vh] overflow-y-auto md:p-6 p-4">
           <DialogHeader>
             <DialogTitle>
               Calculated for {(() => {
@@ -993,7 +999,7 @@ export function Dashboard() {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
@@ -1176,6 +1182,13 @@ export function Dashboard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Transaction Details Dialog */}
+      <TransactionDetailsDialog
+        transaction={selectedTransaction}
+        open={isTransactionDialogOpen}
+        onOpenChange={setIsTransactionDialogOpen}
+      />
     </div>
   );
 }

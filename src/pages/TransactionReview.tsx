@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X, CheckCircle } from 'lucide-react';
+import { Shield, CreditCard, Wallet, ArrowLeft, PartyPopper, Check, X, CheckCircle, Coins } from 'lucide-react';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ import { Heading1, Heading2, Heading4, BodyText, BodyTextSmall, Caption, Label }
 import { PageHeader } from "@/components/PageHeader";
 
 type PaymentMethod = 'credit_card' | 'crypto_wallet';
-type CryptoCurrency = 'ETH' | 'SOL' | 'BTC';
+type CryptoCurrency = 'ETH' | 'SOL' | 'BTC' | 'USDT' | 'USDC' | 'ATOM' | 'MATIC' | 'AVAX' | 'DOT';
 
 interface CostBreakdown {
   amount: number;
@@ -31,7 +31,7 @@ interface CurrencyData {
   name: string;
   balance: number;
   usdValue: number;
-  icon: string;
+  icon: string | React.ReactNode;
 }
 
 export function TransactionReview() {
@@ -92,6 +92,48 @@ export function TransactionReview() {
       balance: 0.15,
       usdValue: 43500.00,
       icon: '₿'
+    },
+    {
+      symbol: 'USDT',
+      name: 'Tether',
+      balance: 12500.0,
+      usdValue: 1.00,
+      icon: <Coins className="w-5 h-5" />
+    },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      balance: 8500.0,
+      usdValue: 1.00,
+      icon: <Coins className="w-5 h-5" />
+    },
+    {
+      symbol: 'ATOM',
+      name: 'Cosmos',
+      balance: 1250.5,
+      usdValue: 8.50,
+      icon: '⚛'
+    },
+    {
+      symbol: 'MATIC',
+      name: 'Polygon',
+      balance: 5200.0,
+      usdValue: 0.75,
+      icon: <Coins className="w-5 h-5" />
+    },
+    {
+      symbol: 'AVAX',
+      name: 'Avalanche',
+      balance: 180.5,
+      usdValue: 35.00,
+      icon: <Coins className="w-5 h-5" />
+    },
+    {
+      symbol: 'DOT',
+      name: 'Polkadot',
+      balance: 450.0,
+      usdValue: 6.50,
+      icon: <Coins className="w-5 h-5" />
     }
   ];
   
@@ -434,7 +476,7 @@ export function TransactionReview() {
                         <Label>
                           Select Currency
                         </Label>
-                        <div className="space-y-3">
+                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2 scrollbar-custom">
                           {currencies.map((currency) => (
                             <button
                               key={currency.symbol}
@@ -856,7 +898,7 @@ export function TransactionReview() {
                         <Label>
                           Select Currency
                         </Label>
-                        <div className="space-y-3">
+                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2 scrollbar-custom">
                           {currencies.map((currency) => (
                             <button
                               key={currency.symbol}
@@ -1000,7 +1042,7 @@ export function TransactionReview() {
                       </div>
                       
                       <div className="space-y-4">
-                        <h2 className="text-2xl font-bold">Transaction Successful</h2>
+                        <h2 className="text-2xl font-bold">Investment Initiated</h2>
                         
                         <p className="text-muted-foreground">
                           Great choice! Your investment is being processed and will be ready in a couple of minutes.

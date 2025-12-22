@@ -1,18 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
   Wallet2, 
   CreditCard, 
   Copy, 
   LogOut,
-  DollarSign,
   Plus,
   Trash2,
   X,
   Check,
-  CreditCardIcon,
-  ArrowDownLeft,
   User,
   Edit3,
   Save,
@@ -22,7 +19,6 @@ import { CryptoIcon } from '../components/CryptoIcon';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
 import { ConfirmationModal } from '../components/ConfirmationModal';
-import confetti from 'canvas-confetti';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -239,6 +235,17 @@ export function Wallet() {
     logout();
     navigate('/login');
   };
+
+  // Safety check - ensure component always renders
+  if (!profile) {
+    return (
+      <div className="space-y-4 sm:space-y-6">
+        <div className="text-center py-8">
+          <BodyText>Loading profile...</BodyText>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">

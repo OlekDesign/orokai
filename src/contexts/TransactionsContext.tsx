@@ -15,7 +15,11 @@ interface TransactionContextValue {
 const TransactionsContext = createContext<TransactionContextValue | undefined>(undefined);
 
 export function TransactionsProvider({ children }: { children: ReactNode }) {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialDemoTransactions);
+  // Sort transactions by timestamp (most recent first)
+  const sortedInitialTransactions = [...initialDemoTransactions].sort((a, b) => 
+    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+  const [transactions, setTransactions] = useState<Transaction[]>(sortedInitialTransactions);
 
   const addTransaction = (type: TransactionType, amount: number, token: string) => {
     const newTransaction: Transaction = {
@@ -27,7 +31,13 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
       timestamp: new Date().toISOString(),
     };
 
-    setTransactions(prev => [newTransaction, ...prev]);
+    setTransactions(prev => {
+      const updated = [newTransaction, ...prev];
+      // Sort by timestamp (most recent first)
+      return updated.sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+    });
 
     // Update status to completed after 10 seconds
     setTimeout(() => {

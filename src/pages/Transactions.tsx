@@ -29,8 +29,18 @@ import { cn } from "@/lib/utils";
 import { useTransactions } from '@/contexts/TransactionsContext';
 import { TransactionRow } from '@/components/TransactionRow';
 import { Caption } from '@/components/ui/typography';
+import { TransactionDetailsDialog } from '@/components/TransactionDetailsDialog';
 
 export const initialDemoTransactions: Transaction[] = [
+  // Failed investment - most recent
+  {
+    id: 'failed-investment',
+    type: 'investment',
+    amount: 10000,
+    token: 'USDT',
+    status: 'failed',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago (most recent)
+  },
   // Completed transactions
   ...(rewardTransactions as Transaction[]),
   {
@@ -40,6 +50,14 @@ export const initialDemoTransactions: Transaction[] = [
     token: 'USDT',
     status: 'completed',
     timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '7',
+    type: 'investment',
+    amount: 10000,
+    token: 'USDT',
+    status: 'failed',
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: '8',
@@ -55,6 +73,8 @@ export function Transactions() {
   const location = useLocation();
   const navigate = useNavigate();
   const { transactions, getTransactionsByType } = useTransactions();
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
 
   // Animation variants
   const cardVariants = {
@@ -159,6 +179,10 @@ export function Transactions() {
                   <TransactionRow 
                     key={tx.id}
                     transaction={tx}
+                    onClick={() => {
+                      setSelectedTransaction(tx);
+                      setIsTransactionDialogOpen(true);
+                    }}
                   />
                 ))}
               </TableBody>
@@ -168,6 +192,13 @@ export function Transactions() {
           </motion.div>
         </Card>
       </motion.div>
+
+      {/* Transaction Details Dialog */}
+      <TransactionDetailsDialog
+        transaction={selectedTransaction}
+        open={isTransactionDialogOpen}
+        onOpenChange={setIsTransactionDialogOpen}
+      />
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function InfoTooltip({
         <TooltipTrigger asChild>
           <Info className={iconClassName} />
         </TooltipTrigger>
-        <TooltipContent className={`max-w-xs bg-foreground p-4 ${className}`}>
+        <TooltipContent className={`max-w-xs bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}>
           <div className="w-full aspect-video mb-3 rounded-md overflow-hidden bg-muted">
             <video
               src={videoUrl || "/video.mp4"}
