@@ -221,9 +221,7 @@ function AppRoutes() {
         path="/transaction-review"
         element={
           <ProfileProtectedRoute>
-            <Layout>
-              <TransactionReview />
-            </Layout>
+            <TransactionReview />
           </ProfileProtectedRoute>
         }
       />

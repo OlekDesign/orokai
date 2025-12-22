@@ -7,35 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - 2024-12-XX
+### Changed - 2024-12-22
 
-#### Transaction Details Dialog
-- **New Component**: Created `TransactionDetailsDialog` component for viewing detailed transaction information
-  - Displays comprehensive transaction details including status, date, time, token, and transaction ID
-  - Visual status indicators with icons (completed, pending, failed)
-  - Color-coded transaction type icons (rewards, withdrawals, investments, top-ups, internal transfers)
-  - Error details display for failed transactions
-  - Responsive design with mobile and desktop layouts
+#### Transaction Review Page Improvements
+- **Full-Screen Layout**: Refactored TransactionReview page to use full-screen layout without Layout wrapper
+  - Removed Layout component wrapper from route definition
+  - Changed from fixed positioning to scrollable layout with proper spacing
+  - Improved mobile responsiveness and scrolling behavior
+  - Better visual consistency with full-page experience
 
-#### Enhanced Transaction Interactions
-- **Clickable Transaction Rows**: Transaction rows are now clickable across Dashboard, Transactions, and Wallet pages
-  - Added onClick handler support to `TransactionRow` component
-  - Hover effects for better UX feedback
-  - Opens transaction details dialog on click
-  - Integrated in Dashboard, Transactions, and Wallet pages
-
-#### Expanded Cryptocurrency Support
-- **Additional Cryptocurrencies**: Added support for 6 new cryptocurrencies in TransactionReview page
-  - USDT (Tether)
-  - USDC (USD Coin)
-  - ATOM (Cosmos)
-  - MATIC (Polygon)
-  - AVAX (Avalanche)
-  - DOT (Polkadot)
-  - Scrollable currency selection dropdown with custom scrollbar styling
-  - Improved mobile responsiveness with max-height constraints
-
-### Changed - 2024-12-XX
+#### Transaction Management Enhancements
+- **Remove Transaction Functionality**: Added ability to remove transactions from context
+  - Added `removeTransaction` function to TransactionsContext
+  - Enables better transaction lifecycle management
+  - Supports future features requiring transaction deletion
 
 #### Dashboard UI Improvements
 - **Simplified Reward Display**: Refactored the investment details section in the Dashboard to improve UI consistency and reduce visual clutter
@@ -43,34 +28,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Combined reward value and frequency into a single "Reward" field
   - Updated display format to show reward amount with frequency inline (e.g., "$2.14 every 24h")
   - Maintains all functionality while providing a cleaner, more compact interface
-- **Button Styling**: Updated "See rewards history" button from ghost variant to link variant for better visual consistency
-- **Investment Modal**: Improved responsive design with better padding and max-width constraints
 
-#### Transaction Context Enhancements
-- **Failed Transaction Support**: Added failed transaction examples to demo data
-- **Transaction Status Handling**: Enhanced transaction status display and filtering
+**Technical Details:**
+- Modified `src/App.tsx` - Removed Layout wrapper from TransactionReview route
+- Modified `src/pages/TransactionReview.tsx` - Changed layout from fixed to scrollable with proper spacing
+- Modified `src/contexts/TransactionsContext.tsx` - Added removeTransaction function
+- Simplified `CHANGELOG.md` structure for better maintainability
 
-#### Styling Improvements
-- **Custom Scrollbar**: Added custom scrollbar styling for currency selection dropdowns
-- **CSS Enhancements**: Added scrollbar utility classes to `index.css`
-
-### Technical Details
-- Created `src/components/TransactionDetailsDialog.tsx`
-- Modified `src/components/TransactionRow.tsx` - Added onClick prop support
-- Modified `src/pages/Dashboard.tsx` - Integrated transaction details dialog
-- Modified `src/pages/Transactions.tsx` - Added clickable rows and dialog integration
-- Modified `src/pages/TransactionReview.tsx` - Expanded cryptocurrency options and improved scrolling
-- Modified `src/pages/Wallet.tsx` - Enhanced transaction interactions
-- Modified `src/contexts/TransactionsContext.tsx` - Added failed transaction support
-- Modified `src/index.css` - Added scrollbar styling utilities
-- Removed `DEPLOYMENT_SUMMARY.md` - Consolidated documentation
-
-### Impact
-- Improved user experience with detailed transaction views
-- Better accessibility with clickable transaction rows
-- Expanded cryptocurrency support for broader user base
-- Enhanced mobile responsiveness
-- Cleaner, more maintainable code structure
+**Impact:**
+- Better user experience with full-screen transaction review flow
+- Improved transaction management capabilities
+- Better visual hierarchy in the investment details section
+- Reduced vertical space usage
+- More intuitive information presentation
 
 ---
 

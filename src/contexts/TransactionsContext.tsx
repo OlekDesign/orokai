@@ -7,6 +7,7 @@ interface TransactionContextValue {
   transactions: Transaction[];
   addTransaction: (type: TransactionType, amount: number, token: string) => void;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
+  removeTransaction: (id: string) => void;
   getRecentTransactions: (limit?: number) => Transaction[];
   getTransactionsByType: (type: TransactionType) => Transaction[];
   getPendingTransactions: () => Transaction[];
@@ -53,6 +54,10 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     return newTransaction;
   };
 
+  const removeTransaction = (id: string) => {
+    setTransactions(prev => prev.filter(tx => tx.id !== id));
+  };
+
   const updateTransaction = (id: string, updates: Partial<Transaction>) => {
     setTransactions(prev =>
       prev.map(tx =>
@@ -91,6 +96,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
         transactions,
         addTransaction,
         updateTransaction,
+        removeTransaction,
         getRecentTransactions,
         getTransactionsByType,
         getPendingTransactions,

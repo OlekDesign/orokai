@@ -271,9 +271,9 @@ export function TransactionReview() {
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="min-h-screen bg-background overflow-auto scrollbar-hide pt-16">
       <PageHeader onClose={handleClose} />
-      <div className="h-full grid grid-cols-1 lg:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100vh-64px)]">
         {/* Left Column */}
         <div className="bg-background overflow-auto scrollbar-hide">
           <div className="p-4 lg:p-12 max-w-xl mx-auto lg:ml-auto lg:mr-4 space-y-6">
