@@ -738,7 +738,7 @@ export function Dashboard() {
                           <Caption>APY</Caption>
                           <InfoTooltip 
                             content="Annual Percentage Yield - your yearly returns including compound interest"
-                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                           />
                         </div>
                         <Caption className="!text-white">7.8%</Caption>
@@ -751,7 +751,7 @@ export function Dashboard() {
                           <Caption>Reward</Caption>
                           <InfoTooltip 
                             content="The amount you earn every 24 hours based on your investment"
-                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                           />
                         </div>
                         <Caption className="!text-white">
@@ -774,7 +774,7 @@ export function Dashboard() {
                           <Caption>Transaction fee</Caption>
                           <InfoTooltip 
                             content="One-time fee charged when you start your investment"
-                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                            iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                           />
                         </div>
                         <Caption className="!text-white">2.5%</Caption>
@@ -1018,7 +1018,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="The blockchain network where your investment will be deployed"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -1035,7 +1035,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="How often you receive your investment rewards"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -1052,7 +1052,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="The amount you earn per reward period"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -1069,7 +1069,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="Annual Percentage Yield - your yearly returns including compound interest"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -1086,7 +1086,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="Your total expected returns for one year based on your investment amount"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -1103,7 +1103,7 @@ export function Dashboard() {
                         </Caption>
                         <InfoTooltip 
                           content="One-time fee charged when you start your investment"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>

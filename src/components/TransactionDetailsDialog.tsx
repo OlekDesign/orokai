@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BodyText, Caption, Heading2 } from '@/components/ui/typography';
 import type { Transaction, TransactionType } from '@/types';
@@ -84,7 +85,20 @@ export function TransactionDetailsDialog({
     };
   };
 
+  const formatCompactDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const time = date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true
+    });
+    return `${day} ${month}, ${time}`;
+  };
+
   const { date, time } = formatDate(transaction.timestamp);
+  const compactDateTime = formatCompactDate(transaction.timestamp);
 
   const DetailRow = ({ label, value }: { label: string; value: ReactNode }) => (
     <div className="flex flex-row items-center justify-between gap-2 py-3 border-b border-border last:border-0">
@@ -113,62 +127,173 @@ export function TransactionDetailsDialog({
               {getTransactionIcon(transaction.type as TransactionType)}
             </div>
             <div>
-              <Heading2 className="text-foreground">
+              <Heading2 className="text-muted-foreground">
                 {getTransactionLabel(transaction.type as TransactionType)}
               </Heading2>
-              <BodyText className="text-muted-foreground mt-1">
+              <h1 className="text-heading-1 text-foreground mt-1">
                 {transaction.type === 'withdrawals' 
                   ? `-$${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                   : transaction.type === 'investment'
                   ? `$${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                   : `+$${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              </h1>
+              <BodyText className="text-muted-foreground mt-1">
+                {compactDateTime}
               </BodyText>
+              
+              {/* Action Buttons for Pending Investment Transactions */}
+              {transaction.type === 'investment' && transaction.status === 'pending' && (
+                <div className="flex flex-row items-center justify-center gap-3 mt-4">
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    className="px-6"
+                  >
+                    Cancel Transaction
+                  </Button>
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    className="px-6"
+                  >
+                    Speed Up
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Details Section */}
           <div className="space-y-0">
-            <DetailRow
-              label="Status"
-              value={
-                <span className={cn(
-                  "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
-                  transaction.status === 'completed' && "text-success-foreground bg-success/10",
-                  transaction.status === 'pending' && "text-warning-foreground bg-warning/10",
-                  transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
-                )}>
-                  {getStatusIcon(transaction.status)}
-                  {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                </span>
-              }
-            />
-            <DetailRow
-              label="Date"
-              value={<BodyText className="text-foreground">{date}</BodyText>}
-            />
-            <DetailRow
-              label="Time"
-              value={<BodyText className="text-foreground">{time}</BodyText>}
-            />
-            <DetailRow
-              label="Token"
-              value={<BodyText className="text-foreground">{transaction.token}</BodyText>}
-            />
-            <DetailRow
-              label="Transaction ID"
-              value={
-                <BodyText className="text-foreground font-mono text-sm break-all">
-                  {transaction.id}
-                </BodyText>
-              }
-            />
-            {transaction.status === 'failed' && (
-              <div className="flex flex-col gap-2 py-3 border-b border-border last:border-0">
-                <Caption className="text-muted-foreground">Details</Caption>
-                <BodyText className="text-foreground">
-                  Transaction failed due to insufficient funds or network error. Please try again.
-                </BodyText>
-              </div>
+            {transaction.type === 'investment' && (
+              <>
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
+                      transaction.status === 'completed' && "text-success-foreground bg-success/10",
+                      transaction.status === 'pending' && "text-white bg-warning/10",
+                      transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
+                    )}>
+                      {getStatusIcon(transaction.status)}
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Payment from"
+                  value={<BodyText className="text-foreground">Mastercard **4118</BodyText>}
+                />
+                <DetailRow
+                  label="Fee"
+                  value={<BodyText className="text-foreground">4.34 USDT</BodyText>}
+                />
+                <DetailRow
+                  label="Token"
+                  value={<BodyText className="text-foreground">{transaction.token}</BodyText>}
+                />
+                <div className="flex flex-col gap-2 py-3 border-b border-border last:border-0">
+                  <Caption className="text-muted-foreground">Details</Caption>
+                  <BodyText className="text-foreground">
+                    {transaction.status === 'failed' 
+                      ? 'Transaction failed due to insufficient funds or network error. Please try again.'
+                      : transaction.status === 'pending'
+                      ? 'Your investment is being processed. It will be active shortly.'
+                      : 'Investment successfully processed and added to your portfolio.'}
+                  </BodyText>
+                </div>
+              </>
+            )}
+            {transaction.type === 'rewards' && (
+              <>
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
+                      transaction.status === 'completed' && "text-success-foreground bg-success/10",
+                      transaction.status === 'pending' && "text-white bg-warning/10",
+                      transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
+                    )}>
+                      {getStatusIcon(transaction.status)}
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Investment"
+                  value={<BodyText className="text-foreground">${(transaction.amount * 20).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT</BodyText>}
+                />
+                <DetailRow
+                  label="Provider"
+                  value={<BodyText className="text-foreground">SOL</BodyText>}
+                />
+              </>
+            )}
+            {transaction.type === 'withdrawals' && (
+              <>
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
+                      transaction.status === 'completed' && "text-success-foreground bg-success/10",
+                      transaction.status === 'pending' && "text-white bg-warning/10",
+                      transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
+                    )}>
+                      {getStatusIcon(transaction.status)}
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Withdrawn to"
+                  value={<BodyText className="text-foreground">Mastercard **4118</BodyText>}
+                />
+                <DetailRow
+                  label="Fee"
+                  value={<BodyText className="text-foreground">4.34 USDT</BodyText>}
+                />
+              </>
+            )}
+            {transaction.type !== 'investment' && transaction.type !== 'rewards' && transaction.type !== 'withdrawals' && (
+              <>
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
+                      transaction.status === 'completed' && "text-success-foreground bg-success/10",
+                      transaction.status === 'pending' && "text-white bg-warning/10",
+                      transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
+                    )}>
+                      {getStatusIcon(transaction.status)}
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Token"
+                  value={<BodyText className="text-foreground">{transaction.token}</BodyText>}
+                />
+                <DetailRow
+                  label="Transaction ID"
+                  value={
+                    <BodyText className="text-foreground font-mono text-sm break-all">
+                      {transaction.id}
+                    </BodyText>
+                  }
+                />
+                {transaction.status === 'failed' && (
+                  <div className="flex flex-col gap-2 py-3 border-b border-border last:border-0">
+                    <Caption className="text-muted-foreground">Details</Caption>
+                    <BodyText className="text-foreground">
+                      Transaction failed due to insufficient funds or network error. Please try again.
+                    </BodyText>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

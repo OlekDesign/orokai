@@ -17,8 +17,8 @@ interface InfoTooltipProps {
 export function InfoTooltip({ 
   content, 
   className = "", 
-  iconClassName = "w-3 h-3 text-muted-foreground hover:text-foreground cursor-help",
-  delayDuration = 0,
+  iconClassName = "w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100",
+  delayDuration = 100,
   videoUrl
 }: InfoTooltipProps) {
   return (

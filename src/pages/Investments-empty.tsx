@@ -429,7 +429,7 @@ export default function InvestmentsEmpty() {
                     <span className="text-muted-foreground">APY</span>
                     <InfoTooltip 
                       content="Annual Percentage Yield - your yearly returns including compound interest"
-                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                     />
                   </div>
                   <span className="font-medium">7.8%</span>
@@ -442,7 +442,7 @@ export default function InvestmentsEmpty() {
                     <span className="text-muted-foreground">Reward frequency</span>
                     <InfoTooltip 
                       content="How often you receive your investment rewards"
-                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                     />
                   </div>
                   <span className="font-medium">24h</span>
@@ -455,7 +455,7 @@ export default function InvestmentsEmpty() {
                     <span className="text-muted-foreground">Reward value</span>
                     <InfoTooltip 
                       content="The amount you earn every 24 hours based on your investment"
-                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                     />
                   </div>
                   <span className="font-medium">
@@ -476,7 +476,7 @@ export default function InvestmentsEmpty() {
                     <span className="text-muted-foreground">Transaction fee</span>
                     <InfoTooltip 
                       content="One-time fee charged when you start your investment"
-                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help"
+                      iconClassName="w-3 h-3 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                     />
                   </div>
                   <span className="font-medium">2.5%</span>
@@ -548,7 +548,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="The blockchain network where your investment will be deployed"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -565,7 +565,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="How often you receive your investment rewards"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -582,7 +582,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="The amount you earn per reward period"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -599,7 +599,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="Annual Percentage Yield - your yearly returns including compound interest"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -616,7 +616,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="Your total expected returns for one year based on your investment amount"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>
@@ -633,7 +633,7 @@ export default function InvestmentsEmpty() {
                         </Caption>
                         <InfoTooltip 
                           content="One-time fee charged when you start your investment"
-                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help"
+                          iconClassName="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help transition-colors duration-200 delay-100"
                         />
                       </div>
                     </th>

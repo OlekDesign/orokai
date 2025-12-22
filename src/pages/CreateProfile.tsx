@@ -64,7 +64,7 @@ export default function CreateProfile() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-muted/50 px-4">
+    <div className="min-h-screen bg-background px-4">
       {/* Desktop Layout - Centered */}
       <div className="hidden md:flex min-h-screen items-center justify-center">
         <motion.div
@@ -100,7 +100,7 @@ export default function CreateProfile() {
               </div>
               
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-2"
