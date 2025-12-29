@@ -43,7 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Caption, BodyText, Heading2, Heading3 } from "@/components/ui/typography";
+import { Caption, BodyText, Heading2, Heading3, Label } from "@/components/ui/typography";
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
@@ -101,12 +101,19 @@ export function Wallet() {
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [hasWallet, setHasWallet] = useState(true);
-  const [selectedCardId, setSelectedCardId] = useState(DEMO_CARDS[0].id);
   const [cards, setCards] = useState(DEMO_CARDS);
+  const [selectedCardId, setSelectedCardId] = useState(DEMO_CARDS.length > 0 ? DEMO_CARDS[0].id : '');
   const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [availableFunds, setAvailableFunds] = useState(closedInvestmentAmount || 0);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  
+  // New card form states
+  const [showNewCardForm, setShowNewCardForm] = useState(false);
+  const [newCardNumber, setNewCardNumber] = useState('');
+  const [newCardHolder, setNewCardHolder] = useState('');
+  const [newCardExpiry, setNewCardExpiry] = useState('');
+  const [newCardSecurityCode, setNewCardSecurityCode] = useState('');
   
   // Profile editing states
   const [isEditingName, setIsEditingName] = useState(false);
@@ -171,15 +178,42 @@ export function Wallet() {
     }, 1500);
   };
 
+  const formatCardNumber = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    const groups = numbers.match(/.{1,4}/g) || [];
+    return groups.join(' ').substr(0, 19);
+  };
+
+  const formatExpiry = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length >= 2) {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}`;
+    }
+    return numbers;
+  };
+
   const handleAddCard = () => {
+    if (!newCardNumber || !newCardHolder || !newCardExpiry || !newCardSecurityCode) return;
+    
+    const cardNumberOnly = newCardNumber.replace(/\s/g, '');
+    const last4 = cardNumberOnly.slice(-4);
+    
     const newCard: CreditCardData = {
       id: Date.now().toString(),
-      last4: '8888',
-      fullNumber: '8888 8888 8888 8888',
-      bank: 'Citibank',
-      holder: 'John Doe'
+      last4: last4,
+      fullNumber: newCardNumber,
+      bank: 'Card', // Default bank name since we're not collecting it anymore
+      holder: newCardHolder
     };
     setCards([...cards, newCard]);
+    setSelectedCardId(newCard.id);
+    
+    // Reset form and hide it
+    setNewCardNumber('');
+    setNewCardHolder('');
+    setNewCardExpiry('');
+    setNewCardSecurityCode('');
+    setShowNewCardForm(false);
   };
 
   const handleDeleteCard = (cardId: string) => {
@@ -383,8 +417,12 @@ export function Wallet() {
                   <CreditCard className="w-5 h-5 text-primary" />
                 </div>
                 <div className="text-left">
-                  <BodyText className="font-medium">•••• {selectedCard?.last4}</BodyText>
-                  <p className="text-sm text-muted-foreground">{selectedCard?.bank}</p>
+                  <BodyText className="font-medium">
+                    {cards.length === 0 || !selectedCard ? 'No credit card added' : `•••• ${selectedCard.last4}`}
+                  </BodyText>
+                  {cards.length > 0 && selectedCard && (
+                    <p className="text-sm text-muted-foreground">{selectedCard.bank}</p>
+                  )}
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -525,7 +563,6 @@ export function Wallet() {
                     </Button>
                     <Tooltip show={showCopiedTooltip} message="Address copied" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
                 </div>
               </Button>
 
@@ -575,70 +612,159 @@ export function Wallet() {
       </motion.div>
 
       {/* Card Selection Modal */}
-      <Dialog open={showCardModal} onOpenChange={setShowCardModal}>
-        <DialogContent>
+      <Dialog open={showCardModal} onOpenChange={(open) => {
+        setShowCardModal(open);
+        if (!open) {
+          setShowNewCardForm(false);
+          setNewCardNumber('');
+          setNewCardHolder('');
+          setNewCardExpiry('');
+          setNewCardSecurityCode('');
+        }
+      }}>
+        <DialogContent className="p-6">
           <DialogHeader>
-            <DialogTitle>Payment Methods</DialogTitle>
+            <DialogTitle className="text-heading-2">Payment Methods</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
-            <div className="space-y-3">
-              {cards.map((card) => (
-                <div
-                  key={card.id}
-                  className={cn(
-                    "p-4 rounded-lg transition-colors",
-                    selectedCardId === card.id
-                      ? "bg-primary/10 border-2 border-primary"
-                      : "bg-accent/30 hover:bg-accent/50"
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
-                        <CreditCard className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <BodyText className="font-medium">{card.fullNumber}</BodyText>
-                        <p className="text-sm text-muted-foreground">
-                          {card.bank} • {card.holder}
-                        </p>
-                      </div>
+            {cards.length === 0 || showNewCardForm ? (
+              // New Card Form
+              <form onSubmit={(e) => { e.preventDefault(); handleAddCard(); }} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Card Number</Label>
+                  <Input
+                    type="text"
+                    value={newCardNumber}
+                    onChange={(e) => setNewCardNumber(formatCardNumber(e.target.value))}
+                    placeholder="1234 5678 9012 3456"
+                    maxLength={19}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Card Holder Name</Label>
+                  <Input
+                    type="text"
+                    value={newCardHolder}
+                    onChange={(e) => setNewCardHolder(e.target.value)}
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div className="pb-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Expiry Date</Label>
+                      <Input
+                        type="text"
+                        value={newCardExpiry}
+                        onChange={(e) => setNewCardExpiry(formatExpiry(e.target.value))}
+                        placeholder="MM/YY"
+                        maxLength={5}
+                        required
+                      />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      {selectedCardId === card.id ? (
-                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                          <Check className="h-4 w-4 text-primary-foreground" />
-                        </div>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="w-6 h-6 rounded-full p-0"
-                          onClick={() => setSelectedCardId(card.id)}
-                        />
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteCard(card.id)}
-                        className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    <div className="space-y-2">
+                      <Label>Security Code</Label>
+                      <Input
+                        type="text"
+                        value={newCardSecurityCode}
+                        onChange={(e) => setNewCardSecurityCode(e.target.value.replace(/\D/g, '').substr(0, 4))}
+                        placeholder="123"
+                        maxLength={4}
+                        required
+                      />
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="flex gap-3">
+                  {cards.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setShowNewCardForm(false);
+                        setNewCardNumber('');
+                        setNewCardHolder('');
+                        setNewCardExpiry('');
+                        setNewCardSecurityCode('');
+                      }}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                  <Button
+                    type="submit"
+                    className={cards.length > 0 ? "flex-1" : "w-full"}
+                    disabled={!newCardNumber || !newCardHolder || !newCardExpiry || !newCardSecurityCode}
+                  >
+                    Add Card
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {cards.map((card) => (
+                    <div
+                      key={card.id}
+                      className={cn(
+                        "p-4 rounded-lg transition-colors",
+                        selectedCardId === card.id
+                          ? "bg-primary/10 border-2 border-primary"
+                          : "bg-accent/30 hover:bg-accent/50"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
+                            <CreditCard className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <BodyText className="font-medium">{card.fullNumber}</BodyText>
+                            <p className="text-sm text-muted-foreground">
+                              {card.bank} • {card.holder}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {selectedCardId === card.id ? (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                              <Check className="h-4 w-4 text-primary-foreground" />
+                            </div>
+                          ) : (
+                            <Button
+                              variant="secondary"
+                              size="icon"
+                              className="w-6 h-6 rounded-full p-0"
+                              onClick={() => setSelectedCardId(card.id)}
+                            />
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteCard(card.id)}
+                            className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-            <Button
-              variant="secondary"
-              onClick={handleAddCard}
-              className="w-full"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Card
-            </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowNewCardForm(true)}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Card
+                </Button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>

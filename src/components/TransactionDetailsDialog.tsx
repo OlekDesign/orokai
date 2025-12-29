@@ -113,7 +113,10 @@ export function TransactionDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md md:p-6 p-4">
+      <DialogContent 
+        className="sm:max-w-md md:p-6 p-4"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader className="text-left">
           <DialogTitle className="sr-only">Transaction Details</DialogTitle>
         </DialogHeader>
@@ -201,7 +204,7 @@ export function TransactionDetailsDialog({
                   <Caption className="text-muted-foreground">Details</Caption>
                   <BodyText className="text-foreground">
                     {transaction.status === 'failed' 
-                      ? 'Transaction failed due to insufficient funds or network error. Please try again.'
+                      ? 'Transaction failed due to insufficient funds or network error. Your funds will be securely transferred back to you.'
                       : transaction.status === 'pending'
                       ? 'Your investment is being processed. It will be active shortly.'
                       : 'Investment successfully processed and added to your portfolio.'}
@@ -329,7 +332,7 @@ export function TransactionDetailsDialog({
                   <div className="flex flex-col gap-2 py-3 border-b border-border last:border-0">
                     <Caption className="text-muted-foreground">Details</Caption>
                     <BodyText className="text-foreground">
-                      Transaction failed due to insufficient funds or network error. Please try again.
+                      Transaction failed due to insufficient funds or network error. Your funds will be securely transferred back to you.
                     </BodyText>
                   </div>
                 )}

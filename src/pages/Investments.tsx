@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Shield, Clock, ChevronDown, Loader2, X } from 'lucide-react';
+import { Plus, TrendingUp, Shield, Clock, ChevronDown, Loader2, X, MoreVertical } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Heading1, Heading2, Heading3, Heading4, BodyTextLarge, BodyTextSmall, Caption, Label } from '@/components/ui/typography';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from "@/lib/utils";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { InfoTooltip } from "@/components/InfoTooltip";
@@ -58,8 +59,11 @@ export function Investments() {
   const [isClosing, setIsClosing] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [mobileSortBy, setMobileSortBy] = useState<'annualReturn' | 'frequency' | 'rewards' | 'apy' | 'fee'>('annualReturn');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const hasMobileDrawerBeenOpened = useRef(false);
   const initialMobileOrder = useRef<string[] | null>(null);
   const previousSelectedCurrency = useRef<string>(selectedCurrency);
@@ -277,6 +281,56 @@ export function Investments() {
     };
   }, [isDropdownOpen]);
 
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId) {
+        const buttonRef = menuRefs.current[openMenuId];
+        const menuElement = document.getElementById(`menu-${openMenuId}`);
+        if (buttonRef && !buttonRef.contains(event.target as Node) && 
+            menuElement && !menuElement.contains(event.target as Node)) {
+          setOpenMenuId(null);
+          setMenuPosition(null);
+        }
+      }
+    };
+
+    if (openMenuId) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenuId]);
+
+  // Update menu position on scroll/resize
+  useEffect(() => {
+    const updatePosition = () => {
+      if (openMenuId) {
+        const buttonRef = menuRefs.current[openMenuId];
+        if (buttonRef) {
+          const rect = buttonRef.getBoundingClientRect();
+          setMenuPosition({
+            top: rect.bottom + window.scrollY + 4,
+            left: rect.right + window.scrollX - 180 // 180px is min-w-[180px]
+          });
+        }
+      }
+    };
+
+    if (openMenuId) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [openMenuId]);
+
   // Handle body scroll lock when mobile drawer is open
   useEffect(() => {
     if (isMobileDrawerOpen) {
@@ -482,6 +536,27 @@ export function Investments() {
   if (!selectedOption && investmentOptions.length > 0) {
     setSelectedOption(investmentOptions[0]);
   }
+
+  // Helper function to calculate next reward value and time
+  const getNextReward = (investment: { amount: number; apy: number; startDate: string }) => {
+    // Calculate daily reward: (amount * apy / 100) / 365
+    const dailyReward = (investment.amount * investment.apy / 100) / 365;
+    
+    // Calculate time until next reward (assuming 24h cycle)
+    // Use a fixed offset from start date to simulate next reward time
+    const startTime = new Date(investment.startDate).getTime();
+    const now = Date.now();
+    const hoursSinceStart = (now - startTime) / (1000 * 60 * 60);
+    const hoursUntilNextReward = 24 - (hoursSinceStart % 24);
+    
+    const hours = Math.floor(hoursUntilNextReward);
+    const minutes = Math.floor((hoursUntilNextReward - hours) * 60);
+    
+    return {
+      value: dailyReward,
+      time: `${hours}h ${minutes}min`
+    };
+  };
 
   // Helper function to calculate time since investment start
   const getTimeSince = (startDate: string) => {
@@ -872,9 +947,9 @@ export function Investments() {
                       <TableHead><Caption>Investment</Caption></TableHead>
                       <TableHead><Caption>Active since</Caption></TableHead>
                       <TableHead><Caption>APY</Caption></TableHead>
-                      <TableHead><Caption>Rewards</Caption></TableHead>
                       <TableHead><Caption>Next reward</Caption></TableHead>
-                      <TableHead><Caption>Actions</Caption></TableHead>
+                      <TableHead><Caption>All rewards</Caption></TableHead>
+                      <TableHead></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -900,6 +975,19 @@ export function Investments() {
                             <span className="font-medium">{investment.apy}%</span>
                           </TableCell>
                           <TableCell>
+                            {(() => {
+                              const nextReward = getNextReward(investment);
+                              return (
+                                <span className="font-medium">
+                                  ${nextReward.value.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                  })} in {nextReward.time}
+                                </span>
+                              );
+                            })()}
+                          </TableCell>
+                          <TableCell>
                             <span className="font-medium text-success">
                               ${investment.earned.toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
@@ -908,16 +996,60 @@ export function Investments() {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <span className="font-medium">3h 32min</span>
-                          </TableCell>
-                          <TableCell>
                             <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => handleWithdraw(investment.id)}
+                              ref={(el) => menuRefs.current[investment.id] = el}
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                if (openMenuId === investment.id) {
+                                  setOpenMenuId(null);
+                                  setMenuPosition(null);
+                                } else {
+                                  const buttonRef = menuRefs.current[investment.id];
+                                  if (buttonRef) {
+                                    const rect = buttonRef.getBoundingClientRect();
+                                    setMenuPosition({
+                                      top: rect.bottom + window.scrollY + 4,
+                                      left: rect.right + window.scrollX - 180
+                                    });
+                                    setOpenMenuId(investment.id);
+                                  }
+                                }
+                              }}
+                              className="h-8 w-8"
                             >
-                              Close
+                              <MoreVertical className="h-4 w-4" />
                             </Button>
+                            {openMenuId === investment.id && menuPosition && createPortal(
+                              <AnimatePresence>
+                                <motion.div
+                                  id={`menu-${investment.id}`}
+                                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                  style={{
+                                    position: 'fixed',
+                                    top: `${menuPosition.top}px`,
+                                    left: `${menuPosition.left}px`,
+                                    zIndex: 50
+                                  }}
+                                  className="bg-popover rounded-lg shadow-lg border border-border py-1 min-w-[180px]"
+                                >
+                                  <button
+                                    onClick={() => {
+                                      handleWithdraw(investment.id);
+                                      setOpenMenuId(null);
+                                      setMenuPosition(null);
+                                    }}
+                                    className="w-full flex items-center px-4 py-2 hover:bg-muted transition-colors text-left text-sm"
+                                  >
+                                    Close this investment
+                                  </button>
+                                </motion.div>
+                              </AnimatePresence>,
+                              document.body
+                            )}
                           </TableCell>
                         </TableRow>
                       );
@@ -940,7 +1072,7 @@ export function Investments() {
                     <Card key={investment.id} className="border">
                       <CardContent className="p-4">
                         {/* Title */}
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center justify-between mb-[28px]">
                           <div className="flex items-center gap-2">
                             <CryptoIcon symbol={investment.chain === 'Ethereum' ? 'ETH' : 'BTC'} size={16} />
                             <Heading4>{investment.chain}</Heading4>
@@ -955,26 +1087,38 @@ export function Investments() {
                         </div>
 
                         {/* Two Column Layout */}
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                        <div className="grid grid-cols-2 gap-x-4 text-sm my-2">
                           <div className="text-muted-foreground">Investment</div>
                           <div className="font-medium text-right">${investment.amount.toLocaleString()}</div>
                           
-                          <div className="text-muted-foreground">Active since</div>
-                          <div className="font-medium text-right">{timeSince.days}d {timeSince.hours}h</div>
+                          <div className="text-muted-foreground mt-6">Active since</div>
+                          <div className="font-medium text-right mt-6">{timeSince.days}d {timeSince.hours}h</div>
                           
-                          <div className="text-muted-foreground">APY</div>
-                          <div className="font-medium text-right">{investment.apy}%</div>
+                          <div className="text-muted-foreground mt-6">APY</div>
+                          <div className="font-medium text-right mt-6">{investment.apy}%</div>
                           
-                          <div className="text-muted-foreground">Rewards</div>
-                          <div className="font-bold text-right text-success">
+                          <div className="text-muted-foreground mt-6">Next reward</div>
+                          <div className="font-medium text-right mt-6">
+                            {(() => {
+                              const nextReward = getNextReward(investment);
+                              return (
+                                <span>
+                                  ${nextReward.value.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                  })} in {nextReward.time}
+                                </span>
+                              );
+                            })()}
+                          </div>
+                          
+                          <div className="text-muted-foreground mt-6">All rewards</div>
+                          <div className="font-bold text-right text-success mt-6">
                             ${investment.earned.toLocaleString(undefined, {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2
                             })}
                           </div>
-                          
-                          <div className="text-muted-foreground">Next reward</div>
-                          <div className="font-medium text-right">3h 32min</div>
                         </div>
                       </CardContent>
                     </Card>
