@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -13,9 +13,9 @@ import {
   User,
   Edit3,
   Save,
-  ChevronRight
+  ChevronRight,
+  Coins
 } from 'lucide-react';
-import { CryptoIcon } from '../components/CryptoIcon';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
 import { ConfirmationModal } from '../components/ConfirmationModal';
@@ -65,6 +65,22 @@ type Asset = {
   balance: number;
   value: number;
   price: number;
+};
+
+// Get crypto icon matching TransactionReview.tsx design
+const getCryptoIcon = (symbol: string) => {
+  const iconMap: Record<string, string | React.ReactNode> = {
+    'ETH': '⟠',
+    'SOL': '◎',
+    'BTC': '₿',
+    'USDT': <Coins className="w-5 h-5" />,
+    'USDC': <Coins className="w-5 h-5" />,
+    'ATOM': '⚛',
+    'MATIC': <Coins className="w-5 h-5" />,
+    'AVAX': <Coins className="w-5 h-5" />,
+    'DOT': <Coins className="w-5 h-5" />
+  };
+  return iconMap[symbol] || <Coins className="w-5 h-5" />;
 };
 
 interface CreditCardData {
@@ -575,7 +591,6 @@ export function Wallet() {
                         <TableRow>
                           <TableHead><Caption>Name</Caption></TableHead>
                           <TableHead><Caption>Balance</Caption></TableHead>
-                          <TableHead><Caption>Price</Caption></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -583,20 +598,19 @@ export function Wallet() {
                           <TableRow key={asset.symbol}>
                             <TableCell>
                               <div className="flex items-center space-x-3">
-                                <CryptoIcon symbol={asset.symbol} size={24} />
+                                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xl">
+                                  {getCryptoIcon(asset.symbol)}
+                                </div>
                                 <BodyText className="font-medium">{asset.symbol}</BodyText>
                               </div>
                             </TableCell>
                             <TableCell>
                               <div>
-                                <BodyText className="font-medium">{asset.balance} {asset.symbol}</BodyText>
+                                <BodyText className="font-medium">${asset.value.toLocaleString()}</BodyText>
                                 <BodyText className="text-muted-foreground">
-                                  ${asset.value.toLocaleString()}
+                                  {asset.balance} {asset.symbol}
                                 </BodyText>
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              <BodyText className="font-medium">${asset.price.toLocaleString()}</BodyText>
                             </TableCell>
                           </TableRow>
                         ))}
