@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2025-01-XX
+
+#### Date Formatting and UI Improvements
+- **Date Format Update**: Changed date display format from `DD/MM/YYYY` to `DD MMM YYYY` (e.g., "29 Dec 2025")
+  - Applied to all transaction dates in Dashboard and Transactions pages
+  - More readable and user-friendly date format
+- **Wallet Component Fixes**:
+  - Fixed Wallet component not rendering when profile is null
+  - Removed chevron icon from crypto wallet button
+  - Updated credit card button to show "No credit card added" when empty
+  - Added 24px padding to Payment Methods dialog
+  - Changed dialog title to use Heading2 typography
+- **Card Management**:
+  - Added new card form that appears when no cards exist
+  - Updated form fields: Card Number, Card Holder Name, Expiry Date, Security Code
+  - Expiry Date and Security Code fields are displayed side-by-side
+  - Added proper form validation and formatting
+- **Transaction Details**:
+  - Updated transaction failure message to include fund return information
+  - Prevented auto-focus on transaction details dialog close button
+- **Investments Table Enhancements**:
+  - Added dropdown menu to investments table with "Close this investment" option
+  - Changed Close button to more icon (three vertical dots) button
+  - Updated "Next reward" column to show reward value and time (e.g., "$2.14 in 3h 32min")
+  - Flipped column order: Next reward now appears before All rewards
+  - Renamed "Rewards" column to "All rewards"
+  - Removed Actions column header label
+  - Improved mobile layout spacing with proper row gaps (mt-6)
+
+**Technical Details:**
+- Modified `src/components/TransactionRow.tsx` - Updated date formatting
+- Modified `src/components/TransactionDetailsDialog.tsx` - Updated messages and focus behavior
+- Modified `src/pages/Wallet.tsx` - Fixed rendering, added card form, improved UI
+- Modified `src/pages/Investments.tsx` - Added menu, updated columns, improved mobile layout
+
+**Impact:**
+- Better date readability across the platform
+- Improved wallet management experience
+- Enhanced investments table functionality
+- Better mobile user experience
+
+---
+
 ### Added - 2025-01-XX
 
 #### Closure Transaction Type

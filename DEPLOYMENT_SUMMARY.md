@@ -1,29 +1,45 @@
-# Deployment Summary - Closure Transaction Feature
+# Deployment Summary - UI Improvements and Enhancements
 
 ## 📋 Changes Summary
 
-This deployment includes the following updates:
+This deployment includes comprehensive UI improvements and bug fixes:
 
 ### ✨ New Features
 
-1. **Closure Transaction Type**
-   - New transaction type for tracking investment closures
-   - Automatically created when users close investments
-   - Starts as "pending" and auto-completes after 10 seconds
-   - Full transaction details available in dialog
+1. **Date Formatting Update**
+   - Changed date format from `DD/MM/YYYY` to `DD MMM YYYY` (e.g., "29 Dec 2025")
+   - Applied to all transaction dates across Dashboard and Transactions pages
+   - More readable and user-friendly format
 
-2. **Card Spacing Improvements**
-   - Reduced default card padding for tighter, more compact layouts
-   - Changed from 24px to 8px padding-top
+2. **Wallet Component Enhancements**
+   - Fixed Wallet component rendering when profile is null
+   - Removed chevron icon from crypto wallet button
+   - Credit card button shows "No credit card added" when empty
+   - Added 24px padding to Payment Methods dialog
+   - Dialog title now uses Heading2 typography
+   - New card form appears when no cards exist
+   - Updated form fields: Card Number, Card Holder Name, Expiry Date, Security Code
+   - Expiry Date and Security Code displayed side-by-side
+
+3. **Investments Table Improvements**
+   - Added dropdown menu with "Close this investment" option
+   - Changed Close button to more icon (three vertical dots)
+   - "Next reward" column shows reward value and time (e.g., "$2.14 in 3h 32min")
+   - Flipped column order: Next reward before All rewards
+   - Renamed "Rewards" to "All rewards"
+   - Removed Actions column header label
+   - Improved mobile layout spacing with proper row gaps
+
+4. **Transaction Details Updates**
+   - Updated failure message to include fund return information
+   - Prevented auto-focus on dialog close button
 
 ### 📝 Files Changed
 
-- `src/types/index.ts` - Added closure transaction type
-- `src/components/TransactionRow.tsx` - Added closure handling
-- `src/components/TransactionDetailsDialog.tsx` - Added closure details
-- `src/pages/Investments.tsx` - Added transaction creation on closure
-- `src/pages/Dashboard.tsx` - Cleaned up unused imports
-- `src/components/ui/card.tsx` - Updated default padding
+- `src/components/TransactionRow.tsx` - Updated date formatting
+- `src/components/TransactionDetailsDialog.tsx` - Updated messages and focus behavior
+- `src/pages/Wallet.tsx` - Fixed rendering, added card form, improved UI
+- `src/pages/Investments.tsx` - Added menu, updated columns, improved mobile layout
 - `CHANGELOG.md` - Updated with detailed change documentation
 
 ## 🚀 Deployment Steps
@@ -97,6 +113,6 @@ If deployment issues occur:
 
 ---
 
-**Commit:** `1abd9a8` - feat: Add closure transaction type and improve card spacing  
+**Commit:** `00beda5` - Update UI: date formatting, wallet improvements, transaction details, and investments table enhancements  
 **Date:** 2025-01-XX  
 **Status:** Ready for deployment
