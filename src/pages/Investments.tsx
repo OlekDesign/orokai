@@ -701,8 +701,8 @@ export function Investments() {
                     <input
                       ref={inputRef}
                       type="text"
-                      placeholder="$0"
-                      value={investAmount ? investAmount.toLocaleString() : ''}
+                      placeholder={selectedCurrency === 'USD' ? '$0' : `0 ${selectedCurrency}`}
+                      value={investAmount ? (selectedCurrency === 'USD' ? `$${investAmount.toLocaleString()}` : `${investAmount.toLocaleString()} ${selectedCurrency}`) : ''}
                       onChange={(e) => {
                         const value = e.target.value.replace(/[^0-9]/g, '');
                         setInvestAmount(Number(value) || null);
@@ -713,7 +713,7 @@ export function Investments() {
                           handleEstimateReturns();
                         }
                       }}
-                      className="flex-1 bg-transparent text-xl font-semibold outline-none placeholder:text-muted-foreground placeholder:opacity-40 text-foreground"
+                      className="flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground placeholder:opacity-40 text-foreground"
                     />
                   </div>
                 </div>

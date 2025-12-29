@@ -295,8 +295,16 @@ export default function WalletEmpty() {
               exit={{ opacity: 0, scale: 0.9 }}
               className="fixed inset-0 flex items-center justify-center z-50 p-4"
             >
-              <Card className="w-full max-w-md rounded-3xl">
-                <CardContent className="p-12">
+              <Card className="w-full max-w-md rounded-3xl relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowAddCardModal(false)}
+                  className="absolute right-4 top-4 h-8 w-8 rounded-full"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                <CardContent className="!p-0 pt-6 px-12 pb-12 sm:!p-0 sm:pt-6 sm:px-12 sm:pb-12">
                   <Heading2 className="mb-6">Add Payment Method</Heading2>
                   <div className="space-y-6">
                     <div className="space-y-4">

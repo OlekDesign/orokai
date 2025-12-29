@@ -433,7 +433,7 @@ export function Wallet() {
                   <CreditCard className="w-5 h-5 text-primary" />
                 </div>
                 <div className="text-left">
-                  <BodyText className="font-medium">
+                  <BodyText className="text-foreground">
                     {cards.length === 0 || !selectedCard ? 'No credit card added' : `•••• ${selectedCard.last4}`}
                   </BodyText>
                   {cards.length > 0 && selectedCard && (
@@ -451,7 +451,7 @@ export function Wallet() {
                   <Caption className="!text-muted-foreground">
                     Available Cash
                   </Caption>
-                  <Heading2 className="mt-1 !text-xl !md:text-2xl !font-semibold">${availableFunds.toLocaleString()}</Heading2>
+                  <Heading2 className="mt-1">${availableFunds.toLocaleString()}</Heading2>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -476,7 +476,7 @@ export function Wallet() {
                   <Caption>
                     Available Cash
                   </Caption>
-                  <Heading2 className=" !text-xl !md:text-2xl !font-semibold">$0</Heading2>
+                  <Heading2>$0</Heading2>
                   
                 </div>
                 <div className="flex items-center space-x-3">
@@ -550,37 +550,31 @@ export function Wallet() {
               </CardHeader>
 
               <CardContent className="space-y-6">
-              <Button
-                variant="secondary"
-                className="w-full justify-between"
+              <div
+                className="w-full flex items-center border rounded-md p-4 bg-transparent"
                 style={{ height: '80px' }}
               >
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                    <MetaMaskIcon size={24} />
-                  </div>
-                  <div className="text-left">
-                    <BodyText className="font-medium">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</BodyText>
-                    <p className="text-sm text-muted-foreground">MetaMask</p>
-                  </div>
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <MetaMaskIcon size={24} />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="relative">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyToClipboard(DEMO_WALLET.address);
-                      }}
-                      className="rounded-full"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Tooltip show={showCopiedTooltip} message="Address copied" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <BodyText className="text-foreground">{DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}</BodyText>
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(DEMO_WALLET.address)}
+                        className="rounded-full h-5 w-5 min-h-0"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                      <Tooltip show={showCopiedTooltip} message="Address copied" />
+                    </div>
                   </div>
+                  <p className="text-sm text-muted-foreground">MetaMask</p>
                 </div>
-              </Button>
+              </div>
 
               <div className="space-y-4">
                 <div>
@@ -590,7 +584,7 @@ export function Wallet() {
                       <TableHeader>
                         <TableRow>
                           <TableHead><Caption>Name</Caption></TableHead>
-                          <TableHead><Caption>Balance</Caption></TableHead>
+                          <TableHead className="text-right md:text-left"><Caption>Balance</Caption></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -601,10 +595,10 @@ export function Wallet() {
                                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xl">
                                   {getCryptoIcon(asset.symbol)}
                                 </div>
-                                <BodyText className="font-medium">{asset.symbol}</BodyText>
+                                <BodyText className="text-foreground">{asset.symbol}</BodyText>
                               </div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-right md:text-left">
                               <div>
                                 <BodyText className="font-medium">${asset.value.toLocaleString()}</BodyText>
                                 <BodyText className="text-muted-foreground">
@@ -636,7 +630,7 @@ export function Wallet() {
           setNewCardSecurityCode('');
         }
       }}>
-        <DialogContent className="p-6">
+        <DialogContent className="p-6 pt-6">
           <DialogHeader>
             <DialogTitle className="text-heading-2">Payment Methods</DialogTitle>
           </DialogHeader>
