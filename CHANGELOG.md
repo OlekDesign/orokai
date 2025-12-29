@@ -21,10 +21,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Table Layout Improvements**:
   - Removed Price column from crypto assets table for cleaner display
   - Reordered balance display: USD value now appears above crypto amount
+  - Balance column aligns right on mobile, left on desktop
   - Improved visual hierarchy and readability
+- **Wallet Display Updates**:
+  - Changed crypto wallet from clickable button to non-clickable div with border
+  - Removed background from wallet container (transparent)
+  - Aligned Copy button with wallet address text
+  - Made Copy button smaller (h-5 w-5) with reduced icon size
+  - Removed gap between wallet address and MetaMask label
+- **Text Size Consistency**:
+  - Updated all wallet and transaction text to use `text-foreground` for consistent sizing
+  - Wallet address, card numbers, and crypto symbols now match Investment text size
+  - Removed custom font weights to maintain design consistency
+- **Add Payment Method Dialog**:
+  - Fixed padding-top to 24px (pt-6)
+  - Added close button in top-right corner
 
 **Technical Details:**
-- Modified `src/pages/Wallet.tsx` - Fixed loading issue, updated icon system, improved table layout
+- Modified `src/pages/Wallet.tsx` - Fixed loading issue, updated icon system, improved table layout, wallet display improvements
+- Modified `src/pages/Wallet-empty.tsx` - Fixed dialog padding and added close button
 - Removed dependency on CryptoIcon component in favor of inline icon mapping
 - Added `getCryptoIcon` helper function matching TransactionReview.tsx pattern
 
@@ -33,6 +48,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consistent crypto icon design across platform
 - Better balance information display
 - Cleaner table layout
+- Improved wallet display consistency
+- Better mobile responsiveness
+
+---
+
+### Changed - 2025-01-XX
+
+#### Investments Page Input Improvements
+- **Currency-Aware Input**: Investment amount input now displays value in selected currency
+  - Shows `$10,000` for USD or `10,000 ETH` for crypto currencies
+  - Placeholder updates dynamically based on selected currency
+  - Input value formatting matches currency selector display
+- **Text Size Consistency**: Updated input text size to match currency selector
+  - Changed from `text-xl font-semibold` to `text-sm font-medium`
+  - Consistent typography across investment form elements
+
+**Technical Details:**
+- Modified `src/pages/Investments.tsx` - Updated input value display and text sizing
+
+**Impact:**
+- Better user experience with currency-aware input
+- Consistent typography across form elements
+- Clearer indication of selected currency
 
 ---
 
