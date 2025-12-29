@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2025-01-XX
+
+#### Pending Withdrawal Transactions with Cancel and Speed Up
+- **Pending Withdrawal State**: Withdrawal transactions now start in pending state for 20 seconds (matching investment transaction pattern)
+- **Cancel Transaction**: Users can cancel pending withdrawal transactions, which removes the transaction and keeps funds available
+- **Speed Up Transaction**: Users can immediately complete pending withdrawal transactions instead of waiting for the 20-second timeout
+- **Transaction Management**: Enhanced TransactionsContext to support different timeout durations (20s for withdrawals, 10s for investments)
+- **Fund Management**: Funds are only deducted when withdrawal transaction completes (either after timeout or when sped up)
+- **UI Consistency**: Cancel and Speed Up buttons appear in TransactionDetailsDialog for pending withdrawal transactions, matching the investment transaction UI
+
+**Technical Details:**
+- Modified `src/contexts/TransactionsContext.tsx` - Added timeout management, `completeTransaction()` method, and timeout cancellation support
+- Modified `src/pages/Wallet.tsx` - Updated withdrawal handler to create pending transactions immediately, added tracking for multiple pending withdrawals
+- Modified `src/components/TransactionDetailsDialog.tsx` - Added Cancel/Speed Up buttons and handlers for pending withdrawal transactions
+- Withdrawal transactions auto-complete after 20 seconds if not cancelled or sped up
+
+**Impact:**
+- Better user control over withdrawal transactions
+- Consistent transaction handling across investment and withdrawal flows
+- Improved user experience with ability to cancel or speed up pending transactions
+
 ### Fixed - 2025-01-XX
 
 #### Wallet Page Loading and Display Improvements

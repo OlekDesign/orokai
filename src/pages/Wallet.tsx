@@ -111,7 +111,7 @@ const DEMO_CARDS: CreditCardData[] = [
 export function Wallet() {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { addTransaction } = useTransactions();
+  const { addTransaction, transactions } = useTransactions();
   const { closedInvestmentAmount, profile, setProfile } = useUserProfile();
   const { showToast } = useToast();
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
@@ -123,6 +123,7 @@ export function Wallet() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [availableFunds, setAvailableFunds] = useState(closedInvestmentAmount || 0);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<Map<string, number>>(new Map());
   
   // New card form states
   const [showNewCardForm, setShowNewCardForm] = useState(false);
@@ -154,6 +155,33 @@ export function Wallet() {
     setAvailableFunds(closedInvestmentAmount || 0);
   }, [closedInvestmentAmount]);
 
+  // Watch for completed or cancelled withdrawal transactions
+  useEffect(() => {
+    pendingWithdrawals.forEach((amount, transactionId) => {
+      const transaction = transactions.find(tx => tx.id === transactionId);
+      if (transaction && transaction.status === 'completed') {
+        setAvailableFunds(prev => Math.max(0, prev - amount));
+        setPendingWithdrawals(prev => {
+          const next = new Map(prev);
+          next.delete(transactionId);
+          return next;
+        });
+        showToast(
+          'success',
+          'Funds Withdrawn',
+          'Your funds have been successfully withdrawn to your wallet.'
+        );
+      } else if (!transaction) {
+        // Transaction was cancelled/removed, remove from tracking
+        setPendingWithdrawals(prev => {
+          const next = new Map(prev);
+          next.delete(transactionId);
+          return next;
+        });
+      }
+    });
+  }, [transactions, pendingWithdrawals, showToast]);
+
   const selectedCard = cards.find(card => card.id === selectedCardId);
 
   const handleConnectWallet = async () => {
@@ -177,21 +205,12 @@ export function Wallet() {
   const handleWithdrawModalConfirm = async () => {
     setIsWithdrawing(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      addTransaction('withdrawals', availableFunds, 'USDT');
-      setAvailableFunds(0);
-      
-      // Show success toast
-      showToast(
-        'success',
-        'Funds Withdrawn',
-        'Your funds have been successfully withdrawn to your wallet.'
-      );
-      
-      setIsWithdrawing(false);
-      setShowWithdrawModal(false);
-    }, 1500);
+    // Create pending withdrawal transaction immediately (will auto-complete after 20s)
+    const transaction = addTransaction('withdrawals', availableFunds, 'USDT');
+    setPendingWithdrawals(prev => new Map(prev).set(transaction.id, availableFunds));
+    
+    setIsWithdrawing(false);
+    setShowWithdrawModal(false);
   };
 
   const formatCardNumber = (value: string) => {
@@ -551,8 +570,7 @@ export function Wallet() {
 
               <CardContent className="space-y-6">
               <div
-                className="w-full flex items-center border rounded-md p-4 bg-transparent"
-                style={{ height: '80px' }}
+                className="w-full flex items-center border rounded-md px-4 pt-4 pb-4 bg-transparent"
               >
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <MetaMaskIcon size={24} />
@@ -565,7 +583,7 @@ export function Wallet() {
                         variant="ghost"
                         size="icon"
                         onClick={() => copyToClipboard(DEMO_WALLET.address)}
-                        className="rounded-full h-5 w-5 min-h-0"
+                        className="rounded-full h-10 w-10 md:h-5 md:w-5 min-h-0 opacity-50 hover:opacity-100"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -784,7 +802,7 @@ export function Wallet() {
         onConfirm={handleWithdrawModalConfirm}
         isLoading={isWithdrawing}
         title="Withdraw Funds"
-        message="All funds will be available to you in your wallet within a couple of minutes. Do you want to proceed?"
+        message="All funds will be securely returned to your card once the transaction is processed by the providers."
         confirmText="Confirm"
         cancelText="Cancel"
       />

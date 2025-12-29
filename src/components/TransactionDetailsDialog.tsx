@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BodyText, Caption, Heading2 } from '@/components/ui/typography';
 import type { Transaction, TransactionType } from '@/types';
+import { useTransactions } from '@/contexts/TransactionsContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface TransactionDetailsDialogProps {
   transaction: Transaction | null;
@@ -22,7 +24,29 @@ export function TransactionDetailsDialog({
   open,
   onOpenChange,
 }: TransactionDetailsDialogProps) {
+  const { removeTransaction, completeTransaction } = useTransactions();
+  const { showToast } = useToast();
+
   if (!transaction) return null;
+
+  const handleCancelTransaction = () => {
+    removeTransaction(transaction.id);
+    showToast(
+      'success',
+      'Transaction Cancelled',
+      'The transaction has been cancelled successfully.'
+    );
+    onOpenChange(false);
+  };
+
+  const handleSpeedUpTransaction = () => {
+    completeTransaction(transaction.id);
+    showToast(
+      'success',
+      'Transaction Sped Up',
+      'The transaction has been processed immediately.'
+    );
+  };
 
   const getTransactionIcon = (type: TransactionType) => {
     switch (type) {
@@ -148,13 +172,14 @@ export function TransactionDetailsDialog({
                 {compactDateTime}
               </BodyText>
               
-              {/* Action Buttons for Pending Investment Transactions */}
-              {transaction.type === 'investment' && transaction.status === 'pending' && (
+              {/* Action Buttons for Pending Investment and Withdrawal Transactions */}
+              {((transaction.type === 'investment' || transaction.type === 'withdrawals') && transaction.status === 'pending') && (
                 <div className="flex flex-row items-center justify-center gap-3 mt-4">
                   <Button 
                     variant="secondary" 
                     size="sm"
                     className="px-6"
+                    onClick={handleCancelTransaction}
                   >
                     Cancel Transaction
                   </Button>
@@ -162,6 +187,7 @@ export function TransactionDetailsDialog({
                     variant="secondary" 
                     size="sm"
                     className="px-6"
+                    onClick={handleSpeedUpTransaction}
                   >
                     Speed Up
                   </Button>

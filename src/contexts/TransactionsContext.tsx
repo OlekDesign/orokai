@@ -1,13 +1,14 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { Transaction, TransactionType } from '@/types';
 import { initialDemoTransactions } from '@/pages/Transactions';
 
 interface TransactionContextValue {
   transactions: Transaction[];
-  addTransaction: (type: TransactionType, amount: number, token: string) => void;
+  addTransaction: (type: TransactionType, amount: number, token: string, timeoutMs?: number) => Transaction;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
   removeTransaction: (id: string) => void;
+  completeTransaction: (id: string) => void;
   getRecentTransactions: (limit?: number) => Transaction[];
   getTransactionsByType: (type: TransactionType) => Transaction[];
   getPendingTransactions: () => Transaction[];
@@ -21,8 +22,10 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
   const [transactions, setTransactions] = useState<Transaction[]>(sortedInitialTransactions);
+  // Store timeout IDs so we can cancel them
+  const timeoutRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-  const addTransaction = (type: TransactionType, amount: number, token: string) => {
+  const addTransaction = (type: TransactionType, amount: number, token: string, timeoutMs?: number) => {
     const newTransaction: Transaction = {
       id: Date.now().toString(),
       type,
@@ -40,8 +43,11 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
       );
     });
 
-    // Update status to completed after 10 seconds
-    setTimeout(() => {
+    // Determine timeout: 20s for withdrawals, 10s for others (or use provided timeout)
+    const timeout = timeoutMs ?? (type === 'withdrawals' ? 20000 : 10000);
+
+    // Update status to completed after timeout
+    const timeoutId = setTimeout(() => {
       setTransactions(prev =>
         prev.map(tx =>
           tx.id === newTransaction.id
@@ -49,12 +55,40 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
             : tx
         )
       );
-    }, 10000);
+      timeoutRefs.current.delete(newTransaction.id);
+    }, timeout);
+
+    timeoutRefs.current.set(newTransaction.id, timeoutId);
 
     return newTransaction;
   };
 
+  const completeTransaction = (id: string) => {
+    // Clear the timeout if it exists
+    const timeoutId = timeoutRefs.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutRefs.current.delete(id);
+    }
+
+    // Update transaction status to completed immediately
+    setTransactions(prev =>
+      prev.map(tx =>
+        tx.id === id
+          ? { ...tx, status: 'completed' }
+          : tx
+      )
+    );
+  };
+
   const removeTransaction = (id: string) => {
+    // Clear the timeout if it exists
+    const timeoutId = timeoutRefs.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutRefs.current.delete(id);
+    }
+
     setTransactions(prev => prev.filter(tx => tx.id !== id));
   };
 
@@ -97,6 +131,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
         addTransaction,
         updateTransaction,
         removeTransaction,
+        completeTransaction,
         getRecentTransactions,
         getTransactionsByType,
         getPendingTransactions,
