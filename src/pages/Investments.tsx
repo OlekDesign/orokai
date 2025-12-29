@@ -997,7 +997,7 @@ export function Investments() {
                           </TableCell>
                           <TableCell>
                             <Button
-                              ref={(el) => menuRefs.current[investment.id] = el}
+                              ref={(el) => { menuRefs.current[investment.id] = el; }}
                               variant="ghost"
                               size="icon"
                               onClick={() => {

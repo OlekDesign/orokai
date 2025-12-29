@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - 2025-01-XX
+
+#### Wallet Page Loading and Display Improvements
+- **Fixed Wallet Page Loading**: Resolved issue where Wallet.tsx component failed to load
+  - Replaced undefined `getCryptoIcon` function with proper icon mapping
+  - Added React import for proper type support
+- **Crypto Icon Design Consistency**: Updated crypto icons to match TransactionReview.tsx design
+  - ETH displays as emoji (⟠) with text-xl styling
+  - BTC displays as emoji (₿) with text-xl styling  
+  - USDT and other currencies use Coins icon component
+  - Consistent styling across wallet and transaction review pages
+- **Table Layout Improvements**:
+  - Removed Price column from crypto assets table for cleaner display
+  - Reordered balance display: USD value now appears above crypto amount
+  - Improved visual hierarchy and readability
+
+**Technical Details:**
+- Modified `src/pages/Wallet.tsx` - Fixed loading issue, updated icon system, improved table layout
+- Removed dependency on CryptoIcon component in favor of inline icon mapping
+- Added `getCryptoIcon` helper function matching TransactionReview.tsx pattern
+
+**Impact:**
+- Wallet page now loads correctly
+- Consistent crypto icon design across platform
+- Better balance information display
+- Cleaner table layout
+
+---
+
 ### Changed - 2025-01-XX
 
 #### Date Formatting and UI Improvements
