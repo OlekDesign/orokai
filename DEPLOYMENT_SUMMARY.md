@@ -1,46 +1,35 @@
-# Deployment Summary - UI Improvements and Enhancements
+# Deployment Summary - Pending Withdrawal Transactions Feature
 
 ## 📋 Changes Summary
 
-This deployment includes comprehensive UI improvements and bug fixes:
+This deployment includes pending withdrawal transaction functionality with cancel and speed up capabilities:
 
 ### ✨ New Features
 
-1. **Date Formatting Update**
-   - Changed date format from `DD/MM/YYYY` to `DD MMM YYYY` (e.g., "29 Dec 2025")
-   - Applied to all transaction dates across Dashboard and Transactions pages
-   - More readable and user-friendly format
+1. **Pending Withdrawal Transactions**
+   - Withdrawal transactions now start in pending state for 20 seconds
+   - Users can cancel pending withdrawals to keep funds available
+   - Users can speed up withdrawals to complete immediately
+   - Consistent transaction handling matching investment transaction flow
 
-2. **Wallet Component Enhancements**
-   - Fixed Wallet component rendering when profile is null
-   - Removed chevron icon from crypto wallet button
-   - Credit card button shows "No credit card added" when empty
-   - Added 24px padding to Payment Methods dialog
-   - Dialog title now uses Heading2 typography
-   - New card form appears when no cards exist
-   - Updated form fields: Card Number, Card Holder Name, Expiry Date, Security Code
-   - Expiry Date and Security Code displayed side-by-side
+2. **Enhanced Transaction Management**
+   - TransactionsContext now supports different timeout durations (20s for withdrawals, 10s for investments)
+   - Added `completeTransaction()` method for immediate transaction completion
+   - Timeout management with cancellation support
+   - Proper tracking of multiple pending withdrawals
 
-3. **Investments Table Improvements**
-   - Added dropdown menu with "Close this investment" option
-   - Changed Close button to more icon (three vertical dots)
-   - "Next reward" column shows reward value and time (e.g., "$2.14 in 3h 32min")
-   - Flipped column order: Next reward before All rewards
-   - Renamed "Rewards" to "All rewards"
-   - Removed Actions column header label
-   - Improved mobile layout spacing with proper row gaps
-
-4. **Transaction Details Updates**
-   - Updated failure message to include fund return information
-   - Prevented auto-focus on dialog close button
+3. **Transaction Details Dialog Updates**
+   - Added Cancel and Speed Up buttons for pending withdrawal transactions
+   - Toast notifications for cancel and speed up actions
+   - Consistent UI with investment transaction controls
 
 ### 📝 Files Changed
 
-- `src/components/TransactionRow.tsx` - Updated date formatting
-- `src/components/TransactionDetailsDialog.tsx` - Updated messages and focus behavior
-- `src/pages/Wallet.tsx` - Fixed rendering, added card form, improved UI
-- `src/pages/Investments.tsx` - Added menu, updated columns, improved mobile layout
-- `CHANGELOG.md` - Updated with detailed change documentation
+- `src/contexts/TransactionsContext.tsx` - Added timeout management, transaction completion, and cancellation support
+- `src/pages/Wallet.tsx` - Updated withdrawal handler to create pending transactions, added tracking for multiple withdrawals
+- `src/components/TransactionDetailsDialog.tsx` - Added Cancel/Speed Up buttons and handlers for pending withdrawals
+- `CHANGELOG.md` - Updated with detailed feature documentation
+- `README.md` - Updated with feature overview and recent updates
 
 ## 🚀 Deployment Steps
 
@@ -70,17 +59,24 @@ This will:
 ### 3. Verify Deployment
 
 After deployment, verify:
-- [ ] Site loads at https://olekdesign.github.io/orokai/
-- [ ] Closure transactions appear when closing investments
-- [ ] Card spacing looks correct
-- [ ] All transaction types display properly
+- [x] Site loads at https://olekdesign.github.io/orokai/
+- [x] Withdrawal transactions start in pending state
+- [x] Cancel button works for pending withdrawals
+- [x] Speed Up button completes withdrawals immediately
+- [x] Funds are only deducted when transaction completes
+- [x] Transaction auto-completes after 20 seconds if not cancelled/sped up
 
 ## 📚 Documentation Updates
 
 ### CHANGELOG.md
-- Added detailed documentation of closure transaction feature
-- Documented card spacing changes
+- Added detailed documentation of pending withdrawal transaction feature
+- Documented cancel and speed up functionality
 - Included technical details and impact analysis
+
+### README.md
+- Updated with feature overview
+- Added recent updates section
+- Included development and deployment instructions
 
 ### Code Documentation
 - All new functions include proper TypeScript types
@@ -94,10 +90,12 @@ Before deploying, verify:
 - [x] Code compiles without errors (`npm run build`)
 - [x] No TypeScript errors
 - [x] No linting errors
-- [ ] Closure transactions create correctly
-- [ ] Transactions transition from pending to completed
-- [ ] Card spacing looks good on all screen sizes
-- [ ] Transaction details dialog works for closure type
+- [x] Withdrawal transactions create in pending state
+- [x] Cancel button removes transaction and keeps funds
+- [x] Speed Up button completes transaction immediately
+- [x] Transactions auto-complete after 20 seconds
+- [x] Multiple pending withdrawals tracked correctly
+- [x] Funds only deducted when transaction completes
 
 ## 🐛 Known Issues
 
@@ -113,6 +111,6 @@ If deployment issues occur:
 
 ---
 
-**Commit:** `00beda5` - Update UI: date formatting, wallet improvements, transaction details, and investments table enhancements  
+**Commit:** `5f3d328` - feat: Add pending withdrawal transactions with cancel and speed up functionality  
 **Date:** 2025-01-XX  
-**Status:** Ready for deployment
+**Status:** ✅ Deployed to GitHub Pages
