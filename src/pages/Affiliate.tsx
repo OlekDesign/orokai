@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import { Caption, BodyText, Heading1, BodyTextLarge } from '@/components/ui/typography';
-import { Copy, Check, ChevronDown, ChartSpline, FileCheck, Gift, Settings2, Minus, Plus } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChartSpline, FileCheck, Gift } from 'lucide-react';
 import { Avatar } from '@/components/Avatar';
 import {
   Card,
@@ -20,11 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
 
 // Mock data for affiliate history with hierarchical structure
 const affiliateHistory = [
@@ -101,41 +96,7 @@ export function Affiliate() {
   const [selectedLevel, setSelectedLevel] = useState<'all' | 1 | 2 | 3>('all');
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
   const [hideInactive, setHideInactive] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [directInvites, setDirectInvites] = useState(10);
-  const [indirectInvites, setIndirectInvites] = useState(0);
-  const [theirInvites, setTheirInvites] = useState(0);
   const affiliateLink = 'https://platform.example.com/ref/user123';
-
-  const totalPoints = directInvites + indirectInvites + theirInvites;
-  const pointsLeft = 10 - totalPoints;
-
-  const handleDecrease = (type: 'direct' | 'indirect' | 'their') => {
-    if (type === 'direct' && directInvites > 0) {
-      setDirectInvites(directInvites - 1);
-    } else if (type === 'indirect' && indirectInvites > 0) {
-      setIndirectInvites(indirectInvites - 1);
-    } else if (type === 'their' && theirInvites > 0) {
-      setTheirInvites(theirInvites - 1);
-    }
-  };
-
-  const handleIncrease = (type: 'direct' | 'indirect' | 'their') => {
-    if (pointsLeft > 0) {
-      if (type === 'direct') {
-        setDirectInvites(directInvites + 1);
-      } else if (type === 'indirect') {
-        setIndirectInvites(indirectInvites + 1);
-      } else if (type === 'their') {
-        setTheirInvites(theirInvites + 1);
-      }
-    }
-  };
-
-  const handleSave = () => {
-    // Save logic here
-    setIsDialogOpen(false);
-  };
 
   // Calculate counts for each level (flatten all affiliates including sub-affiliates)
   const flattenAffiliates = (affiliates: any[]): any[] => {
@@ -162,9 +123,9 @@ export function Affiliate() {
   // Level options for dropdown
   const levelOptions = [
     { key: 'all', label: 'All invites', count: totalAffiliates },
-    { key: 1, label: 'Level 1', count: level1Count },
-    { key: 2, label: 'Level 2', count: level2Count },
-    { key: 3, label: 'Level 3', count: level3Count },
+    { key: 1, label: 'Direct invites', count: level1Count },
+    { key: 2, label: 'Indirect invites', count: level2Count },
+    { key: 3, label: 'Their invites', count: level3Count },
   ];
 
   const selectedOption = levelOptions.find(option => option.key === selectedLevel) || levelOptions[0];
@@ -275,30 +236,19 @@ export function Affiliate() {
               <CardDescription>My commissions</CardDescription>
               <div className="flex items-baseline gap-2 mt-1">
                 <Heading1>10%</Heading1>
-                <Caption className="text-foreground">of direct invites</Caption>
+                <Caption className="text-foreground">of Direct invites</Caption>
               </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-2 -ml-3">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="flex items-center gap-2"
-                    onClick={() => setIsDialogOpen(true)}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                    Adjust
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2"
-                    onClick={() => navigate('/affiliate-program')}
-                  >
-                    <Gift className="h-4 w-4" />
-                    Unlock higher commissions
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 -ml-3"
+                  onClick={() => navigate('/affiliate-program')}
+                >
+                  <Gift className="h-4 w-4" />
+                  Unlock higher commissions
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -425,153 +375,6 @@ export function Affiliate() {
           </motion.div>
         </Card>
       </motion.div>
-
-      {/* Commission Settings Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="pt-6 px-6 pb-10 md:p-6 md:max-w-md">
-          <div className="flex flex-row items-start mb-4">
-            <div className="flex flex-col">
-              <h2 className="text-heading-1 text-foreground">{pointsLeft}</h2>
-              <Caption className="text-muted-foreground">% points left to distribute</Caption>
-            </div>
-          </div>
-          
-          <div className="space-y-4 mt-4">
-            {/* Direct Invites */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-foreground">Direct invites</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleDecrease('direct')}
-                  disabled={directInvites === 0}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Input
-                  type="number"
-                  value={directInvites}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    if (value >= 0 && value <= 10) {
-                      const diff = value - directInvites;
-                      if (diff <= pointsLeft) {
-                        setDirectInvites(value);
-                      }
-                    }
-                  }}
-                  className="w-16 text-center"
-                  min="0"
-                  max="10"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleIncrease('direct')}
-                  disabled={pointsLeft === 0}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Indirect Invites */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-foreground">Indirect invites</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleDecrease('indirect')}
-                  disabled={indirectInvites === 0}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Input
-                  type="number"
-                  value={indirectInvites}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    if (value >= 0 && value <= 10) {
-                      const diff = value - indirectInvites;
-                      if (diff <= pointsLeft) {
-                        setIndirectInvites(value);
-                      }
-                    }
-                  }}
-                  className="w-16 text-center"
-                  min="0"
-                  max="10"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleIncrease('indirect')}
-                  disabled={pointsLeft === 0}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Their Invites */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-foreground">Their invites</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleDecrease('their')}
-                  disabled={theirInvites === 0}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Input
-                  type="number"
-                  value={theirInvites}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    if (value >= 0 && value <= 10) {
-                      const diff = value - theirInvites;
-                      if (diff <= pointsLeft) {
-                        setTheirInvites(value);
-                      }
-                    }
-                  }}
-                  className="w-16 text-center"
-                  min="0"
-                  max="10"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleIncrease('their')}
-                  disabled={pointsLeft === 0}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Button
-              onClick={handleSave}
-              className="w-full"
-              size="lg"
-            >
-              Save changes
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
     </div>
   );

@@ -1,4 +1,4 @@
-import { Gift, ArrowDownLeft, ArrowUpRight, RefreshCw, ChevronDown } from 'lucide-react';
+import { Gift, ArrowDownLeft, ArrowUpRight, RefreshCw, ChevronDown, XCircle } from 'lucide-react';
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,8 @@ export function TransactionRow({
       case 'investment':
       case 'top-up':
         return <ArrowUpRight className="h-4 w-4" />;
+      case 'closure':
+        return <XCircle className="h-4 w-4" />;
       case 'internal':
         return <RefreshCw className="h-4 w-4" />;
       default:
@@ -46,6 +48,8 @@ export function TransactionRow({
         return 'Investment';
       case 'top-up':
         return 'Top Up';
+      case 'closure':
+        return 'Closure';
       case 'internal':
         return 'Internal';
       default:
@@ -75,7 +79,7 @@ export function TransactionRow({
               <div className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center",
                 transaction.type === 'rewards' && "bg-success/10 text-success",
-                transaction.type === 'withdrawals' && "bg-destructive/10 text-destructive",
+                (transaction.type === 'withdrawals' || transaction.type === 'closure') && "bg-destructive/10 text-destructive",
                 (transaction.type === 'investment' || transaction.type === 'top-up') && "bg-info/10 text-info",
                 transaction.type === 'internal' && "bg-accent/30 text-muted-foreground"
               )}>
@@ -92,7 +96,7 @@ export function TransactionRow({
             </div>
             <div className="text-right">
               <BodyText className="text-foreground font-medium">
-                {transaction.type === 'withdrawals' 
+                {transaction.type === 'withdrawals' || transaction.type === 'closure'
                   ? `-$${transaction.amount.toLocaleString()}`
                   : transaction.type === 'investment'
                   ? `$${transaction.amount.toLocaleString()}`
@@ -127,7 +131,7 @@ export function TransactionRow({
             <div className={cn(
               "w-8 h-8 rounded-full flex items-center justify-center",
               transaction.type === 'rewards' && "bg-success/10 text-success",
-              transaction.type === 'withdrawals' && "bg-destructive/10 text-destructive",
+              (transaction.type === 'withdrawals' || transaction.type === 'closure') && "bg-destructive/10 text-destructive",
               (transaction.type === 'investment' || transaction.type === 'top-up') && "bg-info/10 text-info",
               transaction.type === 'internal' && "bg-accent/30 text-muted-foreground"
             )}>
@@ -140,7 +144,7 @@ export function TransactionRow({
         </TableCell>
         <TableCell>
           <BodyText className="text-foreground">
-            {transaction.type === 'withdrawals' 
+            {transaction.type === 'withdrawals' || transaction.type === 'closure'
               ? `-$${transaction.amount.toLocaleString()}`
               : transaction.type === 'investment'
               ? `$${transaction.amount.toLocaleString()}`

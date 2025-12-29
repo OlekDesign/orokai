@@ -33,6 +33,8 @@ export function TransactionDetailsDialog({
       case 'investment':
       case 'top-up':
         return <ArrowUpRight className="h-6 w-6" />;
+      case 'closure':
+        return <XCircle className="h-6 w-6" />;
       case 'internal':
         return <RefreshCw className="h-6 w-6" />;
       default:
@@ -50,6 +52,8 @@ export function TransactionDetailsDialog({
         return 'Investment';
       case 'top-up':
         return 'Top Up';
+      case 'closure':
+        return 'Closure';
       case 'internal':
         return 'Internal Transfer';
       default:
@@ -120,7 +124,7 @@ export function TransactionDetailsDialog({
             <div className={cn(
               "w-16 h-16 rounded-full flex items-center justify-center",
               transaction.type === 'rewards' && "bg-success/10 text-success",
-              transaction.type === 'withdrawals' && "bg-destructive/10 text-destructive",
+              (transaction.type === 'withdrawals' || transaction.type === 'closure') && "bg-destructive/10 text-destructive",
               (transaction.type === 'investment' || transaction.type === 'top-up') && "bg-info/10 text-info",
               transaction.type === 'internal' && "bg-accent/30 text-muted-foreground"
             )}>
@@ -131,7 +135,7 @@ export function TransactionDetailsDialog({
                 {getTransactionLabel(transaction.type as TransactionType)}
               </Heading2>
               <h1 className="text-heading-1 text-foreground mt-1">
-                {transaction.type === 'withdrawals' 
+                {transaction.type === 'withdrawals' || transaction.type === 'closure'
                   ? `-$${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                   : transaction.type === 'investment'
                   ? `$${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -257,7 +261,43 @@ export function TransactionDetailsDialog({
                 />
               </>
             )}
-            {transaction.type !== 'investment' && transaction.type !== 'rewards' && transaction.type !== 'withdrawals' && (
+            {transaction.type === 'closure' && (
+              <>
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium",
+                      transaction.status === 'completed' && "text-success-foreground bg-success/10",
+                      transaction.status === 'pending' && "text-white bg-warning/10",
+                      transaction.status === 'failed' && "text-destructive-foreground bg-destructive/10"
+                    )}>
+                      {getStatusIcon(transaction.status)}
+                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Investment Closed"
+                  value={<BodyText className="text-foreground">${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {transaction.token}</BodyText>}
+                />
+                <DetailRow
+                  label="Token"
+                  value={<BodyText className="text-foreground">{transaction.token}</BodyText>}
+                />
+                <div className="flex flex-col gap-2 py-3 border-b border-border last:border-0">
+                  <Caption className="text-muted-foreground">Details</Caption>
+                  <BodyText className="text-foreground">
+                    {transaction.status === 'pending'
+                      ? 'Your investment closure is being processed. Funds will be available in your wallet shortly.'
+                      : transaction.status === 'completed'
+                      ? 'Investment successfully closed. Funds have been returned to your wallet.'
+                      : 'Investment closure failed. Please try again or contact support.'}
+                  </BodyText>
+                </div>
+              </>
+            )}
+            {transaction.type !== 'investment' && transaction.type !== 'rewards' && transaction.type !== 'withdrawals' && transaction.type !== 'closure' && (
               <>
                 <DetailRow
                   label="Status"

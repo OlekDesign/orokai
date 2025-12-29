@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/table";
 import { TimeRangeSelector } from '@/components/TimeRangeSelector';
 import { generateChartData, rewardTransactions } from '@/utils/stakingData';
-import { initialDemoTransactions } from '@/pages/Transactions';
 import type { Transaction, TransactionType } from '@/types';
 import { cn } from "@/lib/utils";
 import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/components/ui/typography';
@@ -204,7 +203,7 @@ export function Dashboard() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions } = useTransactions();
   const { profile } = useUserProfile();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
   const inputRef = useRef<HTMLInputElement>(null);
@@ -954,7 +953,7 @@ export function Dashboard() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-2">
               <div className="overflow-x-auto">
             <Table>
               <TableHeader>

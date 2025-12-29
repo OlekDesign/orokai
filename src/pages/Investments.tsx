@@ -33,12 +33,14 @@ import { InfoTooltip } from "@/components/InfoTooltip";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useToast } from '../contexts/ToastContext';
+import { useTransactions } from '../contexts/TransactionsContext';
 import { InvestmentCard } from "@/components/InvestmentCard";
 
 export function Investments() {
   const navigate = useNavigate();
   const { investments, removeInvestment, setClosedInvestmentAmount } = useUserProfile();
   const { showToast } = useToast();
+  const { addTransaction } = useTransactions();
 
   // State for investment input functionality
   const [investAmount, setInvestAmount] = useState<number | null>(null);
@@ -223,12 +225,20 @@ export function Investments() {
     
     setIsClosing(true);
     
+    // Find the investment before removing it to store its amount and create transaction
+    const investment = investments.find(inv => inv.id === investmentToClose);
+    
+    if (investment) {
+      // Create closure transaction (initially pending, will auto-complete after 10s)
+      const token = getTokenForChain(investment.chain);
+      addTransaction('closure', investment.amount, token);
+      
+      setClosedInvestmentAmount(investment.amount);
+    }
+    
     // Simulate API call delay
     setTimeout(() => {
-    // Find the investment before removing it to store its amount
-      const investment = investments.find(inv => inv.id === investmentToClose);
-    if (investment) {
-      setClosedInvestmentAmount(investment.amount);
+      if (investment) {
         removeInvestment(investmentToClose);
         
         // Show success toast
@@ -355,6 +365,25 @@ export function Investments() {
       'USD': 'Ethereum' // Default to Ethereum for USD
     };
     return currencyToChainMap[currency] || null;
+  };
+
+  // Map chain to token symbol
+  const getTokenForChain = (chain: string): string => {
+    const chainToTokenMap: Record<string, string> = {
+      'Ethereum': 'ETH',
+      'Solana': 'SOL',
+      'Bitcoin': 'BTC',
+      'Cosmos': 'ATOM',
+      'Agoric': 'ATOM',
+      'Aptos': 'APT',
+      'Avalanche': 'AVAX',
+      'Axelar': 'AXL',
+      'BNB Smart Chain': 'BNB',
+      'Cardano': 'ADA',
+      'Celo': 'CELO',
+      'Flow': 'FLOW'
+    };
+    return chainToTokenMap[chain] || 'USDT'; // Default to USDT if chain not found
   };
 
   const getSortedOptions = (useMobileSorting = false) => {

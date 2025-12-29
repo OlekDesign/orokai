@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Minus, Plus } from 'lucide-react';
+import { ChevronLeft, Settings2, Minus, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -170,9 +170,19 @@ export function AffiliateProgram() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Direct invites:</span>
-                <span className="text-sm font-medium text-foreground">{directInvites}%</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Direct invites:</span>
+                  <span className="text-sm font-medium text-foreground">{directInvites}%</span>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  <Settings2 className="h-4 w-4" />
+                </Button>
               </div>
               {indirectInvites > 0 && (
                 <div className="flex items-center gap-2">
@@ -299,10 +309,10 @@ export function AffiliateProgram() {
 
       {/* Commission Settings Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="pt-6 px-6 pb-10 md:p-6 md:max-w-md">
+        <DialogContent className="max-w-md">
           <div className="flex flex-row items-start mb-4">
             <div className="flex flex-col">
-              <h2 className="text-heading-1 text-foreground">{pointsLeft}</h2>
+              <h2 className="text-heading-2 text-foreground">{pointsLeft}</h2>
               <Caption className="text-muted-foreground">% points left to distribute</Caption>
             </div>
           </div>
