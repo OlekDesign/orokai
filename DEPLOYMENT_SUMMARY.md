@@ -1,35 +1,36 @@
-# Deployment Summary - Pending Withdrawal Transactions Feature
+# Deployment Summary - Modal Design Unification & Affiliate Analytics Fixes
 
 ## 📋 Changes Summary
 
-This deployment includes pending withdrawal transaction functionality with cancel and speed up capabilities:
+This deployment includes unified modal close button design and affiliate analytics improvements:
 
-### ✨ New Features
+### ✨ New Features & Improvements
 
-1. **Pending Withdrawal Transactions**
-   - Withdrawal transactions now start in pending state for 20 seconds
-   - Users can cancel pending withdrawals to keep funds available
-   - Users can speed up withdrawals to complete immediately
-   - Consistent transaction handling matching investment transaction flow
+1. **Unified Modal Close Button Design**
+   - All modals and dialogs now use consistent close button styling
+   - Enhanced DialogContent component with `hideCloseButton` prop for flexible positioning
+   - Standardized styling: `rounded-sm` with opacity transitions and focus rings
+   - Updated PageHeader close button to match modal design (removed circular styling)
+   - Better accessibility with proper focus states
 
-2. **Enhanced Transaction Management**
-   - TransactionsContext now supports different timeout durations (20s for withdrawals, 10s for investments)
-   - Added `completeTransaction()` method for immediate transaction completion
-   - Timeout management with cancellation support
-   - Proper tracking of multiple pending withdrawals
+2. **Affiliate Analytics Fixes**
+   - Fixed affiliate rewards calculation - total now equals sum of all three levels
+   - Chart data now gradually grows from 0 to total value over time period
+   - Custom chart data generator for accurate affiliate rewards visualization
+   - Updated tooltip styling to match Dashboard tooltip design
 
-3. **Transaction Details Dialog Updates**
-   - Added Cancel and Speed Up buttons for pending withdrawal transactions
-   - Toast notifications for cancel and speed up actions
-   - Consistent UI with investment transaction controls
+3. **Design System Consistency**
+   - Consistent close button positioning and styling across all components
+   - Unified component usage patterns
+   - Improved maintainability with shared design system
 
 ### 📝 Files Changed
 
-- `src/contexts/TransactionsContext.tsx` - Added timeout management, transaction completion, and cancellation support
-- `src/pages/Wallet.tsx` - Updated withdrawal handler to create pending transactions, added tracking for multiple withdrawals
-- `src/components/TransactionDetailsDialog.tsx` - Added Cancel/Speed Up buttons and handlers for pending withdrawals
-- `CHANGELOG.md` - Updated with detailed feature documentation
-- `README.md` - Updated with feature overview and recent updates
+- `src/components/ui/dialog.tsx` - Added `hideCloseButton` prop to DialogContent component
+- `src/components/PageHeader.tsx` - Updated close button styling to match modal design
+- `src/pages/my-nft.tsx` - Replaced custom close button with DialogClose component
+- `src/pages/Affiliate-analytics.tsx` - Fixed rewards calculation, added custom chart generator, updated tooltip
+- `CHANGELOG.md` - Updated with detailed change documentation
 
 ## 🚀 Deployment Steps
 
@@ -111,6 +112,6 @@ If deployment issues occur:
 
 ---
 
-**Commit:** `5f3d328` - feat: Add pending withdrawal transactions with cancel and speed up functionality  
+**Commit:** `02a29d9` - feat: Unify modal close button design and fix affiliate analytics  
 **Date:** 2025-01-XX  
 **Status:** ✅ Deployed to GitHub Pages
