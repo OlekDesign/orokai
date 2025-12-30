@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Info } from 'lucide-react';
 import {
   Tooltip,
@@ -21,13 +22,32 @@ export function InfoTooltip({
   delayDuration = 100,
   videoUrl
 }: InfoTooltipProps) {
+  const [open, setOpen] = React.useState(false);
+
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={delayDuration}>
+      <Tooltip 
+        open={open} 
+        onOpenChange={setOpen} 
+        delayDuration={delayDuration}
+      >
         <TooltipTrigger asChild>
-          <Info className={iconClassName} />
+          <button
+            type="button"
+            className="inline-flex items-center justify-center w-10 h-10 -m-[14px] md:w-auto md:h-auto md:m-0 p-0 bg-transparent border-none outline-none cursor-pointer md:cursor-help"
+            onClick={(e) => {
+              if (window.innerWidth < 768) {
+                e.preventDefault();
+                setOpen(!open);
+              }
+            }}
+          >
+            <Info className={iconClassName} />
+          </button>
         </TooltipTrigger>
-        <TooltipContent className={`max-w-xs bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}>
+        <TooltipContent 
+          className={`max-w-xs bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
+        >
           <div className="w-full aspect-video mb-3 rounded-md overflow-hidden bg-muted">
             <video
               src={videoUrl || "/video.mp4"}
@@ -35,6 +55,7 @@ export function InfoTooltip({
               controls
               playsInline
               loop
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
           {content}

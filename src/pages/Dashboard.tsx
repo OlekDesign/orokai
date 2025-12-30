@@ -572,25 +572,17 @@ export function Dashboard() {
               <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
             </div>
 
-            <div className="space-y-2 flex-shrink-0">
+            <div className="space-y-4 flex-shrink-0">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Next reward</span>
                 <span className="text-muted-foreground">21h 32min</span>
               </div>
               <Progress value={30} className="h-2" />
             </div>
-
-            <Button
-              onClick={() => navigate('/transactions?filter=rewards')}
-              variant="link"
-              className="text-primary hover:text-primary/80 p-0 h-auto font-normal flex-shrink-0 self-start hidden md:flex"
-            >
-              See rewards history
-            </Button>
-              </CardContent>
-            </motion.div>
-          </Card>
+          </CardContent>
         </motion.div>
+      </Card>
+    </motion.div>
 
         <motion.div
           initial="hidden"
@@ -872,11 +864,11 @@ export function Dashboard() {
                     </div>
                   </div>
                 )}
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
                   <Button 
                     variant="secondary"
                     size="lg"
-                    className="h-12 px-4"
+                    className="h-12 w-12 md:h-12 md:w-12 p-0 flex-shrink-0"
                     onClick={handleShowDifferentOptions}
                   >
                     <Settings2 className="h-4 w-4" />
@@ -884,7 +876,7 @@ export function Dashboard() {
                   <Button 
                     onClick={showEstimatedReturn ? handleContinueSetup : handleEstimateReturns}
                     disabled={isEstimating}
-                    className="flex-1 h-12"
+                    className="flex-1 h-12 md:h-12"
                     variant="default"
                     size="lg">
                     {isEstimating ? (
