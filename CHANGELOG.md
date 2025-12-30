@@ -50,6 +50,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
   - Ensures consistent typography for all modal and dialog titles across the platform
   - Uses the Zodiak brand font and proper sizing for better visual hierarchy
+- **Fixed Tooltip Stacking Bug**: Resolved issue where tooltips from the background page remained visible over open modals
+  - Removed `TooltipPortal` to allow tooltips to respect the parent stacking context
+  - Background tooltips are now correctly hidden behind modal overlays
+  - Tooltips inside modals continue to work and display correctly on top of modal content
 
 **Technical Details:**
 - Modified `src/components/ui/input.tsx` - Updated base styles and interactive states
