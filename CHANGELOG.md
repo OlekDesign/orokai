@@ -47,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Investments Page Layout Tweaks**: 
   - Reduced vertical spacing for the "Choose your amount" section
   - Changed margin-top from 24px (mt-6) to 16px (mt-4) for a tighter, more cohesive layout
+- **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
+  - Ensures consistent typography for all modal and dialog titles across the platform
+  - Uses the Zodiak brand font and proper sizing for better visual hierarchy
 
 **Technical Details:**
 - Modified `src/components/ui/input.tsx` - Updated base styles and interactive states
