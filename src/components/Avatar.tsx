@@ -35,7 +35,8 @@ function getColorForName(name: string): string {
 }
 
 // Extract initials from full name
-function getInitials(name: string): string {
+function getInitials(name: string = ''): string {
+  if (!name) return '?';
   const names = name.trim().split(' ');
   if (names.length === 1) {
     return names[0].charAt(0).toUpperCase();
@@ -43,9 +44,9 @@ function getInitials(name: string): string {
   return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
-export function Avatar({ name, size = 'md', className }: AvatarProps) {
+export function Avatar({ name = '', size = 'md', className }: AvatarProps) {
   const initials = getInitials(name);
-  const bgColor = getColorForName(name);
+  const bgColor = getColorForName(name || 'default');
   
   const sizeClasses = {
     sm: 'w-8 h-8 text-xs',

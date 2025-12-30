@@ -655,14 +655,14 @@ export function Dashboard() {
                                 key={currency.symbol}
                                 onClick={() => handleCurrencyChange(currency.symbol)}
                                 className={cn(
-                                  "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                                  "w-full flex items-center justify-between px-4 py-2.5 hover:bg-muted transition-colors",
                                   currency.symbol === selectedCurrency && "bg-muted"
                                 )}
                               >
                                 <div className="flex items-center gap-3">
                                   <CryptoIcon symbol={currency.symbol} size={20} />
                                   <div className="flex flex-col items-start">
-                                    <span className="font-medium text-foreground">{currency.name}</span>
+                                    <span className="text-sm font-medium text-foreground">{currency.name}</span>
                                     <span className="text-xs text-muted-foreground">
                                       {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
                                     </span>
@@ -828,14 +828,14 @@ export function Dashboard() {
                                 key={currency.symbol}
                                 onClick={() => handleCurrencyChange(currency.symbol)}
                                 className={cn(
-                                  "w-full flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors",
+                                  "w-full flex items-center justify-between px-4 py-2.5 hover:bg-muted transition-colors",
                                   currency.symbol === selectedCurrency && "bg-muted"
                                 )}
                               >
                                 <div className="flex items-center gap-3">
                                   <CryptoIcon symbol={currency.symbol} size={20} />
                                   <div className="flex flex-col items-start">
-                                    <span className="font-medium text-foreground">{currency.name}</span>
+                                    <span className="text-sm font-medium text-foreground">{currency.name}</span>
                                     <span className="text-xs text-muted-foreground">
                                       {currency.type === 'fiat' ? currency.cardNumber : currency.balance}
                                     </span>

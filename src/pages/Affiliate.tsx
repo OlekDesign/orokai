@@ -330,7 +330,7 @@ export function Affiliate() {
                     </button>
 
                     {isLevelDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-secondary rounded-lg shadow-md border border-border py-1 z-50">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-popover rounded-lg shadow-lg border border-border py-1 z-50">
                         {levelOptions.map(option => (
                           <button
                             key={option.key}
@@ -338,11 +338,12 @@ export function Affiliate() {
                               setSelectedLevel(option.key as 'all' | 1 | 2 | 3);
                               setIsLevelDropdownOpen(false);
                             }}
-                            className={`w-full flex items-center justify-between px-4 py-2 hover:bg-muted transition-colors ${
-                              option.key === selectedLevel ? 'bg-muted' : ''
-                            }`}
+                            className={cn(
+                              "w-full flex items-center justify-between px-4 py-2 hover:bg-muted transition-colors",
+                              option.key === selectedLevel && "bg-muted"
+                            )}
                           >
-                            <span className="text-sm">{option.label}</span>
+                            <span className="text-sm font-medium text-foreground">{option.label}</span>
                             <Caption className="text-muted-foreground text-xs">({option.count})</Caption>
                           </button>
                         ))}

@@ -27,6 +27,7 @@ import TransactionsEmpty from './pages/Transactions-empty';
 import { TransactionReview } from './pages/TransactionReview';
 import { TypographyDemo } from './components/TypographyDemo';
 import { ColorGuide } from './pages/ColorGuide';
+import DesignSystem from './pages/DesignSystem';
 
 
 // Protected route wrapper
@@ -297,6 +298,13 @@ function AppRoutes() {
           <ProfileProtectedRoute>
             <ColorGuide />
           </ProfileProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/design-system"
+        element={
+          <DesignSystem />
         }
       />
 

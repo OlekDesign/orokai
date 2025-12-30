@@ -20,12 +20,16 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
 - **Investment Closure**: Close investments and track closure transactions
 - **Reward System**: View and track investment rewards
 
+### Developer Tools
+- **Design System**: A comprehensive visual overview of all React components used in the project. Accessible at `#/design-system`.
+
 ## Recent Updates
 
-### Pending Withdrawal Transactions (Latest)
-- Withdrawal transactions now have a 20-second pending state
-- Users can cancel or speed up pending withdrawals
-- Consistent transaction handling across investment and withdrawal flows
+### Design System & Component Unification (Latest)
+- Added a new **Design System** page to visualize all project components in dark mode.
+- Unified dropdown menu styles across the application (Affiliate and Dashboard).
+- Standardized `StatsCard` and `Avatar` typography to match the brand aesthetic.
+- Organized component library into Atoms, Molecules, Organisms, and Orphan components.
 
 See [CHANGELOG.md](./CHANGELOG.md) for full release history.
 
