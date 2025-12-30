@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogClose,
 } from "@/components/ui/dialog";
 
 export function MyNFT() {
@@ -97,17 +98,14 @@ export function MyNFT() {
 
       {/* Mint NFT Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="p-0 bg-background border-border [&>button]:hidden pb-6 md:pb-6 md:max-w-md">
+        <DialogContent className="p-0 bg-background border-border pb-6 md:pb-6 md:max-w-md" hideCloseButton>
           <DialogHeader className="w-full">
             <div className="relative w-full pt-6 px-6">
-              {/* Custom Close button */}
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10"
-              >
+              {/* Custom Close button - positioned inside header for this specific design */}
+              <DialogClose className="absolute right-4 top-4 h-10 w-10 flex items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10">
                 <X className="h-4 w-4 text-foreground" />
                 <span className="sr-only">Close</span>
-              </button>
+              </DialogClose>
 
               {/* Circular gradient graphic */}
               <div className="flex justify-center mb-6">

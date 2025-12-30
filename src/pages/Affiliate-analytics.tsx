@@ -26,22 +26,126 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TimeRangeSelector } from '@/components/TimeRangeSelector';
-import { generateChartData, rewardTransactions } from '@/utils/stakingData';
 import { Heading2, Caption, Heading1, BodyTextSmall, BodyText } from '@/components/ui/typography';
+
+// Helper function to format date based on time range
+const formatDate = (date: Date, timeRange: 'week' | 'month' | 'all'): string => {
+  switch (timeRange) {
+    case 'week':
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+    case 'month':
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
+      });
+    case 'all':
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
+      });
+    default:
+      return date.toLocaleDateString();
+  }
+};
+
+// Generate affiliate chart data that gradually grows to the target total
+const generateAffiliateChartData = (timeRange: 'week' | 'month' | 'all', targetTotal: number) => {
+  const today = new Date();
+  const data = [];
+  
+  let daysToShow: number;
+  switch (timeRange) {
+    case 'week':
+      daysToShow = 7;
+      break;
+    case 'month':
+      daysToShow = 30;
+      break;
+    case 'all':
+      daysToShow = 730; // 2 years
+      break;
+    default:
+      daysToShow = 7;
+  }
+
+  // Start from 0 and gradually grow to targetTotal
+  const startValue = 0;
+  const totalGrowth = targetTotal - startValue;
+  
+  // Calculate average daily growth
+  const averageDailyGrowth = totalGrowth / daysToShow;
+  
+  // Simulate some larger reward spikes at various points (20% of days get rewards)
+  const rewardDates: { day: number; amount: number }[] = [];
+  const numRewards = Math.max(1, Math.floor(daysToShow * 0.2)); // 20% of days get rewards
+  
+  // Distribute rewards evenly across the period
+  for (let i = 0; i < numRewards; i++) {
+    const dayIndex = Math.floor((daysToShow / (numRewards + 1)) * (i + 1));
+    // Each reward is 2-3x the average daily growth
+    const rewardAmount = averageDailyGrowth * (2 + Math.random());
+    rewardDates.push({ day: dayIndex, amount: rewardAmount });
+  }
+
+  let currentValue = startValue;
+  let totalRewardsDistributed = 0;
+  
+  for (let i = 0; i < daysToShow; i++) {
+    const currentDate = new Date(today);
+    currentDate.setDate(currentDate.getDate() - (daysToShow - 1 - i));
+    
+    // Check if there's a reward on this day
+    const reward = rewardDates.find(r => r.day === i);
+    
+    if (reward) {
+      currentValue += reward.amount;
+      totalRewardsDistributed += reward.amount;
+    } else {
+      // Small incremental growth between rewards
+      const remainingDays = daysToShow - i;
+      const remainingGrowth = targetTotal - currentValue;
+      const dailyGrowth = remainingGrowth / remainingDays;
+      currentValue += dailyGrowth;
+    }
+    
+    // On the last day, ensure we reach exactly the target total
+    if (i === daysToShow - 1) {
+      currentValue = targetTotal;
+    }
+
+    data.push({
+      date: formatDate(currentDate, timeRange),
+      value: Number(Math.max(0, Math.min(currentValue, targetTotal)).toFixed(2)),
+      reward: reward ? Number(reward.amount.toFixed(2)) : 0
+    });
+  }
+
+  return data;
+};
 
 export function AffiliateAnalytics() {
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
-  const [chartData, setChartData] = useState(generateChartData(timeRange));
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Total affiliate rewards (matching Affiliate.tsx)
-  const totalAffiliateRewards = 3112;
+  // Level rewards (in USDT)
+  const level1Rewards = 7334;
+  const level2Rewards = 0;
+  const level3Rewards = 0;
+  
+  // Calculate total affiliate rewards as sum of all levels
+  const totalAffiliateRewards = level1Rewards + level2Rewards + level3Rewards;
+
+  // Generate chart data that grows to totalAffiliateRewards
+  const [chartData, setChartData] = useState(() => generateAffiliateChartData(timeRange, totalAffiliateRewards));
 
   // Update chart data when time range changes
   useEffect(() => {
-    setChartData(generateChartData(timeRange));
-  }, [timeRange]);
+    setChartData(generateAffiliateChartData(timeRange, totalAffiliateRewards));
+  }, [timeRange, totalAffiliateRewards]);
 
   // Handle mobile detection
   useEffect(() => {
@@ -58,17 +162,28 @@ export function AffiliateAnalytics() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      
+      // Add year to label if it's missing (for week view)
+      let timestampWithYear = label;
+      if (!label.match(/\d{4}/)) {
+        // If no year found, add current year
+        const currentYear = new Date().getFullYear();
+        timestampWithYear = `${label}, ${currentYear}`;
+      }
+      
       return (
-        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border">
-          <span className="text-caption mb-1">{label}</span>
-          <BodyTextSmall className="font-medium">
-            Total: ${data.value.toLocaleString()}
+        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border flex flex-col gap-1">
+          <BodyTextSmall className="text-foreground">
+            ${data.value.toLocaleString()}
           </BodyTextSmall>
           {data.reward > 0 && (
-            <BodyTextSmall className="text-success mt-1">
-              +${data.reward.toLocaleString()} reward
-            </BodyTextSmall>
+            <Caption style={{ color: 'hsl(var(--faded))' }}>
+              +${data.reward.toLocaleString()}
+            </Caption>
           )}
+          <Caption style={{ color: 'hsl(var(--faded))' }}>
+            {timestampWithYear}
+          </Caption>
         </div>
       );
     }
@@ -206,7 +321,7 @@ export function AffiliateAnalytics() {
                 <TableRow>
                   <TableCell className="w-[120px]"><BodyTextSmall>112</BodyTextSmall></TableCell>
                   <TableCell><BodyTextSmall>43</BodyTextSmall></TableCell>
-                  <TableCell className="text-right"><BodyTextSmall>7,334 USDT</BodyTextSmall></TableCell>
+                  <TableCell className="text-right"><BodyTextSmall>{level1Rewards.toLocaleString()} USDT</BodyTextSmall></TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -238,7 +353,7 @@ export function AffiliateAnalytics() {
                 <TableRow>
                   <TableCell className="w-[120px]"><BodyTextSmall>21</BodyTextSmall></TableCell>
                   <TableCell><BodyTextSmall>13</BodyTextSmall></TableCell>
-                  <TableCell className="text-right"><BodyTextSmall>0 USDT</BodyTextSmall></TableCell>
+                  <TableCell className="text-right"><BodyTextSmall>{level2Rewards.toLocaleString()} USDT</BodyTextSmall></TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -270,7 +385,7 @@ export function AffiliateAnalytics() {
                 <TableRow>
                   <TableCell className="w-[120px]"><BodyTextSmall>3</BodyTextSmall></TableCell>
                   <TableCell><BodyTextSmall>3</BodyTextSmall></TableCell>
-                  <TableCell className="text-right"><BodyTextSmall>0 USDT</BodyTextSmall></TableCell>
+                  <TableCell className="text-right"><BodyTextSmall>{level3Rewards.toLocaleString()} USDT</BodyTextSmall></TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -302,7 +417,7 @@ export function AffiliateAnalytics() {
                 <TableRow>
                   <TableCell className="w-[120px]"><BodyTextSmall>136</BodyTextSmall></TableCell>
                   <TableCell><BodyTextSmall>59</BodyTextSmall></TableCell>
-                  <TableCell className="text-right"><BodyTextSmall>7,334 USDT</BodyTextSmall></TableCell>
+                  <TableCell className="text-right"><BodyTextSmall>{totalAffiliateRewards.toLocaleString()} USDT</BodyTextSmall></TableCell>
                 </TableRow>
               </TableBody>
             </Table>

@@ -40,7 +40,7 @@ export function PageHeader({
           variant="ghost"
           size="icon"
           onClick={handleClose}
-          className="rounded-full hover:bg-muted"
+          className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         >
           <X className="h-5 w-5" />
         </Button>

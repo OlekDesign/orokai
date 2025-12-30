@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2025-01-XX
+
+#### Unified Modal Close Button Design
+- **Consistent Close Button Styling**: All modals and dialogs now use the same close button design
+  - Updated DialogContent component to support `hideCloseButton` prop for custom positioning
+  - Standardized close button styling: `rounded-sm` with opacity transitions and focus rings
+  - Updated PageHeader close button to match modal design (removed circular styling)
+  - Updated my-nft.tsx modal to use DialogClose component instead of custom button
+- **Design System Consistency**: All close buttons across the application now follow the same design pattern
+  - Consistent positioning: `absolute right-4 top-4`
+  - Consistent styling: opacity, hover effects, and focus states
+  - Better accessibility with proper focus rings
+
+**Technical Details:**
+- Modified `src/components/ui/dialog.tsx` - Added `hideCloseButton` prop to DialogContent
+- Modified `src/components/PageHeader.tsx` - Updated close button from `rounded-full` to `rounded-sm` with standard styling
+- Modified `src/pages/my-nft.tsx` - Replaced custom close button with DialogClose component
+
+**Impact:**
+- Consistent user experience across all modals and dialogs
+- Easier maintenance with unified component usage
+- Better accessibility with standardized focus states
+
+---
+
+#### Affiliate Analytics Improvements
+- **Fixed Affiliate Rewards Calculation**: Total affiliate rewards now correctly equals the sum of all three levels
+  - Level 1: 7,334 USDT
+  - Level 2: 0 USDT
+  - Level 3: 0 USDT
+  - Total: 7,334 USDT (calculated dynamically)
+- **Chart Data Accuracy**: Chart now gradually grows from 0 to the total value over the selected time period
+  - Custom chart data generator for affiliate rewards
+  - Smooth growth pattern with realistic reward spikes
+  - Final value matches the total displayed above the chart
+- **Tooltip Consistency**: Updated tooltip styling to match Dashboard tooltip design
+  - Same layout and styling as Dashboard chart tooltips
+  - Consistent date formatting with year handling
+
+**Technical Details:**
+- Modified `src/pages/Affiliate-analytics.tsx` - Fixed rewards calculation, added custom chart data generator, updated tooltip styling
+
+**Impact:**
+- Accurate affiliate rewards display
+- Better data visualization with correct chart progression
+- Consistent tooltip experience across charts
+
+---
+
 ### Added - 2025-01-XX
 
 #### Pending Withdrawal Transactions with Cancel and Speed Up
