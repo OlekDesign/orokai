@@ -4,6 +4,7 @@ import { UserProfileProvider, useUserProfile } from './contexts/UserProfileConte
 import { TransactionsProvider } from './contexts/TransactionsContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { TooltipProvider } from './components/ui/tooltip';
 import { Layout } from './components/Layout';
 import { ScrollToTop } from './components/ScrollToTop';
 import { Login } from './pages/Login';
@@ -323,7 +324,9 @@ export default function App() {
           <TransactionsProvider>
             <OnboardingProvider>
               <ToastProvider>
-                <AppRoutes />
+                <TooltipProvider>
+                  <AppRoutes />
+                </TooltipProvider>
               </ToastProvider>
             </OnboardingProvider>
           </TransactionsProvider>

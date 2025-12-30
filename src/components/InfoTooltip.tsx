@@ -3,7 +3,6 @@ import { Info } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -25,42 +24,40 @@ export function InfoTooltip({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <TooltipProvider>
-      <Tooltip 
-        open={open} 
-        onOpenChange={setOpen} 
-        delayDuration={delayDuration}
-      >
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center w-10 h-10 -m-[14px] md:w-auto md:h-auto md:m-0 p-0 bg-transparent border-none outline-none cursor-pointer md:cursor-help"
-            onClick={(e) => {
-              if (window.innerWidth < 768) {
-                e.preventDefault();
-                setOpen(!open);
-              }
-            }}
-          >
-            <Info className={iconClassName} />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent 
-          className={`max-w-xs bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
+    <Tooltip 
+      open={open} 
+      onOpenChange={setOpen} 
+      delayDuration={delayDuration}
+    >
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center justify-center w-10 h-10 -m-[14px] md:w-auto md:h-auto md:m-0 p-0 bg-transparent border-none outline-none cursor-pointer md:cursor-help"
+          onClick={(e) => {
+            if (window.innerWidth < 768) {
+              e.preventDefault();
+              setOpen(!open);
+            }
+          }}
         >
-          <div className="w-full aspect-video mb-3 rounded-md overflow-hidden bg-muted">
-            <video
-              src={videoUrl || "/video.mp4"}
-              className="w-full h-full object-cover"
-              controls
-              playsInline
-              loop
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-          {content}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+          <Info className={iconClassName} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent 
+        className={`max-w-xs bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
+      >
+        <div className="w-full aspect-video mb-3 rounded-md overflow-hidden bg-muted">
+          <video
+            src={videoUrl || "/video.mp4"}
+            className="w-full h-full object-cover"
+            controls
+            playsInline
+            loop
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+        {content}
+      </TooltipContent>
+    </Tooltip>
   );
 }
