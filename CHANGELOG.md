@@ -39,6 +39,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed - 2025-01-XX
 
+#### Sleek Global Scrollbar Styling
+- **Custom Scrollbar Design**: Implemented a sleek, elegant, and unified scrollbar look across the entire application.
+  - Reduced scrollbar width to 5px for a more modern, minimal aesthetic.
+  - Transparent track to minimize visual clutter and better blend with the UI.
+  - Elegant pill-shaped thumb with soft colors matching the brand's muted tokens.
+  - Added smooth transition effects on hover.
+- **Platform-wide Integration**: Applied scrollbar styling globally to all scrollable elements, including overflow containers and the main page.
+- **Codebase Optimization**: 
+  - Centralized scrollbar styles in the `@layer base` of `src/index.css`.
+  - Removed redundant `.scrollbar-custom` utility class and its usages.
+  - Maintained `.scrollbar-hide` for specific layout needs.
+
+**Technical Details:**
+- Modified `src/index.css` - Moved scrollbar styles to global base layer, updated aesthetics.
+- Modified `src/pages/TransactionReview.tsx` - Removed explicit `scrollbar-custom` classes as they are now handled globally.
+
+**Impact:**
+- More polished and premium feel throughout the platform.
+- Consistent user experience on both desktop and mobile browsers.
+- Reduced CSS redundancy and improved maintainability.
+
+---
+
+## [Unreleased]
+
 #### Unified Modal Close Button Design
 - **Consistent Close Button Styling**: All modals and dialogs now use the same close button design
   - Updated DialogContent component to support `hideCloseButton` prop for custom positioning

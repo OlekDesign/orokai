@@ -476,7 +476,7 @@ export function TransactionReview() {
                         <Label>
                           Select Currency
                         </Label>
-                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2 scrollbar-custom">
+                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2">
                           {currencies.map((currency) => (
                             <button
                               key={currency.symbol}
@@ -898,7 +898,7 @@ export function TransactionReview() {
                         <Label>
                           Select Currency
                         </Label>
-                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2 scrollbar-custom">
+                        <div className="space-y-3 max-h-[60vh] md:max-h-[38vh] overflow-y-auto pr-2">
                           {currencies.map((currency) => (
                             <button
                               key={currency.symbol}
