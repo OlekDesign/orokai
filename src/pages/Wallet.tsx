@@ -646,7 +646,7 @@ export function Wallet() {
       }}>
         <DialogContent className="p-6 pt-6">
           <DialogHeader>
-            <DialogTitle className="text-heading-2">Payment Methods</DialogTitle>
+            <DialogTitle>Payment Methods</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             {cards.length === 0 || showNewCardForm ? (
