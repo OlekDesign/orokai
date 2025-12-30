@@ -30,6 +30,7 @@ import { useTransactions } from '@/contexts/TransactionsContext';
 import { TransactionRow } from '@/components/TransactionRow';
 import { Caption } from '@/components/ui/typography';
 import { TransactionDetailsDialog } from '@/components/TransactionDetailsDialog';
+import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 
 export const initialDemoTransactions: Transaction[] = [
   // Failed investment - most recent
@@ -123,24 +124,16 @@ export function Transactions() {
 
   return (
     <div className="space-y-6">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={contentVariants}
-        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="flex space-x-2 overflow-x-auto pb-2"
-      >
-        {(['all', 'rewards', 'withdrawals', 'investment', 'internal'] as const).map((type) => (
-          <Button
-            key={type}
-            onClick={() => handleFilterChange(type)}
-            variant={filter === type ? "default" : "secondary"}
-            className="whitespace-nowrap"
-          >
-            {getTransactionLabel(type)}
-          </Button>
-        ))}
-      </motion.div>
+      <SegmentedSwitch
+        value={filter}
+        onChange={(val) => handleFilterChange(val as TransactionType)}
+        options={(['all', 'rewards', 'withdrawals', 'investment', 'internal'] as const).map((type) => ({
+          value: type,
+          label: getTransactionLabel(type),
+        }))}
+        className="overflow-x-auto pb-0 justify-start"
+        layoutId="transactionFilterIndicator"
+      />
 
       <motion.div
         initial="hidden"

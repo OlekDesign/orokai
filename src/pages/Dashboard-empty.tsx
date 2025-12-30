@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TimeRangeSelector } from '@/components/TimeRangeSelector';
+import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 import { generateChartData } from '@/utils/stakingData';
 import type { Transaction, TransactionType } from '@/types';
 import { cn } from "@/lib/utils";
@@ -118,7 +118,15 @@ export default function DashboardEmpty() {
                 </p>
               </div>
               <div className="scale-90 origin-top-right">
-                <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                <SegmentedSwitch
+                  value={timeRange}
+                  onChange={setTimeRange}
+                  options={[
+                    { value: 'week', label: 'Week' },
+                    { value: 'month', label: 'Month' },
+                    { value: 'all', label: 'All' },
+                  ]}
+                />
               </div>
             </div>
           </CardHeader>

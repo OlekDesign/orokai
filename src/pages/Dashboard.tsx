@@ -37,7 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TimeRangeSelector } from '@/components/TimeRangeSelector';
+import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 import { generateChartData, rewardTransactions } from '@/utils/stakingData';
 import type { Transaction, TransactionType } from '@/types';
 import { cn } from "@/lib/utils";
@@ -502,7 +502,15 @@ export function Dashboard() {
                     </BodyText>
                   </div>
                   <div className="hidden md:block scale-90 origin-top-right">
-                    <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                    <SegmentedSwitch
+                      value={timeRange}
+                      onChange={setTimeRange}
+                      options={[
+                        { value: 'week', label: 'Week' },
+                        { value: 'month', label: 'Month' },
+                        { value: 'all', label: 'All' },
+                      ]}
+                    />
                   </div>
                   {/* Mobile Avatar - Top right corner */}
                   <div className="md:hidden">
@@ -569,7 +577,15 @@ export function Dashboard() {
 
             {/* Mobile TimeRangeSelector - Below chart, centered */}
             <div className="md:hidden flex justify-center">
-              <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+              <SegmentedSwitch
+                value={timeRange}
+                onChange={setTimeRange}
+                options={[
+                  { value: 'week', label: 'Week' },
+                  { value: 'month', label: 'Month' },
+                  { value: 'all', label: 'All' },
+                ]}
+              />
             </div>
 
             <div className="space-y-4 flex-shrink-0">

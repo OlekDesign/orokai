@@ -14,7 +14,7 @@ import { ActiveStaking } from '@/components/ActiveStaking';
 import { CryptoIcon } from '@/components/CryptoIcon';
 import { Avatar } from '@/components/Avatar';
 import { CurrencySelect } from '@/components/CurrencySelect';
-import { TimeRangeSelector } from '@/components/TimeRangeSelector';
+import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 import { CreditCardForm } from '@/components/CreditCardForm';
 import { InfoTooltip } from '@/components/InfoTooltip';
 import { TransactionDetailsDialog } from '@/components/TransactionDetailsDialog';
@@ -131,8 +131,16 @@ export default function DesignSystem() {
         </Section>
 
         <Section title="Molecules">
-          <ComponentWrapper label="Time Range Selector">
-            <TimeRangeSelector value="month" onChange={() => {}} />
+          <ComponentWrapper label="Segmented Switch">
+            <SegmentedSwitch
+              value="month"
+              onChange={() => {}}
+              options={[
+                { value: 'week', label: 'Week' },
+                { value: 'month', label: 'Month' },
+                { value: 'all', label: 'All' },
+              ]}
+            />
           </ComponentWrapper>
           <ComponentWrapper label="Info Tooltip">
             <InfoTooltip content="Helpful information about an integrated component." />

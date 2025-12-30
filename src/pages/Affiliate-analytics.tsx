@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TimeRangeSelector } from '@/components/TimeRangeSelector';
+import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 import { Heading2, Caption, Heading1, BodyTextSmall, BodyText } from '@/components/ui/typography';
 
 // Helper function to format date based on time range
@@ -240,7 +240,15 @@ export function AffiliateAnalytics() {
                   </Heading1>
                 </div>
                 <div className="hidden md:block scale-90 origin-top-right">
-                  <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                  <SegmentedSwitch
+                    value={timeRange}
+                    onChange={setTimeRange}
+                    options={[
+                      { value: 'week', label: 'Week' },
+                      { value: 'month', label: 'Month' },
+                      { value: 'all', label: 'All' },
+                    ]}
+                  />
                 </div>
               </div>
             </CardHeader>
@@ -290,7 +298,15 @@ export function AffiliateAnalytics() {
 
               {/* Mobile TimeRangeSelector - Below chart, centered */}
               <div className="md:hidden flex justify-center">
-                <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+                <SegmentedSwitch
+                  value={timeRange}
+                  onChange={setTimeRange}
+                  options={[
+                    { value: 'week', label: 'Week' },
+                    { value: 'month', label: 'Month' },
+                    { value: 'all', label: 'All' },
+                  ]}
+                />
               </div>
             </CardContent>
           </motion.div>
