@@ -689,7 +689,7 @@ export function Investments() {
                   </AnimatePresence>
                 </div>
                 
-                <div className="mt-6" style={{ marginTop: '24px' }}>
+                <div className="mt-4" style={{ marginTop: '16px' }}>
                   <Label className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     Choose your amount
                   </Label>

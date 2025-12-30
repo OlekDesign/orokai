@@ -210,7 +210,6 @@ export function Affiliate() {
                 <div className="flex gap-2 -ml-3">
                   <Button
                     variant="ghost"
-                    size="sm"
                     className="flex items-center gap-2"
                     onClick={() => navigate('/affiliate-analytics')}
                   >
@@ -219,7 +218,6 @@ export function Affiliate() {
                   </Button>
                   <Button
                     variant="ghost"
-                    size="sm"
                     className="flex items-center gap-2"
                     onClick={() => navigate('/my-nft')}
                   >
@@ -242,7 +240,6 @@ export function Affiliate() {
               <CardContent>
                 <Button
                   variant="ghost"
-                  size="sm"
                   className="flex items-center gap-2 -ml-3"
                   onClick={() => navigate('/affiliate-program')}
                 >
@@ -258,18 +255,19 @@ export function Affiliate() {
             <CardHeader className="flex-shrink-0">
               <CardDescription>My unique link</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row gap-3 sm:items-end">
+            <CardContent className="flex flex-col sm:flex-row gap-3 sm:items-center">
               <div className="flex-1">
                 <input
                   type="text"
                   value={affiliateLink}
                   readOnly
-                  className="w-full px-3 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-muted-foreground truncate"
+                  className="w-full px-4 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-muted-foreground truncate"
                 />
               </div>
               <Button
                 onClick={copyToClipboard}
                 variant="default"
+                size="lg"
                 className="flex items-center gap-2 sm:w-auto"
               >
                 {copied ? (

@@ -37,6 +37,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2025-12-30
+
+#### UI & Input Styling Refinements
+- **Refined Input Component Styling**: Updated the global `Input` component for a cleaner look
+  - Switched background from `bg-accent` to `bg-background` for better theme integration
+  - Added `hover:bg-accent/50` for improved interactive feedback
+  - Maintained consistent vertical centering and sizing
+- **Investments Page Layout Tweaks**: 
+  - Reduced vertical spacing for the "Choose your amount" section
+  - Changed margin-top from 24px (mt-6) to 16px (mt-4) for a tighter, more cohesive layout
+
+**Technical Details:**
+- Modified `src/components/ui/input.tsx` - Updated base styles and interactive states
+- Modified `src/pages/Investments.tsx` - Adjusted spacing for the investment amount section
+
+**Impact:**
+- More consistent and professional-looking input fields across the platform
+- Improved visual hierarchy and vertical rhythm on the Investments page
+
+---
+
+## [Unreleased]
+
 ### Changed - 2025-01-XX
 
 #### Sleek Global Scrollbar Styling

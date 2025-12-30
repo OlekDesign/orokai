@@ -618,7 +618,7 @@ export function Dashboard() {
               <CardHeader className="flex-shrink-0">
                 <CardDescription>Passive income</CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
+              <CardContent className="flex-1 flex flex-col pt-0 sm:pt-0">
                 {/* Amount Input - Top Position (when showEstimatedReturn is true) */}
                 {showEstimatedReturn && (
                   <div className="mb-4 space-y-2">
@@ -954,8 +954,8 @@ export function Dashboard() {
                 <CardDescription>Latest transactions</CardDescription>
                 <Button
                   onClick={() => navigate('/transactions')}
-                  variant="link"
-                  className="text-primary hover:text-primary/80 p-0 h-auto font-normal"
+                  variant="ghost"
+                  className="font-normal"
                 >
                   See all
                 </Button>

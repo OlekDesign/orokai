@@ -103,13 +103,38 @@ export default function DesignSystem() {
 
         <Section title="Atoms">
           <ComponentWrapper label="Buttons">
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button>Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="destructive">Destructive</Button>
-              <Button variant="link">Link</Button>
+            <div className="flex flex-col gap-8 items-center">
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Button>Primary</Button>
+                <Button variant="secondary">Secondary</Button>
+                <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
+                <Button variant="destructive">Destructive</Button>
+              </div>
+              
+              <div className="flex flex-col gap-4 items-center">
+                <Caption className="text-muted-foreground text-[10px] font-bold">Sizes</Caption>
+                <div className="flex flex-wrap gap-4 justify-center items-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <Button size="sm">Small</Button>
+                    <Caption className="text-[10px]">sm (text-xs)</Caption>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Button size="default">Default</Button>
+                    <Caption className="text-[10px]">default (text-sm)</Caption>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Button size="lg">Large</Button>
+                    <Caption className="text-[10px]">lg (text-sm)</Caption>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Button size="icon" variant="outline">
+                      <Zap className="h-4 w-4" />
+                    </Button>
+                    <Caption className="text-[10px]">icon</Caption>
+                  </div>
+                </div>
+              </div>
             </div>
           </ComponentWrapper>
           <ComponentWrapper label="Input">

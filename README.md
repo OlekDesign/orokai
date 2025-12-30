@@ -26,6 +26,8 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
 ## Recent Updates
 
 ### UI & UX Enhancements (Latest)
+- **Input Styling Refinement**: Updated global input components with themed backgrounds and better hover states.
+- **Investments Page Layout**: Optimized vertical spacing on the investments page for a more compact and readable form.
 - **Global Scrollbar Design**: Implemented a sleek, elegant custom scrollbar globally across the platform.
 - **New SegmentedSwitch Component**: Introduced a generic, animated switch component using Framer Motion's `layoutId` for smooth transitions.
 - **UI Polishing**: Replaced specialized selectors with the unified `SegmentedSwitch` across Dashboard, Transactions, and Analytics pages.

@@ -367,7 +367,7 @@ export function Wallet() {
                   <Input
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
-                    className="h-8 text-heading-4"
+                    className="h-10 text-heading-2"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleNameSave();
                       if (e.key === 'Escape') handleNameCancel();
@@ -393,7 +393,7 @@ export function Wallet() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Heading3>{profile.name}</Heading3>
+                  <Heading2>{profile.name}</Heading2>
                   {showNameEdit && (
                     <Button
                       size="icon"
@@ -476,14 +476,12 @@ export function Wallet() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/transaction-review', { state: { amount: availableFunds } })}
-                    className="flex-1"
                   >
                     Reinvest
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="ghost"
                     onClick={() => setShowWithdrawModal(true)}
-                    className="flex-1"
                   >
                     Withdraw to Your Card
                   </Button>
@@ -502,15 +500,13 @@ export function Wallet() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/transaction-review')}
-                    className="flex-1"
                     disabled
                   >
                     Reinvest
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="ghost"
                     onClick={() => setShowWithdrawModal(true)}
-                    className="flex-1"
                     disabled
                   >
                     Withdraw to Your Card
