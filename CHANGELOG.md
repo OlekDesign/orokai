@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2024-12-30
+
+#### Generic SegmentedSwitch Component
+- **New Reusable Component**: Created `SegmentedSwitch.tsx` to replace specialized selectors
+  - Built with Radix UI `ToggleGroup` and Framer Motion
+  - Features a smooth sliding background indicator (`layoutId`)
+  - Supports generic value types for better type safety
+- **Platform-wide Integration**: Replaced `TimeRangeSelector` with `SegmentedSwitch` in:
+  - Dashboard (time range filters)
+  - Affiliate Analytics (time range filters)
+  - Design System (as a molecule)
+- **Transactions Filter Refactoring**: Updated the transaction category filters to use `SegmentedSwitch`
+  - Replaced multiple `Button` components with a single unified switch
+  - Added smooth transitions between transaction types (All, Rewards, etc.)
+  - Reduced vertical spacing by setting `padding-bottom` to `pb-0`
+
+**Technical Details:**
+- Created `src/components/SegmentedSwitch.tsx`
+- Deleted obsolete `src/components/TimeRangeSelector.tsx`
+- Modified `src/pages/Dashboard.tsx`, `src/pages/Dashboard-empty.tsx`, `src/pages/Transactions.tsx`, `src/pages/Affiliate-analytics.tsx`, and `src/pages/DesignSystem.tsx`
+
+**Impact:**
+- More polished and consistent UI with smooth animations
+- Reduced code duplication with a more flexible generic component
+- Improved visual density in the transactions view
+
+---
+
+## [Unreleased]
+
 ### Changed - 2025-01-XX
 
 #### Unified Modal Close Button Design
