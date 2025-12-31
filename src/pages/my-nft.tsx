@@ -68,7 +68,7 @@ export function MyNFT() {
           className="text-center space-y-4"
         >
           <Heading2>
-            {isMinted ? 'OROKAI-11x399q3' : "You don't have any OROKAI NFT yet."}
+            {isMinted ? 'OROKAI-11x399q3' : "Your Orokai NFT is not minted yet"}
           </Heading2>
           {!isMinted && (
             <p className="text-foreground/80 max-w-sm mx-auto">
