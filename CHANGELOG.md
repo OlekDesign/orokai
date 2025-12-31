@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **My NFT Page Enhancements**:
   - Added explanatory text for users without an NFT, explaining the link between the NFT and affiliate tree transfers.
   - Simplified the Mint NFT modal by removing the large circular gradient graphic for a cleaner look.
+  - Updated the Mint NFT modal title to "Lock the % distribution" and aligned it to the left.
 - **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
   - Ensures consistent typography for all modal and dialog titles across the platform
   - Uses the Zodiak brand font and proper sizing for better visual hierarchy
