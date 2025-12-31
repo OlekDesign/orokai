@@ -71,8 +71,8 @@ export function MyNFT() {
             {isMinted ? 'OROKAI-11x399q3' : "Your Orokai NFT is not minted yet"}
           </Heading2>
           {!isMinted && (
-            <p className="text-foreground/80 max-w-sm mx-auto">
-              You're earning rewards from your affiliate tree. If you want to transfer that affiliate tree to a different wallet then you need to mint your Orokai NFT first.
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              You're earning rewards from your affiliate tree. You can sell the rights to these rewards or transfer it to another wallet. Get your Orokai NFT to do that.
             </p>
           )}
           {isMinted && (
@@ -118,16 +118,21 @@ export function MyNFT() {
               </h2>
 
               {/* Warning message */}
-              <p className="block w-full text-center text-foreground/80 leading-relaxed mb-6">
-                Once you mint your NFT, you cannot<br />
-                change the distribution of your<br />
-                commissions.
+              <p className="block w-full text-left text-foreground/80 leading-relaxed mb-6">
+                Once you mint your NFT, you cannot change the distribution of your commissions.
               </p>
             </div>
           </DialogHeader>
 
-          {/* Confirm button */}
-          <div className="px-6 pb-6">
+          {/* Action buttons */}
+          <div className="px-6 pb-0 flex gap-3">
+            <Button
+              variant="secondary"
+              className="flex-1 h-12"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Nevermind
+            </Button>
             <Button
               onClick={() => {
                 // Handle mint confirmation here
@@ -135,7 +140,7 @@ export function MyNFT() {
                 setIsModalOpen(false);
               }}
               variant="default"
-              className="w-full h-12"
+              className="flex-1 h-12"
             >
               Confirm
             </Button>

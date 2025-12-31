@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2025-12-31
+
+#### My NFT Page & Modal Refinements
+- **Improved Mint NFT Modal Layout**: Optimized the spacing and actions in the NFT minting flow
+  - Reduced button container padding from 24px (`pb-6`) to 0px (`pb-0`) for better vertical alignment
+  - Added a "Nevermind" secondary button to allow users to easily cancel and close the modal
+  - Updated buttons to share width equally (`flex-1`) for a balanced, modern look
+- **Updated Description Text**: Refined the copy for users without an NFT
+  - New copy: "You're earning rewards from your affiliate tree. You can sell the rights to these rewards or transfer it to another wallet. Get your Orokai NFT to do that."
+  - Switched text color to `text-muted-foreground` for a more elegant, faded aesthetic
+- **Standardized Action Buttons**: Ensured buttons in the modal follow the platform's standard height (`h-12`) and styling
+
+**Technical Details:**
+- Modified `src/pages/my-nft.tsx` - Updated modal layout, added secondary button, and refined description text.
+
+**Impact:**
+- More intuitive and user-friendly NFT minting experience.
+- Improved visual hierarchy and text clarity on the My NFT page.
+- Better consistency with platform-wide button and modal patterns.
+
+---
+
+## [Unreleased]
+
 ### Added - 2024-12-30
 
 #### Generic SegmentedSwitch Component
