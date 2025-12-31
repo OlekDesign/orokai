@@ -95,7 +95,7 @@ export function MyNFT() {
               className="min-w-[200px]"
               onClick={() => setIsModalOpen(true)}
             >
-              Mint Your Free NFT
+              Get Orokai NFT
             </Button>
           </motion.div>
         )}
