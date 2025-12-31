@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Settings2, Minus, Plus } from 'lucide-react';
+import { ChevronLeft, Minus, Plus, Sliders } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -177,11 +177,11 @@ export function AffiliateProgram() {
                 </div>
                 <Button 
                   variant="ghost" 
-                  size="icon" 
-                  className="h-8 w-8"
                   onClick={() => setIsDialogOpen(true)}
+                  className="flex items-center gap-2"
                 >
-                  <Settings2 className="h-4 w-4" />
+                  <Sliders className="h-4 w-4" />
+                  Distribute
                 </Button>
               </div>
               {indirectInvites > 0 && (
@@ -309,10 +309,10 @@ export function AffiliateProgram() {
 
       {/* Commission Settings Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md p-6">
           <div className="flex flex-row items-start mb-4">
             <div className="flex flex-col">
-              <h2 className="text-heading-2 text-foreground">{pointsLeft}</h2>
+              <h1 className="text-3xl font-zodiak font-medium text-foreground">{pointsLeft}</h1>
               <Caption className="text-muted-foreground">% points left to distribute</Caption>
             </div>
           </div>
