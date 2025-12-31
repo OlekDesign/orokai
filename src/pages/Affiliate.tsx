@@ -257,33 +257,38 @@ export function Affiliate() {
             <CardHeader className="flex-shrink-0">
               <CardDescription>My unique link</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  value={affiliateLink}
-                  readOnly
-                  className="w-full px-4 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-muted-foreground truncate"
-                />
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={affiliateLink}
+                    readOnly
+                    className="w-full px-4 py-2 bg-secondary border border-border rounded-md text-sm h-10 text-muted-foreground truncate"
+                  />
+                </div>
+                <Button
+                  onClick={copyToClipboard}
+                  variant="default"
+                  size="lg"
+                  className="flex items-center gap-2 sm:w-auto"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy link
+                    </>
+                  )}
+                </Button>
               </div>
-              <Button
-                onClick={copyToClipboard}
-                variant="default"
-                size="lg"
-                className="flex items-center gap-2 sm:w-auto"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Copy link
-                  </>
-                )}
-              </Button>
+              <Caption className="text-muted-foreground mt-4 block">
+                Share this link with your friends and get rewarded every time they get rewarded.
+              </Caption>
             </CardContent>
           </Card>
         </div>

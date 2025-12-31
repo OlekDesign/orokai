@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New copy (not minted): "You're earning rewards from your affiliate tree. You can sell the rights to these rewards or transfer it to another wallet. Get your Orokai NFT to do that."
   - New copy (minted): "Owning this NFT gives you the rights to collect rewards from the affiliate tree attributed to it. You can list this NFT on a market to sell or transfer it to another wallet."
   - Switched both description texts to `text-muted-foreground` for a more elegant, faded aesthetic
+- **Affiliate Page Improvements**:
+  - Added descriptive text to the referral link card: "Share this link with your friends and get rewarded every time they get rewarded."
 - **Standardized Action Buttons**: Ensured buttons in the modal follow the platform's standard height (`h-12`) and styling
 
 **Technical Details:**
