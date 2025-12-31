@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reordered actions: "My NFT" now appears first, followed by "Unlock higher commissions"
 - **My NFT Page Enhancements**:
   - Added explanatory text for users without an NFT, explaining the link between the NFT and affiliate tree transfers.
+  - Simplified the Mint NFT modal by removing the large circular gradient graphic for a cleaner look.
 - **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
   - Ensures consistent typography for all modal and dialog titles across the platform
   - Uses the Zodiak brand font and proper sizing for better visual hierarchy
