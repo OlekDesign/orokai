@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Changed margin-top from 24px (mt-6) to 16px (mt-4) for a tighter, more cohesive layout
 - **Affiliate Page UI Updates**:
   - Moved the "My NFT" button from the "Total rewards" card to the "My commissions" card
-  - Aligned "My NFT" next to "Unlock higher commissions" for better grouping of related actions
+  - Reordered actions: "My NFT" now appears first, followed by "Unlock higher commissions"
 - **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
   - Ensures consistent typography for all modal and dialog titles across the platform
   - Uses the Zodiak brand font and proper sizing for better visual hierarchy
