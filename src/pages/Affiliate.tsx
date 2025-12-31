@@ -216,14 +216,6 @@ export function Affiliate() {
                     <ChartSpline className="h-4 w-4" />
                     Analytics
                   </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center gap-2"
-                    onClick={() => navigate('/my-nft')}
-                  >
-                    <FileCheck className="h-4 w-4" />
-                    My NFT
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -238,14 +230,24 @@ export function Affiliate() {
               </div>
               </CardHeader>
               <CardContent>
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2 -ml-3"
-                  onClick={() => navigate('/affiliate-program')}
-                >
-                  <Gift className="h-4 w-4" />
-                  Unlock higher commissions
-                </Button>
+                <div className="flex gap-2 -ml-3">
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2"
+                    onClick={() => navigate('/affiliate-program')}
+                  >
+                    <Gift className="h-4 w-4" />
+                    Unlock higher commissions
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2"
+                    onClick={() => navigate('/my-nft')}
+                  >
+                    <FileCheck className="h-4 w-4" />
+                    My NFT
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
