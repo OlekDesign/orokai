@@ -76,8 +76,8 @@ export function MyNFT() {
             </p>
           )}
           {isMinted && (
-            <p className="text-foreground/80">
-              This NFT entitles you to collect 10% commissions from the direct invites.
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Owning this NFT gives you the rights to collect rewards from the affiliate tree attributed to it. You can list this NFT on a market to sell or transfer it to another wallet.
             </p>
           )}
         </motion.div>
