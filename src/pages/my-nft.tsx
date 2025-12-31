@@ -113,8 +113,8 @@ export function MyNFT() {
               </DialogClose>
 
               {/* Title */}
-              <h2 className="text-center text-foreground mb-4 text-heading-2">
-                Mint your NFT
+              <h2 className="text-left text-foreground mb-4 text-heading-2">
+                Lock the % distribution
               </h2>
 
               {/* Warning message */}
