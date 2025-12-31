@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
+import { Avatar } from '../components/Avatar';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -326,17 +327,22 @@ export function Wallet() {
             onMouseEnter={() => setShowAvatarEdit(true)}
             onMouseLeave={() => setShowAvatarEdit(false)}
           >
-            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer">
-              {profile?.avatar ? (
+            {profile?.avatar ? (
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer">
                 <img 
                   src={profile.avatar} 
                   alt={profile.name || "Profile"} 
                   className="w-full h-full object-cover"
                 />
-              ) : (
-                <User size={20} className="text-muted-foreground" />
-              )}
-            </div>
+              </div>
+            ) : (
+              <Avatar 
+                name={profile?.name || "User"} 
+                size="md" 
+                className="w-10 h-10 cursor-pointer"
+                singleLetter={true}
+              />
+            )}
             {showAvatarEdit && (
               <Button
                 size="icon"

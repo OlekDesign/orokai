@@ -21,9 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Affiliate Page Improvements**:
   - Added descriptive text to the referral link card: "Share this link with your friends and get rewarded every time they get rewarded."
 - **Navbar & Avatar Updates**:
-  - Integrated `Avatar` component into the desktop sidebar for user profiles.
+  - Integrated `Avatar` component into the desktop sidebar and Wallet page profile header.
   - Added `singleLetter` support to `Avatar` component to display only the first letter of a name.
-  - Sidebar now displays the user's first initial as an avatar when no profile image is set.
+  - Sidebar and Wallet page now display the user's first initial as an avatar when no profile image is set.
 - **Standardized Action Buttons**: Ensured buttons in the modal follow the platform's standard height (`h-12`) and styling
 
 **Technical Details:**
