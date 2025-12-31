@@ -1,6 +1,7 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Home, Gem, Clock8, LogOut, Users, User } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
+import { Avatar } from './Avatar';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
 
@@ -81,17 +82,22 @@ export function Navbar() {
             }`}
             onClick={() => navigate('/wallet')}
           >
-              <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
-                {profile?.avatar ? (
+              {profile?.avatar ? (
+                <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
                   <img 
                     src={profile.avatar} 
                     alt={profile.name || "Profile"} 
                     className="w-full h-full object-cover"
                   />
-                ) : (
-                  <User size={16} className="text-muted-foreground" />
-                )}
-              </div>
+                </div>
+              ) : (
+                <Avatar 
+                  name={profile?.name || "User"} 
+                  size="sm" 
+                  className="w-6 h-6 text-[10px]" 
+                  singleLetter={true}
+                />
+              )}
               <div className="flex flex-col">
                 {profile?.name && (
                   <span className={`text-xs font-medium ${

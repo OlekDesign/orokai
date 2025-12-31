@@ -32,6 +32,8 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
   - Switched to an elegant `text-muted-foreground` aesthetic for descriptive content.
 - **Affiliate Page Enhancements**:
   - Added instructional text to the referral link card to encourage sharing.
+- **User Profile & Navigation**:
+  - Integrated dynamic user avatars in the sidebar with support for both uploaded images and name-based initials.
 - **Input Styling Refinement**: Updated global input components with themed backgrounds and better hover states.
 - **Investments Page Layout**: Optimized vertical spacing on the investments page for a more compact and readable form.
 - **Global Scrollbar Design**: Implemented a sleek, elegant custom scrollbar globally across the platform.

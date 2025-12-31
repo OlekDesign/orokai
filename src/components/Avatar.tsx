@@ -4,6 +4,7 @@ interface AvatarProps {
   name: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  singleLetter?: boolean;
 }
 
 // Predefined color combinations for avatars
@@ -44,8 +45,10 @@ function getInitials(name: string = ''): string {
   return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
-export function Avatar({ name = '', size = 'md', className }: AvatarProps) {
-  const initials = getInitials(name);
+export function Avatar({ name = '', size = 'md', className, singleLetter = false }: AvatarProps) {
+  const initials = singleLetter 
+    ? (name?.trim().charAt(0).toUpperCase() || '?')
+    : getInitials(name);
   const bgColor = getColorForName(name || 'default');
   
   const sizeClasses = {
