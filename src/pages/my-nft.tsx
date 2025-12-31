@@ -70,6 +70,11 @@ export function MyNFT() {
           <Heading2>
             {isMinted ? 'OROKAI-11x399q3' : "You don't have any OROKAI NFT yet."}
           </Heading2>
+          {!isMinted && (
+            <p className="text-foreground/80 max-w-sm mx-auto">
+              You're earning rewards from your affiliate tree. If you want to transfer that affiliate tree to a different wallet then you need to mint your Orokai NFT first.
+            </p>
+          )}
           {isMinted && (
             <p className="text-foreground/80">
               This NFT entitles you to collect 10% commissions from the direct invites.
