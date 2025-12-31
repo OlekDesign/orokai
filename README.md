@@ -26,6 +26,10 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
 ## Recent Updates
 
 ### UI & UX Enhancements (Latest)
+- **My NFT Page & Modal Refinements**: 
+  - Optimized the NFT minting flow with improved button layouts and a new "Nevermind" cancel action.
+  - Refined description text for better clarity on the link between NFTs and affiliate tree transfers.
+  - Switched to an elegant `text-muted-foreground` aesthetic for descriptive content.
 - **Input Styling Refinement**: Updated global input components with themed backgrounds and better hover states.
 - **Investments Page Layout**: Optimized vertical spacing on the investments page for a more compact and readable form.
 - **Global Scrollbar Design**: Implemented a sleek, elegant custom scrollbar globally across the platform.
