@@ -50,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Affiliate Page UI Updates**:
   - Moved the "My NFT" button from the "Total rewards" card to the "My commissions" card
   - Reordered actions: "My NFT" now appears first, followed by "Unlock higher commissions"
+- **My NFT Page Enhancements**:
+  - Added explanatory text for users without an NFT, explaining the link between the NFT and affiliate tree transfers.
 - **Standardized Dialog Headers**: Updated `DialogTitle` to use `text-heading-2` globally
   - Ensures consistent typography for all modal and dialog titles across the platform
   - Uses the Zodiak brand font and proper sizing for better visual hierarchy
