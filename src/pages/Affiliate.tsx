@@ -234,18 +234,18 @@ export function Affiliate() {
                   <Button
                     variant="ghost"
                     className="flex items-center gap-2"
-                    onClick={() => navigate('/affiliate-program')}
-                  >
-                    <Gift className="h-4 w-4" />
-                    Unlock higher commissions
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center gap-2"
                     onClick={() => navigate('/my-nft')}
                   >
                     <FileCheck className="h-4 w-4" />
                     My NFT
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2"
+                    onClick={() => navigate('/affiliate-program')}
+                  >
+                    <Gift className="h-4 w-4" />
+                    Unlock higher commissions
                   </Button>
                 </div>
               </CardContent>
