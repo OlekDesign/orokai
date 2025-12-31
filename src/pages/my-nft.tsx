@@ -112,32 +112,6 @@ export function MyNFT() {
                 <span className="sr-only">Close</span>
               </DialogClose>
 
-              {/* Circular gradient graphic */}
-              <div className="flex justify-center mb-6">
-                <div className="w-48 h-48 rounded-full overflow-hidden relative">
-                  <div 
-                    className="w-full h-full"
-                    style={{
-                      background: 'linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, rgba(20, 30, 40, 0.95) 100%)',
-                      filter: 'blur(40px)',
-                    }}
-                  />
-                  <div 
-                    className="absolute inset-0"
-                    style={{
-                      background: 'radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)',
-                    }}
-                  />
-                  {/* Add noise texture */}
-                  <div 
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                      backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-                    }}
-                  />
-                </div>
-              </div>
-
               {/* Title */}
               <h2 className="text-center text-foreground mb-4 text-heading-2">
                 Mint your NFT
