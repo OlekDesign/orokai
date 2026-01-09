@@ -218,11 +218,11 @@ export default function CreateProfile() {
         </motion.div>
 
         {/* Fixed form at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 pb-8 bg-background border-t border-border">
-          <div className="w-full mx-auto space-y-4">
+        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 pb-4 bg-background border-t border-border">
+          <div className="w-full mx-auto flex items-end gap-3">
             {/* Name Input */}
-            <div className="space-y-2">
-              <Label htmlFor="name-mobile">Enter your name</Label>
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="name-mobile" className="text-xs font-medium text-muted-foreground">Enter your name</Label>
               <Input
                 id="name-mobile"
                 ref={nameMobileInputRef}
@@ -239,26 +239,25 @@ export default function CreateProfile() {
                   }
                 }}
                 className={cn(
-                  "h-12",
+                  "h-11",
                   showWarning && "border-destructive"
                 )}
               />
-              {showWarning && (
-                <Caption className="text-destructive">
-                  Please enter your name to continue
-                </Caption>
-              )}
             </div>
 
             {/* Continue Button */}
             <Button 
               onClick={handleContinue}
-              className="w-full min-h-[44px] py-3"
-              size="lg"
+              className="h-11 px-8"
             >
               Continue
             </Button>
           </div>
+          {showWarning && (
+            <Caption className="text-destructive mt-2">
+              Please enter your name to continue
+            </Caption>
+          )}
         </div>
       </div>
     </div>

@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Integrated `Avatar` component into the desktop sidebar and Wallet page profile header.
   - Added `singleLetter` support to `Avatar` component to display only the first letter of a name.
   - Sidebar and Wallet page now display the user's first initial as an avatar when no profile image is set.
+- **Onboarding Page Improvements**:
+  - Optimized the mobile `CreateProfile` bottom bar by moving the "Continue" button into a horizontal row with the name input.
+  - Reduced the overall height and padding (`pb-4`) of the fixed bottom container for a more compact and modern mobile layout.
 - **Standardized Action Buttons**: Ensured buttons in the modal follow the platform's standard height (`h-12`) and styling
 
 **Technical Details:**
