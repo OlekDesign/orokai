@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Toggle } from '@/components/ui/toggle';
 import { Card } from '@/components/ui/card';
-import { Heading1, Heading2, BodyText, BodyTextSmall, Caption } from '@/components/ui/typography';
+import { Heading1, Heading2, Heading3, BodyText, BodyTextSmall, Caption } from '@/components/ui/typography';
 import { StatsCard } from '@/components/StatsCard';
 import { InvestmentCard } from '@/components/InvestmentCard';
 import { StakingOptionCard } from '@/components/StakingOptionCard';
@@ -85,6 +85,7 @@ export default function DesignSystem() {
             <div className="space-y-4 text-left w-full">
               <Heading1>Heading 1</Heading1>
               <Heading2>Heading 2</Heading2>
+              <Heading3>Heading 3</Heading3>
               <BodyText>Body Text</BodyText>
               <BodyTextSmall>Body Text Small</BodyTextSmall>
               <Caption>Caption</Caption>

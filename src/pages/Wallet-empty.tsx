@@ -11,7 +11,9 @@ import {
   LogOut,
   User,
   Edit3,
-  Save
+  Save,
+  MessageCircleQuestionMark,
+  BellRing
 } from 'lucide-react';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
 import { Tooltip } from '../components/Tooltip';
@@ -186,15 +188,34 @@ export default function WalletEmpty() {
           )}
         </div>
 
-        {/* Logout Button */}
-        <Button
-          variant="ghost"
-          onClick={handleLogout}
-          className="flex items-center gap-2"
-        >
-          <LogOut size={16} />
-          Log out
-        </Button>
+        {/* Notifications, Help and Logout Buttons */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+          >
+            <div className="relative">
+              <BellRing size={16} />
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border-2 border-background"></span>
+            </div>
+            <span className="hidden md:inline">Notifications</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+          >
+            <MessageCircleQuestionMark size={16} />
+            <span className="hidden md:inline">Get help</span>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut size={16} />
+            <span className="hidden md:inline">Log out</span>
+          </Button>
+        </div>
       </div>
       {/* Cash Section */}
       <div className="space-y-4">

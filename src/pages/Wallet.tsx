@@ -14,7 +14,9 @@ import {
   Edit3,
   Save,
   ChevronRight,
-  Coins
+  Coins,
+  MessageCircleQuestionMark,
+  BellRing
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip';
 import { MetaMaskIcon } from '../components/MetaMaskIcon';
@@ -416,15 +418,34 @@ export function Wallet() {
           )}
         </div>
 
-        {/* Logout Button */}
-        <Button
-          variant="ghost"
-          onClick={handleLogout}
-          className="flex items-center gap-2"
-        >
-          <LogOut size={16} />
-          Log out
-        </Button>
+        {/* Notifications, Help and Logout Buttons */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+          >
+            <div className="relative">
+              <BellRing size={16} />
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border-2 border-background"></span>
+            </div>
+            <span className="hidden md:inline">Notifications</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+          >
+            <MessageCircleQuestionMark size={16} />
+            <span className="hidden md:inline">Get help</span>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut size={16} />
+            <span className="hidden md:inline">Log out</span>
+          </Button>
+        </div>
       </div>
       {/* Cash Section - Always show but with different states */}
       <motion.div

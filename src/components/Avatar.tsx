@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
 
-interface AvatarProps {
+interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
   singleLetter?: boolean;
 }
 
@@ -45,7 +44,7 @@ function getInitials(name: string = ''): string {
   return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
-export function Avatar({ name = '', size = 'md', className, singleLetter = false }: AvatarProps) {
+export function Avatar({ name = '', size = 'md', className, singleLetter = false, ...props }: AvatarProps) {
   const initials = singleLetter 
     ? (name?.trim().charAt(0).toUpperCase() || '?')
     : getInitials(name);
@@ -65,6 +64,7 @@ export function Avatar({ name = '', size = 'md', className, singleLetter = false
         sizeClasses[size],
         className
       )}
+      {...props}
     >
       {initials}
     </div>

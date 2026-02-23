@@ -1062,7 +1062,7 @@ export function Investments() {
 
           {/* Mobile Flex Layout */}
           <div className="md:hidden flex flex-col space-y-4">
-            <Heading4>Your Passive Income</Heading4>
+            <Heading3>Your Passive Income</Heading3>
             <div className="space-y-3">
               {[...investments]
                 .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())

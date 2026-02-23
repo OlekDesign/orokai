@@ -1,99 +1,78 @@
-# Deployment Summary - Global Scrollbar & Documentation Updates
+# Deployment Summary - Task-Driven Widget & Onboarding Enhancements
 
 ## 📋 Changes Summary
 
-This deployment includes sleek global scrollbar styling and updated documentation:
+This deployment includes a new task-driven widget system, redesigned mobile onboarding, and several UI refinements:
 
 ### ✨ New Features & Improvements
 
-1. **Sleek Global Scrollbar Styling**
-   - Implemented a unified, elegant scrollbar look across the entire application.
-   - Reduced scrollbar width to 5px for a modern, minimal aesthetic.
-   - Transparent track and pill-shaped thumb matching the brand's muted tokens.
-   - Smooth transition effects on hover.
-   - Applied globally to all scrollable elements, including main page and overflow containers.
+1. **New Task-Driven Widget System**
+   - Introduced a dynamic task widget for guiding users through essential actions.
+   - Built with React Context for global state management and Framer Motion for smooth animations.
+   - Integrated into the global layout for a seamless user experience.
 
-2. **Documentation Updates**
-   - Updated `CHANGELOG.md` with detailed information about the new scrollbar feature.
-   - Updated `README.md` to reflect recent UI/UX enhancements.
-   - Centralized scrollbar styles in the CSS base layer for better maintainability.
+2. **Dashboard Task List ("Do these first")**
+   - Added a task card to the Dashboard that interacts with the new Widget system.
+   - Prompts users to complete their profile and other required setup tasks.
 
-3. **Codebase Optimization**
-   - Removed redundant `.scrollbar-custom` utility classes.
-   - Simplified scrollbar management by moving to global CSS rules.
+3. **Redesigned Mobile Onboarding**
+   - Updated the `CreateProfile.tsx` mobile layout to a vertical progression model.
+   - Improved usability by removing the fixed bottom bar, providing better focus on input fields.
+   - Standardized buttons and spacing for a more consistent feel.
+
+4. **UI & Design System Refinements**
+   - Added `Heading3` to the global typography system.
+   - Integrated the unified `Avatar` component into the Dashboard's mobile view.
+   - Refined Investments page mobile headers and layout spacing.
 
 ### 📝 Files Changed
 
-- `src/index.css` - Implemented global scrollbar styles in the base layer.
-- `src/pages/TransactionReview.tsx` - Removed explicit scrollbar utility classes.
-- `CHANGELOG.md` - Documented the new scrollbar feature.
-- `README.md` - Updated with latest UI/UX enhancements.
+- `src/components/Widget.tsx` (New) - Dynamic task widget component.
+- `src/contexts/WidgetContext.tsx` (New) - Context for managing widget state.
+- `src/App.tsx` - Integrated WidgetProvider.
+- `src/components/Layout.tsx` - Integrated Widget into global layout.
+- `src/pages/Dashboard.tsx` - Added task card and updated mobile avatar navigation.
+- `src/pages/CreateProfile.tsx` - Redesigned mobile onboarding flow.
+- `src/pages/DesignSystem.tsx` - Added Heading3 to the design system page.
+- `src/pages/Investments.tsx` - Updated mobile headers and layout.
+- `CHANGELOG.md` - Documented all new features and refinements.
+- `README.md` - Updated with latest features and enhancements.
 
 ## 🚀 Deployment Steps
 
 ### 1. Push to GitHub
 
-The changes have been committed locally. To push to GitHub:
+To push the latest changes to GitHub:
 
 ```bash
 git push origin main
 ```
 
-**Note:** You may need to authenticate with GitHub (personal access token or SSH key).
-
 ### 2. Deploy to GitHub Pages
 
-After pushing, deploy using:
+Deploy the production build to the live site:
 
 ```bash
 npm run deploy
 ```
 
-This will:
-1. Build the production bundle (`npm run build`)
-2. Deploy to the `gh-pages` branch
-3. Make the site available at: https://olekdesign.github.io/orokai/
+Live URL: https://olekdesign.github.io/orokai/
 
 ### 3. Verify Deployment
 
-After deployment, verify:
-- [x] Site loads at https://olekdesign.github.io/orokai/
-- [x] Scrollbars appear with the new sleek design on all scrollable containers.
-- [x] Hover effects on scrollbars are working as expected.
-- [x] Documentation is correctly updated on the main branch.
-
-## 📚 Documentation Updates
-
-### CHANGELOG.md
-- Added detailed documentation of sleek global scrollbar styling.
-- Included technical details and impact analysis.
-
-### README.md
-- Updated with latest UI/UX enhancements section.
+- [ ] Task widget appears when clicking tasks in the Dashboard.
+- [ ] Mobile onboarding flow follows the new vertical layout.
+- [ ] Dashboard mobile avatar uses the new component styling.
+- [ ] Documentation reflects all latest updates.
 
 ## 🔍 Testing Checklist
 
-Before deploying, verify:
-
-- [x] Code compiles without errors (`npm run build`)
-- [x] No TypeScript errors
-- [x] No linting errors
-- [x] Scrollbars look consistent across different sections.
-- [x] Mobile and desktop views both handle scrollbars gracefully.
-
-## 🐛 Known Issues
-
-None at this time.
-
-## 📞 Support
-
-If deployment issues occur:
-1. Check GitHub Actions for build errors
-2. Verify GitHub Pages settings in repository
-3. Check browser console for runtime errors
+- [x] Build completes without errors (`npm run build`)
+- [x] All interactive elements (buttons, inputs) work as expected.
+- [x] Responsive layout is maintained across mobile and desktop.
 
 ---
 
-**Commit:** `142903b` - feat: implement sleek global scrollbar and update documentation
-**Date:** 2025-01-XX  
-**Status:** 🏗️ Ready for Deployment
+**Commit:** feat: implement task-driven widget system and refine mobile onboarding
+**Date:** 2026-02-23
+**Status:** 🚀 Ready for Deployment

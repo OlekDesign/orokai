@@ -5,6 +5,7 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
 ## Features
 
 ### Transaction Management
+- **Task-Driven Widget**: A new system to display interactive tasks at the top of the layout to guide users through essential actions.
 - **Pending Transactions**: Investment and withdrawal transactions start in pending state
 - **Cancel Transactions**: Cancel pending transactions before they complete
 - **Speed Up Transactions**: Instantly complete pending transactions instead of waiting
@@ -26,6 +27,11 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
 ## Recent Updates
 
 ### UI & UX Enhancements (Latest)
+- **New Task-Driven Widget**: Introduced a interactive task widget at the top of the platform to guide users through essential actions.
+- **Onboarding Experience Refinement**: Reimagined the mobile profile creation flow with a more intuitive vertical layout and better input focus management.
+- **Dashboard Task List**: Added a "Do these first" task card to prompt users to complete their profile and other key actions.
+- **Design System Expansion**: Added `Heading3` to the global typography system for better visual hierarchy.
+- **Unified Avatar Navigation**: Integrated dynamic user avatars in the Dashboard's mobile view with support for both uploaded images and name-based initials.
 - **My NFT Page & Modal Refinements**: 
   - Optimized the NFT minting flow with improved button layouts and a new "Nevermind" cancel action.
   - Refined description texts for both minted and non-minted states for better clarity on NFT rights and transfers.
@@ -34,8 +40,6 @@ A modern crypto investment platform built with React, TypeScript, and Vite.
   - Added instructional text to the referral link card to encourage sharing.
 - **User Profile & Navigation**:
   - Integrated dynamic user avatars in the sidebar and Wallet page with support for both uploaded images and name-based initials.
-- **Onboarding Experience**:
-  - Refined the mobile profile creation flow with a more compact, horizontal input and button layout.
 - **Input Styling Refinement**: Updated global input components with themed backgrounds and better hover states.
 - **Investments Page Layout**: Optimized vertical spacing on the investments page for a more compact and readable form.
 - **Global Scrollbar Design**: Implemented a sleek, elegant custom scrollbar globally across the platform.

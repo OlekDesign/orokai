@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
 import { useUserProfile } from '@/contexts/UserProfileContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, Loader2, Settings2, User } from 'lucide-react';
+import { useWidget } from '@/contexts/WidgetContext';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, ChevronRight, Loader2, Settings2, User } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -38,6 +39,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SegmentedSwitch } from '@/components/SegmentedSwitch';
+import { Avatar } from '@/components/Avatar';
 import { generateChartData, rewardTransactions } from '@/utils/stakingData';
 import type { Transaction, TransactionType } from '@/types';
 import { cn } from "@/lib/utils";
@@ -205,6 +207,7 @@ export function Dashboard() {
   const navigate = useNavigate();
   const { transactions } = useTransactions();
   const { profile } = useUserProfile();
+  const { showWidget } = useWidget();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -471,6 +474,52 @@ export function Dashboard() {
           </div>
         )}
 
+      {/* Do these first Card */}
+      <Card>
+        <CardHeader>
+          <CardDescription>Do these first</CardDescription>
+        </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full justify-between"
+                  disabled
+                >
+                  <span className="line-through">Label 1</span>
+                  <Check size={16} />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full justify-between"
+                  onClick={() => showWidget({
+                    title: 'Label 2',
+                    subtitle: 'Complete this task to continue',
+                    progress: 60
+                  })}
+                >
+                  <span>Label 2</span>
+                  <ChevronRight size={16} />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full justify-between"
+                  onClick={() => showWidget({
+                    title: 'Label 3',
+                    subtitle: 'Complete this task to continue',
+                    progress: 30
+                  })}
+                >
+                  <span>Label 3</span>
+                  <ChevronRight size={16} />
+                </Button>
+              </div>
+            </CardContent>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 sm:gap-6">
         <motion.div
           initial="hidden"
@@ -514,20 +563,26 @@ export function Dashboard() {
                   </div>
                   {/* Mobile Avatar - Top right corner */}
                   <div className="md:hidden">
-                    <div 
-                      className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => navigate('/wallet')}
-                    >
-                      {profile?.avatar ? (
+                    {profile?.avatar ? (
+                      <div 
+                        className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate('/wallet')}
+                      >
                         <img 
                           src={profile.avatar} 
                           alt={profile.name || "Profile"} 
                           className="w-full h-full object-cover"
                         />
-                      ) : (
-                        <User size={20} className="text-muted-foreground" />
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <Avatar 
+                        name={profile?.name || "User"} 
+                        size="md" 
+                        className="w-10 h-10 cursor-pointer hover:opacity-80 transition-opacity"
+                        singleLetter={true}
+                        onClick={() => navigate('/wallet')}
+                      />
+                    )}
                   </div>
                 </div>
               </CardHeader>

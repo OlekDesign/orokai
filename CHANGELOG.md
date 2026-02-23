@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2026-02-23
+
+#### Task-Driven Widget System
+- **New Reusable Widget Component**: Created `Widget.tsx` and `WidgetContext.tsx` to display interactive tasks at the top of the layout.
+  - Supports dynamic titles, subtitles, and progress indicators.
+  - Smooth animation with Framer Motion (`initial`, `animate`, `exit`).
+  - Integrated into the global `Layout` to be accessible from any page.
+- **Dashboard Task Integration**: Added a "Do these first" section on the Dashboard to prompt users for specific tasks.
+- **Improved Mobile Avatar Navigation**: Switched the Dashboard's mobile avatar to use the unified `Avatar` component with `singleLetter` support.
+
+#### Onboarding & UI Refinements
+- **Redesigned Mobile Onboarding**: Updated `CreateProfile.tsx` for a cleaner, more intuitive mobile flow.
+  - Replaced the fixed bottom bar with a standard vertical layout for better input focus management.
+  - Updated buttons to use the `secondary` variant and improved overall spacing.
+- **Typography & Layout Updates**:
+  - Added `Heading3` to the design system for better hierarchical depth.
+  - Standardized the Investments page mobile headers to use `Heading3`.
+  - Adjusted global content layout padding and margins for a more modern look.
+
+---
+
+## [Unreleased]
+
 ### Changed - 2025-12-31
 
 #### My NFT Page & Modal Refinements
@@ -24,9 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Integrated `Avatar` component into the desktop sidebar and Wallet page profile header.
   - Added `singleLetter` support to `Avatar` component to display only the first letter of a name.
   - Sidebar and Wallet page now display the user's first initial as an avatar when no profile image is set.
-- **Onboarding Page Improvements**:
-  - Optimized the mobile `CreateProfile` bottom bar by moving the "Continue" button into a horizontal row with the name input.
-  - Reduced the overall height and padding (`pb-4`) of the fixed bottom container for a more compact and modern mobile layout.
 - **Standardized Action Buttons**: Ensured buttons in the modal follow the platform's standard height (`h-12`) and styling
 
 **Technical Details:**

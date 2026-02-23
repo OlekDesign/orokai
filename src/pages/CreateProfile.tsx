@@ -160,14 +160,14 @@ export default function CreateProfile() {
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Content scrollable, form fixed at bottom */}
-      <div className="md:hidden min-h-screen flex flex-col">
+      {/* Mobile Layout - Content scrollable, form at bottom */}
+      <div className="md:hidden h-screen flex flex-col -mx-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 overflow-y-auto px-4 pt-12 flex flex-col items-center justify-start"
+          className="flex-1 overflow-y-auto px-4 flex flex-col items-center justify-center"
         >
           <div className="max-w-[20rem] mx-auto w-full">
             <div className="flex flex-col justify-center space-y-8">
@@ -196,7 +196,7 @@ export default function CreateProfile() {
                 </div>
                 
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
                   className="flex items-center gap-2"
@@ -217,12 +217,12 @@ export default function CreateProfile() {
           </div>
         </motion.div>
 
-        {/* Fixed form at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 pb-4 bg-background border-t border-border">
-          <div className="w-full mx-auto flex items-end gap-3">
+        {/* Form at bottom */}
+        <div className="px-6 py-4 pb-8 bg-background border-t border-border">
+          <div className="w-full mx-auto space-y-4">
             {/* Name Input */}
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="name-mobile" className="text-xs font-medium text-muted-foreground">Enter your name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="name-mobile">Enter your name</Label>
               <Input
                 id="name-mobile"
                 ref={nameMobileInputRef}
@@ -239,25 +239,26 @@ export default function CreateProfile() {
                   }
                 }}
                 className={cn(
-                  "h-11",
+                  "h-12",
                   showWarning && "border-destructive"
                 )}
               />
+              {showWarning && (
+                <Caption className="text-destructive">
+                  Please enter your name to continue
+                </Caption>
+              )}
             </div>
 
             {/* Continue Button */}
             <Button 
               onClick={handleContinue}
-              className="h-11 px-8"
+              className="w-full min-h-[44px] py-3"
+              size="lg"
             >
               Continue
             </Button>
           </div>
-          {showWarning && (
-            <Caption className="text-destructive mt-2">
-              Please enter your name to continue
-            </Caption>
-          )}
         </div>
       </div>
     </div>
