@@ -1,7 +1,8 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { Home, Gem, Clock8, LogOut, Users, User } from 'lucide-react';
+import { Home, Gem, Clock8, LogOut, Users, User, BellRing } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
 import { Avatar } from './Avatar';
+import { Button } from './ui/button';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../contexts/UserProfileContext';
 
@@ -36,8 +37,8 @@ export function Navbar() {
     <>
       {/* Desktop Sidebar */}
       <nav className="hidden md:flex fixed top-0 left-0 h-full w-64 bg-card border-r border-border z-50 flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-border">
+        {/* Logo & Notifications */}
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <Link to="/dashboard">
             <img 
               src={`${import.meta.env.BASE_URL}logo-orokai-full-white.svg`}
@@ -45,6 +46,16 @@ export function Navbar() {
               className="h-5 w-auto"
             />
           </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          >
+            <div className="relative">
+              <BellRing size={16} />
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border-2 border-background"></span>
+            </div>
+          </Button>
         </div>
 
         {/* Navigation */}

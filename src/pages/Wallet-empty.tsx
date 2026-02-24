@@ -187,19 +187,9 @@ export default function WalletEmpty() {
             </div>
           )}
         </div>
-
-        {/* Notifications, Help and Logout Buttons */}
+        
+        {/* Help and Logout Buttons */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2"
-          >
-            <div className="relative">
-              <BellRing size={16} />
-              <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border-2 border-background"></span>
-            </div>
-            <span className="hidden md:inline">Notifications</span>
-          </Button>
           <Button
             variant="ghost"
             className="flex items-center gap-2"

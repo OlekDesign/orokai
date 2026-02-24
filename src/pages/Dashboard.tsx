@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
 import { useUserProfile } from '@/contexts/UserProfileContext';
 import { useWidget } from '@/contexts/WidgetContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, ChevronRight, Loader2, Settings2, User } from 'lucide-react';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, ChevronRight, Loader2, Settings2, User, BellRing } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -430,6 +430,41 @@ export function Dashboard() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Mobile Top Header - Avatar and Notifications */}
+      <div className="md:hidden flex items-center justify-between">
+        <div 
+          onClick={() => navigate('/wallet')} 
+          className="cursor-pointer"
+        >
+          {profile?.avatar ? (
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted hover:opacity-80 transition-opacity">
+              <img 
+                src={profile.avatar} 
+                alt={profile.name || "Profile"} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <Avatar 
+              name={profile?.name || "User"} 
+              size="md" 
+              className="w-10 h-10 hover:opacity-80 transition-opacity"
+              singleLetter={true}
+            />
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-10 w-10 text-muted-foreground hover:text-foreground"
+        >
+          <div className="relative">
+            <BellRing size={20} />
+            <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border-2 border-background"></span>
+          </div>
+        </Button>
+      </div>
+
       {/* Banner */}
         {showBanner && (
           <div 
@@ -560,29 +595,6 @@ export function Dashboard() {
                         { value: 'all', label: 'All' },
                       ]}
                     />
-                  </div>
-                  {/* Mobile Avatar - Top right corner */}
-                  <div className="md:hidden">
-                    {profile?.avatar ? (
-                      <div 
-                        className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => navigate('/wallet')}
-                      >
-                        <img 
-                          src={profile.avatar} 
-                          alt={profile.name || "Profile"} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <Avatar 
-                        name={profile?.name || "User"} 
-                        size="md" 
-                        className="w-10 h-10 cursor-pointer hover:opacity-80 transition-opacity"
-                        singleLetter={true}
-                        onClick={() => navigate('/wallet')}
-                      />
-                    )}
                   </div>
                 </div>
               </CardHeader>
