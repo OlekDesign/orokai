@@ -32,7 +32,7 @@ export function Layout({ children }: LayoutProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="mx-auto px-4 pt-2 pb-4 sm:py-6 max-w-[900px] bg-background mt-4 md:mt-0"
+          className="mx-auto px-4 pt-2 pb-4 sm:py-6 max-w-[700px] md:max-w-[848px] bg-background mt-4 md:mt-0"
         >
           {children}
         </motion.div>

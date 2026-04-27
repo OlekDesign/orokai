@@ -188,6 +188,10 @@
   .text-caption.text-destructive {
     color: hsl(var(--destructive)) !important;
   }
+
+  .text-caption.text-success {
+    color: hsl(var(--success)) !important;
+  }
   
   /* Ensure border-destructive overrides hover and focus states */
   input.border-destructive,

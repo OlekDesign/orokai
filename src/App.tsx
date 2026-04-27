@@ -1,4 +1,5 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { TransactionsProvider } from './contexts/TransactionsContext';
@@ -30,18 +31,43 @@ import { TransactionReview } from './pages/TransactionReview';
 import { TypographyDemo } from './components/TypographyDemo';
 import { ColorGuide } from './pages/ColorGuide';
 import DesignSystem from './pages/DesignSystem';
+import { TradingProvider } from './context/TradingContext';
+import { BorrowingProvider } from './context/BorrowingContext';
+import { Positions } from './pages/trading/Positions';
+import { TradeBrowser } from './pages/trading/TradeBrowser';
+import { OpenPosition } from './pages/trading/OpenPosition';
+import { PreventLiquidation } from './pages/trading/PreventLiquidation';
+import { BorrowPositions } from './pages/borrowing/Positions';
+import { BorrowTradeBrowser } from './pages/borrowing/TradeBrowser';
+import { BorrowOpenPosition } from './pages/borrowing/OpenPosition';
+import { BorrowPreventLiquidation } from './pages/borrowing/PreventLiquidation';
 
+
+function RedirectFallback() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground text-sm">
+      Loading…
+    </div>
+  );
+}
 
 // Protected route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [isLoading, user, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <RedirectFallback />;
   }
 
   return <>{children}</>;
@@ -51,17 +77,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const { profile } = useUserProfile();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    if (!profile) {
+      navigate('/create-profile', { replace: true });
+    }
+  }, [isLoading, user, profile, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  if (!profile) {
-    return <Navigate to="/create-profile" />;
+  if (!user || !profile) {
+    return <RedirectFallback />;
   }
 
   return <>{children}</>;
@@ -70,13 +104,20 @@ function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
 // Public route wrapper (redirects to dashboard if already logged in)
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isLoading, user, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (user) {
-    return <Navigate to="/dashboard" />;
+    return <RedirectFallback />;
   }
 
   return <>{children}</>;
@@ -281,6 +322,90 @@ function AppRoutes() {
         }
       />
 
+      {/* Trading Routes */}
+      <Route
+        path="/trading"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <Positions />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/trading/trade"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <TradeBrowser />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/trading/open"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <OpenPosition />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/trading/prevent-liquidation"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <PreventLiquidation />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+
+      {/* Borrowing Routes */}
+      <Route
+        path="/borrowing"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <BorrowPositions />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/borrowing/trade"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <BorrowTradeBrowser />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/borrowing/open"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <BorrowOpenPosition />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/borrowing/prevent-liquidation"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <BorrowPreventLiquidation />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+
       {/* Typography Demo Route */}
       <Route
         path="/typography-demo"
@@ -323,15 +448,19 @@ export default function App() {
       <AuthProvider>
         <UserProfileProvider>
           <TransactionsProvider>
-            <OnboardingProvider>
-              <ToastProvider>
-                <WidgetProvider>
-                  <TooltipProvider>
-                    <AppRoutes />
-                  </TooltipProvider>
-                </WidgetProvider>
-              </ToastProvider>
-            </OnboardingProvider>
+            <TradingProvider>
+              <BorrowingProvider>
+                <OnboardingProvider>
+                  <ToastProvider>
+                    <WidgetProvider>
+                      <TooltipProvider>
+                        <AppRoutes />
+                      </TooltipProvider>
+                    </WidgetProvider>
+                  </ToastProvider>
+                </OnboardingProvider>
+              </BorrowingProvider>
+            </TradingProvider>
           </TransactionsProvider>
         </UserProfileProvider>
       </AuthProvider>

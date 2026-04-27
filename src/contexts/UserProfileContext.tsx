@@ -1,5 +1,22 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import { useAuth } from './AuthContext';
+
+const PROFILE_STORAGE_KEY = 'user_profile';
+
+function readStoredProfile(): { name: string; avatar: string | null } | null {
+  try {
+    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { name?: string; avatar?: string | null };
+    if (typeof parsed?.name === 'string') {
+      return { name: parsed.name, avatar: parsed.avatar ?? null };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 interface CreditCard {
   id: string;
@@ -63,7 +80,6 @@ const UserProfileContext = createContext<UserProfileContextType | undefined>(und
 
 // Demo initial state for development
 const DEMO_STATE = {
-  profile: null,
   creditCards: [],
   investments: [
     {
@@ -81,7 +97,23 @@ const DEMO_STATE = {
 };
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<{ name: string; avatar: string | null } | null>(DEMO_STATE.profile);
+  const { user, isLoading } = useAuth();
+  const [profile, setProfileState] = useState<{ name: string; avatar: string | null } | null>(() =>
+    readStoredProfile()
+  );
+  const setProfile = useCallback((p: { name: string; avatar: string | null }) => {
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(p));
+    setProfileState(p);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+      setProfileState(null);
+    }
+  }, [user, isLoading]);
+
   const [creditCards, setCreditCards] = useState<CreditCard[]>(DEMO_STATE.creditCards);
   const [investments, setInvestments] = useState<Investment[]>(DEMO_STATE.investments);
   const [cryptoWallet, setCryptoWallet] = useState<CryptoWallet | null>(DEMO_STATE.cryptoWallet);

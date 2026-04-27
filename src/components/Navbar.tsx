@@ -1,5 +1,5 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { Home, Gem, Clock8, LogOut, Users, User, BellRing } from 'lucide-react';
+import { Home, Gem, Clock8, Users, BellRing, TrendingUp, Landmark } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
 import { Avatar } from './Avatar';
 import { Button } from './ui/button';
@@ -14,6 +14,8 @@ const navItems: Array<{
 }> = [
   { icon: Home, label: 'Home', path: '/dashboard' },
   { icon: Gem, label: 'Passive Income', mobileLabel: 'Passive Income', path: '/invest' },
+  { icon: TrendingUp, label: 'Trading', path: '/trading' },
+  { icon: Landmark, label: 'Borrowing', mobileLabel: 'Borrow', path: '/borrowing' },
   { icon: Clock8, label: 'Transactions', path: '/transactions' },
   { icon: Users, label: 'Affiliate', path: '/affiliate' },
 ];
@@ -27,6 +29,9 @@ export function Navbar() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { profile } = useUserProfile();
+
+  const isNavItemActive = (path: string) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const handleLogout = () => {
     logout();
@@ -63,7 +68,7 @@ export function Navbar() {
           <nav className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+              const isActive = isNavItemActive(item.path);
 
               return (
                 <Link
@@ -129,16 +134,16 @@ export function Navbar() {
 
       {/* Mobile Navigation (Bottom) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-24 bg-background border-t border-border z-50 pb-4">
-        <div className="h-full grid grid-cols-4 items-center">
+        <div className="h-full grid grid-cols-6 items-center">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = isNavItemActive(item.path);
             
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center space-y-2 p-2 min-h-[44px] min-w-[112px] transition-opacity ${
+                className={`flex flex-col items-center space-y-2 p-2 min-h-[44px] transition-opacity ${
                   isActive ? 'text-primary opacity-100' : 'text-muted-foreground opacity-70'
                 }`}
               >

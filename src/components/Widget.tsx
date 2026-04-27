@@ -19,7 +19,7 @@ export function Widget() {
           className="overflow-hidden"
         >
           <div className="bg-card border-b border-border px-4 py-4 sm:px-6 sm:py-5">
-            <div className="mx-auto max-w-[900px] flex items-center justify-between gap-4">
+            <div className="mx-auto max-w-[700px] flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
                   <Heading2 className="text-base sm:text-lg">{widget.title}</Heading2>
