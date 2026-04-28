@@ -14,10 +14,10 @@ const navItems: Array<{
 }> = [
   { icon: Home, label: 'Home', path: '/dashboard' },
   { icon: Gem, label: 'Passive Income', mobileLabel: 'Passive Income', path: '/invest' },
-  { icon: TrendingUp, label: 'Trading', path: '/trading' },
-  { icon: Landmark, label: 'Borrowing', mobileLabel: 'Borrow', path: '/borrowing' },
-  { icon: Clock8, label: 'Transactions', path: '/transactions' },
+  { icon: TrendingUp, label: 'Trade', path: '/trading' },
+  { icon: Landmark, label: 'Borrow', mobileLabel: 'Borrow', path: '/borrowing' },
   { icon: Users, label: 'Affiliate', path: '/affiliate' },
+  { icon: Clock8, label: 'Transactions', path: '/transactions' },
 ];
 
 const DEMO_WALLET = {

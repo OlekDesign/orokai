@@ -111,7 +111,7 @@ export function TradeBrowser() {
     >
       <Button
         variant="ghost"
-        onClick={() => navigate('/trading')}
+        onClick={() => navigate(-1)}
         className="-ml-2 flex items-center gap-1 px-2 text-muted-foreground hover:text-foreground"
       >
         <ChevronLeft className="h-4 w-4" />

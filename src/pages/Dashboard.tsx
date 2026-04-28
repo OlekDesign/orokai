@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
@@ -42,6 +42,8 @@ import { SegmentedSwitch } from '@/components/SegmentedSwitch';
 import { Avatar } from '@/components/Avatar';
 import { generateChartData, rewardTransactions } from '@/utils/stakingData';
 import type { Transaction, TransactionType } from '@/types';
+import { useTrading } from '@/context/TradingContext';
+import type { Position as TradingPosition } from '@/context/TradingContext';
 import { cn } from "@/lib/utils";
 import { Heading1, Heading2, BodyText, BodyTextSmall, Label, Caption } from '@/components/ui/typography';
 import { TransactionRow } from '@/components/TransactionRow';
@@ -191,8 +193,94 @@ const investmentOptions = [
   }
 ];
 
+type ChartTimeRange = 'week' | 'month' | 'all';
+
+const TIME_RANGE_OPTIONS: { value: ChartTimeRange; label: string }[] = [
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+  { value: 'all', label: 'All' },
+];
+
+function formatCurrencyValue(value: number) {
+  return value.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatChartLabel(date: Date, timeRange: ChartTimeRange) {
+  if (timeRange === 'week') {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function getRangeLength(timeRange: ChartTimeRange) {
+  switch (timeRange) {
+    case 'week':
+      return 7;
+    case 'month':
+      return 30;
+    case 'all':
+      return 365;
+    default:
+      return 7;
+  }
+}
+
+function generateTradingPortfolioChartData(
+  timeRange: ChartTimeRange,
+  positions: TradingPosition[],
+  portfolioTotal: number
+) {
+  const daysToShow = getRangeLength(timeRange);
+  const sortedPositions = [...positions].sort(
+    (a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime()
+  );
+  const now = Date.now();
+
+  return Array.from({ length: daysToShow }, (_, index) => {
+    const offset = daysToShow - index - 1;
+    const currentDate = new Date();
+    currentDate.setHours(12, 0, 0, 0);
+    currentDate.setDate(currentDate.getDate() - offset);
+    const currentTime = currentDate.getTime();
+
+    const value = sortedPositions.reduce((sum, position) => {
+      const openedAt = new Date(position.openedAt).getTime();
+      if (currentTime < openedAt) return sum;
+
+      const positionAge = Math.max(now - openedAt, 1);
+      const elapsed = Math.min(currentTime - openedAt, positionAge);
+      const progress = Math.max(0, Math.min(1, elapsed / positionAge));
+      const startingValue = position.deposit;
+      const currentValue = position.deposit + position.pnl;
+
+      return sum + startingValue + (currentValue - startingValue) * progress;
+    }, 0);
+
+    return {
+      date: formatChartLabel(currentDate, timeRange),
+      value: Number(value.toFixed(2)),
+    };
+  }).map((entry, index, data) => {
+    if (index === data.length - 1) {
+      return { ...entry, value: Number(portfolioTotal.toFixed(2)) };
+    }
+    return entry;
+  });
+}
+
 export function Dashboard() {
-  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week');
+  const [timeRange, setTimeRange] = useState<ChartTimeRange>('week');
+  const [tradingTimeRange, setTradingTimeRange] = useState<ChartTimeRange>('week');
   const [investAmount, setInvestAmount] = useState('10000');
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [showBanner, setShowBanner] = useState(true);
@@ -208,6 +296,7 @@ export function Dashboard() {
   const { transactions } = useTransactions();
   const { profile } = useUserProfile();
   const { showWidget } = useWidget();
+  const { positions, portfolioTotal, portfolio24hDelta } = useTrading();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -221,6 +310,11 @@ export function Dashboard() {
   useEffect(() => {
     setChartData(generateChartData(timeRange));
   }, [timeRange]);
+
+  const tradingChartData = useMemo(
+    () => generateTradingPortfolioChartData(tradingTimeRange, positions, portfolioTotal),
+    [tradingTimeRange, positions, portfolioTotal]
+  );
 
   // Handle mobile detection
   useEffect(() => {
@@ -416,6 +510,30 @@ export function Dashboard() {
     return null;
   };
 
+  const TradingPortfolioTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      let timestampWithYear = label;
+
+      if (!label.match(/\d{4}/)) {
+        timestampWithYear = `${label}, ${new Date().getFullYear()}`;
+      }
+
+      return (
+        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-lg border border-border flex flex-col gap-1">
+          <BodyTextSmall className="text-foreground">
+            ${formatCurrencyValue(data.value)}
+          </BodyTextSmall>
+          <Caption style={{ color: 'hsl(var(--faded))' }}>
+            {timestampWithYear}
+          </Caption>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
 
   // Animation variants
   const cardVariants = {
@@ -574,27 +692,40 @@ export function Dashboard() {
               <CardHeader className="flex-shrink-0">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardDescription>Total rewards</CardDescription>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/invest')}
+                      className="group inline-flex items-center gap-1 text-left text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      <CardDescription className="transition-colors group-hover:text-foreground">
+                        Total rewards
+                      </CardDescription>
+                      <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </button>
                     <Heading1 className="mt-1">
-                      ${totalRewards.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
+                      ${formatCurrencyValue(totalRewards)}
                     </Heading1>
                     <BodyText className="mt-1 text-success">
                       +$17.49
                     </BodyText>
                   </div>
-                  <div className="hidden md:block scale-90 origin-top-right">
-                    <SegmentedSwitch
-                      value={timeRange}
-                      onChange={setTimeRange}
-                      options={[
-                        { value: 'week', label: 'Week' },
-                        { value: 'month', label: 'Month' },
-                        { value: 'all', label: 'All' },
-                      ]}
-                    />
+                  <div className="flex items-start gap-2">
+                    <Button
+                      onClick={() => navigate('/invest')}
+                      className="h-10 px-4 md:hidden"
+                      variant="secondary"
+                      size="sm"
+                    >
+                      New Investment
+                    </Button>
+                    <div className="hidden md:block scale-90 origin-top-right">
+                      <SegmentedSwitch
+                        value={timeRange}
+                        onChange={setTimeRange}
+                        options={TIME_RANGE_OPTIONS}
+                        layoutId="dashboardRewardsTimeRange"
+                      />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -647,11 +778,8 @@ export function Dashboard() {
               <SegmentedSwitch
                 value={timeRange}
                 onChange={setTimeRange}
-                options={[
-                  { value: 'week', label: 'Week' },
-                  { value: 'month', label: 'Month' },
-                  { value: 'all', label: 'All' },
-                ]}
+                options={TIME_RANGE_OPTIONS}
+                layoutId="dashboardRewardsTimeRangeMobile"
               />
             </div>
 
@@ -982,26 +1110,113 @@ export function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Mobile New Investment Button - Replaces Passive Income card */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={cardVariants}
-          transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="lg:col-span-3 md:hidden"
-        >
-          <div className="flex justify-center">
-            <Button 
-              onClick={() => navigate('/invest')}
-              className="w-full h-12"
-              variant="default"
-              size="lg"
-            >
-              New Investment
-            </Button>
-          </div>
-        </motion.div>
       </div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.2, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <Card>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={contentVariants}
+            transition={{ duration: 0.2, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <CardHeader className="flex-shrink-0">
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/trading')}
+                    className="group inline-flex items-center gap-1 text-left text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <CardDescription className="transition-colors group-hover:text-foreground">
+                      Trading Portfolio
+                    </CardDescription>
+                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                  <Heading1 className="mt-1">${formatCurrencyValue(portfolioTotal)}</Heading1>
+                  <BodyText className={cn('mt-1', portfolio24hDelta >= 0 ? 'text-success' : 'text-destructive')}>
+                    {portfolio24hDelta >= 0 ? '+' : '-'}${formatCurrencyValue(Math.abs(portfolio24hDelta))}
+                  </BodyText>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Button
+                    onClick={() => navigate('/trading/trade')}
+                    className="h-10 px-4 md:hidden"
+                    variant="secondary"
+                    size="sm"
+                  >
+                    New Position
+                  </Button>
+                  <div className="hidden md:block scale-90 origin-top-right">
+                    <SegmentedSwitch
+                      value={tradingTimeRange}
+                      onChange={setTradingTimeRange}
+                      options={TIME_RANGE_OPTIONS}
+                      layoutId="dashboardTradingTimeRange"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex flex-col space-y-4 sm:space-y-6">
+              <div className="h-[180px] md:h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={tradingChartData}>
+                    <defs>
+                      <linearGradient id="colorTradingPortfolio" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="white" stopOpacity={0.05} />
+                        <stop offset="95%" stopColor="white" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="date"
+                      stroke="hsl(var(--muted-foreground))"
+                      tickMargin={8}
+                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                      hide={isMobile}
+                    />
+                    <RechartsTooltip content={<TradingPortfolioTooltip />} />
+                    {tradingChartData.map((entry, index) => (
+                      <ReferenceLine
+                        key={`${entry.date}-${index}`}
+                        x={entry.date}
+                        stroke="hsl(var(--primary))"
+                        strokeDasharray="3 3"
+                        opacity={0.5}
+                      />
+                    ))}
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="white"
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#colorTradingPortfolio)"
+                      isAnimationActive={true}
+                      animationDuration={300}
+                      animationBegin={0}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="md:hidden flex justify-center">
+                <SegmentedSwitch
+                  value={tradingTimeRange}
+                  onChange={setTradingTimeRange}
+                  options={TIME_RANGE_OPTIONS}
+                  layoutId="dashboardTradingTimeRangeMobile"
+                />
+              </div>
+            </CardContent>
+          </motion.div>
+        </Card>
+      </motion.div>
 
       <motion.div
         initial="hidden"
