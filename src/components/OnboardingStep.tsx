@@ -205,7 +205,7 @@ export function OnboardingStep({
                       )}
                       size="lg"
                     >
-                      {step === 2 ? 'Personalize' : 'Continue'}
+                      {step === totalSteps ? 'Personalize' : 'Continue'}
                     </Button>
                   </div>
                 </div>
@@ -339,7 +339,7 @@ export function OnboardingStep({
                 )}
                 size="lg"
               >
-                {step === 2 ? 'Personalize' : 'Continue'}
+                {step === totalSteps ? 'Personalize' : 'Continue'}
               </Button>
             </div>
           </div>

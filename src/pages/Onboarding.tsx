@@ -118,9 +118,11 @@ export function Onboarding() {
 
   const step = onboardingSteps[currentStep];
 
-  if (step.type === 'info') {
-    return (
-      <AnimatePresence mode="wait">
+  const canProceed = step.type === 'info' || answers[currentStep] !== null;
+
+  return (
+    <AnimatePresence mode="wait">
+      {step.type === 'info' ? (
         <OnboardingInfoStep
           key={currentStep}
           step={currentStep + 1}
@@ -132,28 +134,22 @@ export function Onboarding() {
           onNext={handleNext}
           onBack={handleBack}
         />
-      </AnimatePresence>
-    );
-  }
-
-  const canProceed = answers[currentStep] !== null;
-
-  return (
-    <AnimatePresence mode="wait">
-      <OnboardingStep
-        key={currentStep}
-        step={currentStep + 1}
-        totalSteps={totalSteps}
-        heading={step.heading}
-        description={step.description}
-        options={step.options}
-        selectedAnswer={answers[currentStep]}
-        backgroundImageType={step.backgroundImageType}
-        onAnswerSelect={handleAnswerSelect}
-        onNext={handleNext}
-        onBack={currentStep > 0 ? handleBack : undefined}
-        canProceed={canProceed}
-      />
+      ) : (
+        <OnboardingStep
+          key={currentStep}
+          step={currentStep + 1}
+          totalSteps={totalSteps}
+          heading={step.heading}
+          description={step.description}
+          options={step.options}
+          selectedAnswer={answers[currentStep]}
+          backgroundImageType={step.backgroundImageType}
+          onAnswerSelect={handleAnswerSelect}
+          onNext={handleNext}
+          onBack={currentStep > 0 ? handleBack : undefined}
+          canProceed={canProceed}
+        />
+      )}
     </AnimatePresence>
   );
 }
