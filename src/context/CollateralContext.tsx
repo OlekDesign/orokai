@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
-export interface BorrowingPosition {
+export interface CollateralPosition {
   id: string;
   asset: string;
   ticker: string;
@@ -24,17 +24,17 @@ export interface BorrowingPosition {
   fundingRate8h?: number;
 }
 
-interface BorrowingContextValue {
-  positions: BorrowingPosition[];
-  addPosition: (position: BorrowingPosition) => void;
-  updatePosition: (id: string, updates: Partial<BorrowingPosition>) => void;
+interface CollateralContextValue {
+  positions: CollateralPosition[];
+  addPosition: (position: CollateralPosition) => void;
+  updatePosition: (id: string, updates: Partial<CollateralPosition>) => void;
   removePosition: (id: string) => void;
   portfolioTotal: number;
   portfolio24hDelta: number;
   portfolio24hPct: number;
 }
 
-const BorrowingContext = createContext<BorrowingContextValue | null>(null);
+const CollateralContext = createContext<CollateralContextValue | null>(null);
 
 function getLiquidationPrice(marketPrice: number) {
   return marketPrice * 0.9;
@@ -50,8 +50,8 @@ function roundTo2(value: number) {
 }
 
 function createSeedPosition(
-  position: Omit<BorrowingPosition, 'liqPrice' | 'roe' | 'pnl'>
-): BorrowingPosition {
+  position: Omit<CollateralPosition, 'liqPrice' | 'roe' | 'pnl'>
+): CollateralPosition {
   const liqPrice = roundTo2(getLiquidationPrice(position.marketPrice));
   const roe = roundTo2(getPriceChangePct(position.entryPrice, position.marketPrice));
   const positionSize = position.size ?? position.deposit * position.leverage;
@@ -66,9 +66,9 @@ function createSeedPosition(
   };
 }
 
-const SEED_POSITIONS: BorrowingPosition[] = [
+const SEED_POSITIONS: CollateralPosition[] = [
   createSeedPosition({
-    id: 'borrow-1',
+    id: 'collateral-1',
     asset: 'Bitcoin',
     ticker: 'BTC',
     collateralAsset: 'USDT',
@@ -87,7 +87,7 @@ const SEED_POSITIONS: BorrowingPosition[] = [
     fundingRate8h: -0.01,
   }),
   createSeedPosition({
-    id: 'borrow-2',
+    id: 'collateral-2',
     asset: 'Ethereum',
     ticker: 'ETH',
     collateralAsset: 'USDT',
@@ -106,7 +106,7 @@ const SEED_POSITIONS: BorrowingPosition[] = [
     fundingRate8h: 0.01,
   }),
   createSeedPosition({
-    id: 'borrow-3',
+    id: 'collateral-3',
     asset: 'Solana',
     ticker: 'SOL',
     collateralAsset: 'USDT',
@@ -126,14 +126,14 @@ const SEED_POSITIONS: BorrowingPosition[] = [
   }),
 ];
 
-export function BorrowingProvider({ children }: { children: ReactNode }) {
-  const [positions, setPositions] = useState<BorrowingPosition[]>(SEED_POSITIONS);
+export function CollateralProvider({ children }: { children: ReactNode }) {
+  const [positions, setPositions] = useState<CollateralPosition[]>(SEED_POSITIONS);
 
-  const addPosition = (position: BorrowingPosition) => {
+  const addPosition = (position: CollateralPosition) => {
     setPositions(prev => [position, ...prev]);
   };
 
-  const updatePosition = (id: string, updates: Partial<BorrowingPosition>) => {
+  const updatePosition = (id: string, updates: Partial<CollateralPosition>) => {
     setPositions(prev =>
       prev.map(position =>
         position.id === id ? { ...position, ...updates } : position
@@ -162,7 +162,7 @@ export function BorrowingProvider({ children }: { children: ReactNode }) {
   }, [positions, portfolio24hDelta]);
 
   return (
-    <BorrowingContext.Provider
+    <CollateralContext.Provider
       value={{
         positions,
         addPosition,
@@ -174,14 +174,14 @@ export function BorrowingProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </BorrowingContext.Provider>
+    </CollateralContext.Provider>
   );
 }
 
-export function useBorrowing() {
-  const context = useContext(BorrowingContext);
+export function useCollateral() {
+  const context = useContext(CollateralContext);
   if (!context) {
-    throw new Error('useBorrowing must be used within BorrowingProvider');
+    throw new Error('useCollateral must be used within CollateralProvider');
   }
 
   return context;

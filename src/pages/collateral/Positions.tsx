@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useBorrowing } from '../../context/BorrowingContext';
-import type { BorrowingPosition } from '../../context/BorrowingContext';
+import { useCollateral } from '../../context/CollateralContext';
+import type { CollateralPosition } from '../../context/CollateralContext';
 import type { Asset } from './TradeBrowser';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '../../components/ui/card';
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../components/ui/dialog';
-import { BodyText, BodyTextSmall, Caption, Heading1, Label } from '../../components/ui/typography';
+import { Heading1, Label } from '../../components/ui/typography';
 
 const REPAYMENT_CURRENCIES = ['USDC', 'USDT', 'ETH', 'BTC'];
 const CURRENCY_PRICES: Record<string, number> = {
@@ -57,12 +57,12 @@ function createRepaymentRows(count: number, defaultCurrency: string): RepaymentC
   return Array.from({ length: count }, () => ({ currency: defaultCurrency }));
 }
 
-function getPriceChangePct(position: BorrowingPosition) {
+function getPriceChangePct(position: CollateralPosition) {
   if (!position.entryPrice) return 0;
   return ((position.marketPrice - position.entryPrice) / position.entryPrice) * 100;
 }
 
-function getLiquidationRisk(position: BorrowingPosition) {
+function getLiquidationRisk(position: CollateralPosition) {
   const priceChangePct = getPriceChangePct(position);
 
   if (priceChangePct >= 0) {
@@ -116,7 +116,7 @@ function PositionCard({
   position,
   onClose,
 }: {
-  position: BorrowingPosition;
+  position: CollateralPosition;
   onClose: (id: string) => void;
 }) {
   const navigate = useNavigate();
@@ -210,19 +210,17 @@ function PositionCard({
           <TickerAvatar ticker={position.ticker} />
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap min-w-0">
-              <BodyText as="span" className="font-bold">
-                {position.asset}
-              </BodyText>
+              <span className="text-sm font-medium">{position.asset}</span>
               {position.status === 'complete' && priceChangePct < 0 ? <AtRiskBadge /> : null}
             </div>
           </div>
           <div className="text-right shrink-0 space-y-0.5">
-            <BodyText className="font-bold tabular-nums">
+            <div className="text-sm font-medium tabular-nums">
               {formatBorrowedTokenAmount(borrowedTokenAmount)} {position.ticker}
-            </BodyText>
-            <Caption as="div" className="tabular-nums text-muted-foreground">
+            </div>
+            <div className="text-sm tabular-nums text-muted-foreground">
               ${formatCurrency(borrowedValueUsd)}
-            </Caption>
+            </div>
           </div>
         </div>
 
@@ -239,26 +237,26 @@ function PositionCard({
               <Separator />
               <CardContent className="p-4 space-y-3 pt-6 sm:pt-6">
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <Caption className="text-muted-foreground">Borrow price</Caption>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <span className="text-muted-foreground">Entry price</span>
                     <div className="flex min-w-0 items-center gap-2">
                       {position.status === 'pending' ? <PendingBadge /> : null}
-                      <BodyTextSmall className="font-medium tabular-nums">
+                      <span className="font-medium tabular-nums">
                         ${formatCurrency(position.entryPrice)}
-                      </BodyTextSmall>
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Market price</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Market price</span>
+                    <span className="font-medium tabular-nums">
                       ${formatCurrency(position.marketPrice)}
-                    </BodyTextSmall>
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Liquidation</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Liquidation</span>
+                    <span className="font-medium tabular-nums">
                       ${formatCurrency(position.liqPrice)}
-                    </BodyTextSmall>
+                    </span>
                   </div>
                   <div className="pt-2">
                     <div className="flex flex-col gap-4">
@@ -273,7 +271,7 @@ function PositionCard({
                         <Button
                           className="w-full"
                           onClick={() =>
-                            navigate('/borrowing/prevent-liquidation', {
+                            navigate('/collateral/prevent-liquidation', {
                               state: { position, asset: assetForOpen },
                             })
                           }
@@ -283,22 +281,22 @@ function PositionCard({
                       ) : null}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Opened</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Opened</span>
+                    <span className="font-medium tabular-nums">
                       {new Date(position.openedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
                       })}
-                    </BodyTextSmall>
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch w-full">
                   <Button
                     className="flex-1"
-                    onClick={() => navigate('/borrowing/open', { state: { asset: assetForOpen } })}
+                    onClick={() => navigate('/collateral/open', { state: { asset: assetForOpen } })}
                   >
                     New Position
                   </Button>
@@ -349,7 +347,7 @@ function PositionCard({
                     {repaymentType === 'full' ? <div className="h-2 w-2 rounded-full bg-primary" /> : null}
                   </div>
                 </div>
-                <BodyTextSmall className="font-medium">Full repayment</BodyTextSmall>
+                <span className="text-sm font-medium">Full repayment</span>
               </label>
               <label className="flex cursor-pointer items-center gap-2">
                 <div className="relative">
@@ -369,7 +367,7 @@ function PositionCard({
                     {repaymentType === 'partial' ? <div className="h-2 w-2 rounded-full bg-primary" /> : null}
                   </div>
                 </div>
-                <BodyTextSmall className="font-medium">Partial repayment</BodyTextSmall>
+                <span className="text-sm font-medium">Partial repayment</span>
               </label>
             </div>
 
@@ -415,35 +413,37 @@ function PositionCard({
                   Add currency
                 </button>
                 {repaymentRows.length > 1 ? (
-                  <Caption className="tabular-nums text-muted-foreground">100%</Caption>
+                  <span className="text-sm tabular-nums text-muted-foreground">100%</span>
                 ) : null}
               </div>
             </div>
 
-            <div className="flex items-start justify-between gap-4">
-              <Caption className="text-muted-foreground">You pay</Caption>
+            <Separator />
+
+            <div className="flex items-start justify-between gap-4 text-sm">
+              <span className="text-muted-foreground">You pay</span>
               <div className="flex max-w-[65%] flex-col items-end gap-1.5 text-right">
                 {repaymentBreakdown.map((row, index) => (
-                  <BodyTextSmall
+                  <span
                     key={`${row.currency}-${index}`}
                     className="font-medium tabular-nums"
                   >
                     {formatAssetAmount(row.amount)} {row.currency || defaultRepaymentCurrency}
-                  </BodyTextSmall>
+                  </span>
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Debt repaid</Caption>
-              <BodyTextSmall className="font-medium tabular-nums">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Debt repaid</span>
+              <span className="font-medium tabular-nums">
                 {formatBorrowedTokenAmount(repaidTokenAmount)} {position.ticker}
-              </BodyTextSmall>
+              </span>
             </div>
-            <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Fee</Caption>
-              <BodyTextSmall className="font-medium tabular-nums">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Fee</span>
+              <span className="font-medium tabular-nums">
                 ${formatCurrency(repaymentFeeUsd)}
-              </BodyTextSmall>
+              </span>
             </div>
           </div>
           <DialogFooter className="gap-2">
@@ -490,7 +490,7 @@ function PositionCard({
                     setActiveRepaymentCurrencyRow(null);
                   }}
                 >
-                  <BodyText>{selectedCurrency}</BodyText>
+                  <span className="text-sm font-medium">{selectedCurrency}</span>
                   {activeRepaymentCurrencyRow !== null &&
                   selectedCurrency === repaymentRows[activeRepaymentCurrencyRow]?.currency ? (
                     <span className="w-2 h-2 rounded-full bg-primary" />
@@ -506,9 +506,9 @@ function PositionCard({
   );
 }
 
-export function BorrowPositions() {
+export function CollateralPositions() {
   const navigate = useNavigate();
-  const { positions, removePosition } = useBorrowing();
+  const { positions, removePosition } = useCollateral();
   const totalSupply = positions.reduce((sum, position) => sum + position.deposit, 0);
   const totalBorrow = positions.reduce(
     (sum, position) => sum + (position.size ?? position.deposit * position.leverage),
@@ -526,21 +526,21 @@ export function BorrowPositions() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="border border-border">
             <CardHeader className="flex-shrink-0">
-              <CardDescription>Your total supply</CardDescription>
+              <CardDescription>Pledged collateral</CardDescription>
               <Heading1 className="mt-1 tabular-nums">${formatCurrency(totalSupply)}</Heading1>
             </CardHeader>
           </Card>
 
           <Card className="border border-border">
             <CardHeader className="flex-shrink-0">
-              <CardDescription>Your total borrow</CardDescription>
+              <CardDescription>Borrowed against</CardDescription>
               <Heading1 className="mt-1 tabular-nums">${formatCurrency(totalBorrow)}</Heading1>
             </CardHeader>
           </Card>
         </div>
 
-        <Button className="w-full" size="lg" onClick={() => navigate('/borrowing/trade')}>
-          Borrow
+        <Button className="w-full" size="lg" onClick={() => navigate('/collateral/trade')}>
+          Put up collateral
         </Button>
       </div>
 
@@ -550,13 +550,13 @@ export function BorrowPositions() {
         {positions.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center">
-              <BodyText className="text-muted-foreground">No open positions</BodyText>
+              <p className="text-sm text-muted-foreground">No open positions</p>
               <Button
                 variant="ghost"
                 className="mt-3 text-primary"
-                onClick={() => navigate('/borrowing/trade')}
+                onClick={() => navigate('/collateral/trade')}
               >
-                Open your first borrowing position
+                Put up your first collateral
               </Button>
             </CardContent>
           </Card>

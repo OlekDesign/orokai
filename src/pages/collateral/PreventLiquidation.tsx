@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChartLine, ChevronDown, ChevronLeft } from 'lucide-react';
-import { useBorrowing } from '../../context/BorrowingContext';
-import type { BorrowingPosition } from '../../context/BorrowingContext';
+import { useCollateral } from '../../context/CollateralContext';
+import type { CollateralPosition } from '../../context/CollateralContext';
 import type { Asset } from './TradeBrowser';
 import { Button } from '../../components/ui/button';
 import { Separator } from '../../components/ui/separator';
@@ -24,21 +24,21 @@ function formatPrice(price: number) {
   return price.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 4 });
 }
 
-function getProjectedLiquidationPrice(position: BorrowingPosition, addedMargin: number) {
+function getProjectedLiquidationPrice(position: CollateralPosition, addedMargin: number) {
   if (addedMargin <= 0) return position.liqPrice;
   return position.liqPrice * 1.1;
 }
 
-type BorrowPreventLiquidationLocationState = {
+type CollateralPreventLiquidationLocationState = {
   asset?: Asset;
-  position?: BorrowingPosition;
+  position?: CollateralPosition;
 };
 
-export function BorrowPreventLiquidation() {
+export function CollateralPreventLiquidation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { updatePosition } = useBorrowing();
-  const { asset, position } = (location.state as BorrowPreventLiquidationLocationState | null) ?? {};
+  const { updatePosition } = useCollateral();
+  const { asset, position } = (location.state as CollateralPreventLiquidationLocationState | null) ?? {};
 
   const [deposit, setDeposit] = useState('1000');
   const [currency, setCurrency] = useState('USDC');
@@ -75,7 +75,7 @@ export function BorrowPreventLiquidation() {
       deposit: position.deposit + depositNum,
       liqPrice: projectedLiqPrice,
     });
-    navigate('/borrowing');
+    navigate('/collateral');
   };
 
   if (!displayAsset || !position) {
@@ -91,7 +91,7 @@ export function BorrowPreventLiquidation() {
         </Button>
         <div className="py-12 text-center space-y-4">
           <BodyText className="text-muted-foreground">No position selected.</BodyText>
-          <Button variant="ghost" onClick={() => navigate('/borrowing')}>
+          <Button variant="ghost" onClick={() => navigate('/collateral')}>
             Back to positions
           </Button>
         </div>

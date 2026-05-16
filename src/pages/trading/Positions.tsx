@@ -7,7 +7,7 @@ import { useTrading } from '../../context/TradingContext';
 import type { Position } from '../../context/TradingContext';
 import type { Asset } from './TradeBrowser';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '../../components/ui/card';
 import { Progress } from '../../components/ui/progress';
 import { Separator } from '../../components/ui/separator';
 import {
@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '../../components/ui/dialog';
-import { Heading1, BodyText, BodyTextSmall, Label, Caption } from '../../components/ui/typography';
+import { Heading1, Label } from '../../components/ui/typography';
 
 function formatCurrency(n: number, decimals = 2) {
   return n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -75,7 +75,7 @@ function PositionMetaLine({ position }: { position: Position }) {
   const dir = position.direction.toLowerCase();
   const lev = position.leverage;
   return (
-    <Caption className="text-muted-foreground">
+    <div className="text-sm text-muted-foreground">
       {position.status === 'pending' ? (
         <>
           Pending <span className="text-muted-foreground/70">·</span> {lev}× {dir}
@@ -85,7 +85,7 @@ function PositionMetaLine({ position }: { position: Position }) {
           {lev}× {dir}
         </>
       )}
-    </Caption>
+    </div>
   );
 }
 
@@ -150,20 +150,17 @@ function PositionCard({ position, onClose }: { position: Position; onClose: (id:
           <TickerAvatar ticker={position.ticker} />
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap min-w-0">
-              <BodyText as="span" className="font-bold">
-                {position.asset}
-              </BodyText>
+              <span className="text-sm font-medium">{position.asset}</span>
               {position.status === 'complete' && priceChangePct < 0 ? <AtRiskBadge /> : null}
             </div>
             <PositionMetaLine position={position} />
           </div>
           <div className="text-right shrink-0 space-y-0.5">
-            <BodyText className="font-bold tabular-nums">${formatCurrency(positionValue)}</BodyText>
+            <div className="text-sm font-medium tabular-nums">${formatCurrency(positionValue)}</div>
             {position.status !== 'pending' ? (
-              <Caption
-                as="div"
+              <div
                 className={cn(
-                  'tabular-nums inline-flex items-center justify-end gap-0.5',
+                  'text-sm tabular-nums inline-flex items-center justify-end gap-0.5',
                   priceChangePct >= 0 ? 'text-success' : 'text-destructive'
                 )}
               >
@@ -173,7 +170,7 @@ function PositionCard({ position, onClose }: { position: Position; onClose: (id:
                   <ArrowDown className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
                 )}
                 <span>{Math.abs(priceChangePct).toFixed(1)}%</span>
-              </Caption>
+              </div>
             ) : null}
           </div>
         </div>
@@ -192,24 +189,24 @@ function PositionCard({ position, onClose }: { position: Position; onClose: (id:
               <Separator />
               <CardContent className="p-4 space-y-3 pt-6 sm:pt-6">
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <Caption className="text-muted-foreground">Entry price</Caption>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <span className="text-muted-foreground">Entry price</span>
                     <div className="flex min-w-0 items-center gap-2">
                       {position.status === 'pending' ? <PendingBadge /> : null}
-                      <BodyTextSmall className="font-medium tabular-nums">
+                      <span className="font-medium tabular-nums">
                         ${formatCurrency(position.entryPrice)}
-                      </BodyTextSmall>
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Market price</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Market price</span>
+                    <span className="font-medium tabular-nums">
                       ${formatCurrency(position.marketPrice)}
-                    </BodyTextSmall>
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Liquidation</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">${formatCurrency(position.liqPrice)}</BodyTextSmall>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Liquidation</span>
+                    <span className="font-medium tabular-nums">${formatCurrency(position.liqPrice)}</span>
                   </div>
                   <div className="pt-2">
                     <div className="flex flex-col gap-4">
@@ -236,31 +233,31 @@ function PositionCard({ position, onClose }: { position: Position; onClose: (id:
                       ) : null}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Take profit</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Take profit</span>
+                    <span className="font-medium tabular-nums">
                       {position.tp != null ? `$${formatCurrency(position.tp)}` : '—'}
-                    </BodyTextSmall>
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Stop loss</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Stop loss</span>
+                    <span className="font-medium tabular-nums">
                       {position.sl != null ? `$${formatCurrency(position.sl)}` : '—'}
-                    </BodyTextSmall>
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Profit and loss</Caption>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Profit and loss</span>
                     <PnlText value={position.pnl} />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Caption className="text-muted-foreground">Opened</Caption>
-                    <BodyTextSmall className="font-medium tabular-nums">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Opened</span>
+                    <span className="font-medium tabular-nums">
                       {new Date(position.openedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
                       })}
-                    </BodyTextSmall>
+                    </span>
                   </div>
                 </div>
 
@@ -295,20 +292,20 @@ function PositionCard({ position, onClose }: { position: Position; onClose: (id:
             <DialogTitle>Close {position.asset} position?</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Profit and loss</Caption>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Profit and loss</span>
               <PnlText value={position.pnl} />
             </div>
-            <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Deposit returned</Caption>
-              <BodyTextSmall className="font-medium tabular-nums">${formatCurrency(position.deposit)}</BodyTextSmall>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Deposit returned</span>
+              <span className="font-medium tabular-nums">${formatCurrency(position.deposit)}</span>
             </div>
             <Separator />
-            <div className="flex items-center justify-between">
-              <BodyText className="font-semibold">Total received</BodyText>
-              <BodyText className={`font-bold tabular-nums ${totalReceived >= 0 ? 'text-success' : 'text-destructive'}`}>
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium">Total received</span>
+              <span className={`font-medium tabular-nums ${totalReceived >= 0 ? 'text-success' : 'text-destructive'}`}>
                 ${formatCurrency(Math.max(0, totalReceived))}
-              </BodyText>
+              </span>
             </div>
           </div>
           <DialogFooter className="gap-2">
@@ -346,23 +343,25 @@ export function Positions() {
     >
       {/* Portfolio header */}
       <div className="flex flex-col gap-6">
-        <div className="space-y-2">
-          <Heading1 className="tabular-nums">${formatCurrency(portfolioTotal)}</Heading1>
-          <Caption
-            as="div"
-            className={cn(
-              'tabular-nums inline-flex items-center gap-0.5',
-              deltaPositive ? 'text-success' : 'text-destructive'
-            )}
-          >
-            {deltaPositive ? (
-              <ArrowUp className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
-            ) : (
-              <ArrowDown className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
-            )}
-            <span>{Math.abs(portfolio24hPct).toFixed(1)}%</span>
-          </Caption>
-        </div>
+        <Card className="border border-border">
+          <CardHeader className="flex-shrink-0">
+            <CardDescription>Portfolio value</CardDescription>
+            <Heading1 className="mt-1 tabular-nums">${formatCurrency(portfolioTotal)}</Heading1>
+            <div
+              className={cn(
+                'text-sm tabular-nums inline-flex items-center gap-0.5 mt-1',
+                deltaPositive ? 'text-success' : 'text-destructive'
+              )}
+            >
+              {deltaPositive ? (
+                <ArrowUp className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
+              ) : (
+                <ArrowDown className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
+              )}
+              <span>{Math.abs(portfolio24hPct).toFixed(1)}%</span>
+            </div>
+          </CardHeader>
+        </Card>
 
         <Button
           className="w-full"
@@ -380,7 +379,7 @@ export function Positions() {
         {positions.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center">
-              <BodyText className="text-muted-foreground">No open positions</BodyText>
+              <p className="text-sm text-muted-foreground">No open positions</p>
               <Button
                 variant="ghost"
                 className="mt-3 text-primary"

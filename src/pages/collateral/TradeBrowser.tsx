@@ -5,7 +5,6 @@ import { ChevronLeft, Search } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Separator } from '../../components/ui/separator';
-import { BodyText, BodyTextSmall, Caption } from '../../components/ui/typography';
 
 export interface Asset {
   name: string;
@@ -70,21 +69,21 @@ function AssetRow({ asset, onSelect }: { asset: Asset; onSelect: (asset: Asset) 
     >
       <TickerAvatar ticker={asset.ticker} />
       <div className="flex-1 min-w-0">
-        <BodyTextSmall className="font-semibold">{asset.ticker}</BodyTextSmall>
-        <Caption className="text-muted-foreground truncate">{asset.name}</Caption>
+        <div className="text-sm font-medium">{asset.ticker}</div>
+        <div className="text-sm text-muted-foreground truncate">{asset.name}</div>
       </div>
       <div className="text-right shrink-0">
-        <BodyTextSmall className="font-semibold tabular-nums">${formatPrice(asset.price)}</BodyTextSmall>
-        <Caption className={`tabular-nums ${changeColor}`}>
+        <div className="text-sm font-medium tabular-nums">${formatPrice(asset.price)}</div>
+        <div className={`text-sm tabular-nums ${changeColor}`}>
           {positive ? '+' : ''}{asset.change24hPct.toFixed(2)}%
           {' '}(${positive ? '+' : ''}{formatChange(asset.change24hAbs)})
-        </Caption>
+        </div>
       </div>
     </button>
   );
 }
 
-export function BorrowTradeBrowser() {
+export function CollateralTradeBrowser() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,7 +101,7 @@ export function BorrowTradeBrowser() {
   });
 
   const handleSelect = (asset: Asset) => {
-    navigate('/borrowing/open', { state: { asset } });
+    navigate('/collateral/open', { state: { asset } });
   };
 
   return (
@@ -114,7 +113,7 @@ export function BorrowTradeBrowser() {
     >
       <Button
         variant="ghost"
-        onClick={() => navigate('/borrowing')}
+        onClick={() => navigate('/collateral')}
         className="-ml-2 flex items-center gap-1 px-2 text-muted-foreground hover:text-foreground"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -136,7 +135,7 @@ export function BorrowTradeBrowser() {
       <div>
         {filtered.length === 0 ? (
           <div className="py-12 text-center">
-            <BodyText className="text-muted-foreground">No assets found for "{query}"</BodyText>
+            <p className="text-sm text-muted-foreground">No assets found for "{query}"</p>
           </div>
         ) : (
           filtered.map((asset, index) => (

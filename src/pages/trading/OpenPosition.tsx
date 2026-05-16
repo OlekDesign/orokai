@@ -234,36 +234,6 @@ export function OpenPosition() {
         </div>
       </div>
 
-      {/* Leverage chips */}
-      <div className="space-y-2">
-        <Label>Leverage</Label>
-        <div className="flex gap-2 flex-wrap">
-          {LEVERAGE_OPTIONS.map(lev => (
-            <button
-              key={lev}
-              onClick={() => setLeverage(lev)}
-              className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-                leverage === lev
-                  ? 'bg-primary text-primary-foreground border-primary font-semibold'
-                  : 'bg-transparent text-muted-foreground border-border hover:border-foreground/30'
-              }`}
-            >
-              {lev}×
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Liquidation price */}
-      <div className="space-y-2">
-        <Caption className="text-sm font-medium text-foreground">
-          Position is liquidated if price {isLong ? 'drops' : 'rises'} to
-        </Caption>
-        <BodyText className="font-semibold tabular-nums text-xl text-foreground">
-          ${formatPrice(liqPrice)}
-        </BodyText>
-      </div>
-
       <div className="!mt-6 mb-[24px] flex flex-col gap-6 border-t border-t-[rgba(255,255,255,0.04)]">
         <div className="mt-6 flex flex-row items-center justify-start gap-4">
           <label
@@ -294,11 +264,43 @@ export function OpenPosition() {
 
         {advanced && (
           <>
-            <div
-              className="flex flex-col gap-4"
-              role="radiogroup"
-              aria-label="Order type"
-            >
+            {/* Leverage chips */}
+            <div className="space-y-2">
+              <Label>Leverage</Label>
+              <div className="flex gap-2 flex-wrap">
+                {LEVERAGE_OPTIONS.map(lev => (
+                  <button
+                    key={lev}
+                    onClick={() => setLeverage(lev)}
+                    className={`px-4 py-2 rounded-full text-sm border transition-colors ${
+                      leverage === lev
+                        ? 'bg-primary text-primary-foreground border-primary font-semibold'
+                        : 'bg-transparent text-muted-foreground border-border hover:border-foreground/30'
+                    }`}
+                  >
+                    {lev}×
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Liquidation price */}
+            <div className="space-y-2">
+              <Caption className="text-sm font-medium text-foreground">
+                Position is liquidated if price {isLong ? 'drops' : 'rises'} to
+              </Caption>
+              <BodyText className="font-semibold tabular-nums text-xl text-foreground">
+                ${formatPrice(liqPrice)}
+              </BodyText>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Type of order</Label>
+              <div
+                className="flex flex-col gap-4"
+                role="radiogroup"
+                aria-label="Order type"
+              >
               <label className="flex cursor-pointer items-center gap-2">
                 <div className="relative">
                   <input
@@ -346,6 +348,7 @@ export function OpenPosition() {
                 </div>
                 <span className="text-sm text-foreground">Limit order</span>
               </label>
+              </div>
             </div>
 
             {orderType === 'limit' && (

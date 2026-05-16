@@ -2,9 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTransactions } from '@/contexts/TransactionsContext';
-import { useUserProfile } from '@/contexts/UserProfileContext';
 import { useWidget } from '@/contexts/WidgetContext';
-import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, ChevronRight, Loader2, Settings2, User, BellRing } from 'lucide-react';
+import { ExternalLink, ArrowRight, Gift, ArrowUpRight, ArrowDownLeft, RefreshCw, Check, Info, X, Play, ChevronDown, ChevronRight, Loader2, Settings2, User, BellRing, Wallet } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -39,7 +38,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SegmentedSwitch } from '@/components/SegmentedSwitch';
-import { Avatar } from '@/components/Avatar';
 import { generateChartData, rewardTransactions } from '@/utils/stakingData';
 import type { Transaction, TransactionType } from '@/types';
 import { useTrading } from '@/context/TradingContext';
@@ -294,7 +292,6 @@ export function Dashboard() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
   const { transactions } = useTransactions();
-  const { profile } = useUserProfile();
   const { showWidget } = useWidget();
   const { positions, portfolioTotal, portfolio24hDelta } = useTrading();
   const [chartData, setChartData] = useState(generateChartData(timeRange));
@@ -548,29 +545,16 @@ export function Dashboard() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Mobile Top Header - Avatar and Notifications */}
+      {/* Mobile Top Header - Wallet and Notifications */}
       <div className="md:hidden flex items-center justify-between">
-        <div 
-          onClick={() => navigate('/wallet')} 
-          className="cursor-pointer"
+        <button
+          type="button"
+          onClick={() => navigate('/wallet')}
+          className="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
-          {profile?.avatar ? (
-            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-muted hover:opacity-80 transition-opacity">
-              <img 
-                src={profile.avatar} 
-                alt={profile.name || "Profile"} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <Avatar 
-              name={profile?.name || "User"} 
-              size="md" 
-              className="w-10 h-10 hover:opacity-80 transition-opacity"
-              singleLetter={true}
-            />
-          )}
-        </div>
+          <Wallet size={16} />
+          <span className="text-xs leading-none">Wallet</span>
+        </button>
         <Button
           variant="ghost"
           size="icon"
@@ -711,7 +695,7 @@ export function Dashboard() {
                   </div>
                   <div className="flex items-start gap-2">
                     <Button
-                      onClick={() => navigate('/invest')}
+                      onClick={() => navigate('/invest/new')}
                       className="h-10 px-4 md:hidden"
                       variant="secondary"
                       size="sm"

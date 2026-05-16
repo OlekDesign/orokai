@@ -2,6 +2,9 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 interface OnboardingState {
+  // Intro onboarding
+  hasCompletedIntro: boolean;
+
   // Payment methods
   hasAddedPaymentMethod: boolean;
   
@@ -19,6 +22,7 @@ interface OnboardingContextType {
   state: OnboardingState;
   
   // Actions
+  completeIntroOnboarding: () => void;
   completePaymentMethodStep: () => void;
   completeFirstInvestmentStep: () => void;
   completeFirstRewardStep: () => void;
@@ -35,6 +39,7 @@ interface OnboardingContextType {
 const STORAGE_KEY = 'onboarding_state';
 
 const DEFAULT_STATE: OnboardingState = {
+  hasCompletedIntro: false,
   hasAddedPaymentMethod: false,
   hasFirstInvestment: false,
   hasReceivedReward: false,
@@ -57,6 +62,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   }, [state]);
 
   // Action handlers
+  const completeIntroOnboarding = () => {
+    setState(prev => ({ ...prev, hasCompletedIntro: true }));
+  };
+
   const completePaymentMethodStep = () => {
     setState(prev => ({ ...prev, hasAddedPaymentMethod: true }));
   };
@@ -86,6 +95,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const value = {
     state,
+    completeIntroOnboarding,
     completePaymentMethodStep,
     completeFirstInvestmentStep,
     completeFirstRewardStep,

@@ -37,7 +37,7 @@ export default function CreateProfile() {
     }
     
     setProfile({ name: name.trim(), avatar });
-    navigate('/dashboard');
+    navigate('/onboarding');
   };
 
   useEffect(() => {

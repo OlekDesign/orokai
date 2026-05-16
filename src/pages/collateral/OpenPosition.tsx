@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChartLine, ChevronDown, ChevronLeft, Plus, Trash2 } from 'lucide-react';
-import { useBorrowing } from '../../context/BorrowingContext';
-import type { BorrowingPosition } from '../../context/BorrowingContext';
+import { useCollateral } from '../../context/CollateralContext';
+import type { CollateralPosition } from '../../context/CollateralContext';
 import type { Asset } from './TradeBrowser';
 import { Button } from '../../components/ui/button';
 import { Separator } from '../../components/ui/separator';
@@ -40,11 +40,11 @@ function getLiquidationPrice(marketPrice: number) {
   return marketPrice * 0.95;
 }
 
-export function BorrowOpenPosition() {
+export function CollateralOpenPosition() {
   const navigate = useNavigate();
   const location = useLocation();
   const asset = location.state?.asset as Asset | undefined;
-  const { addPosition } = useBorrowing();
+  const { addPosition } = useCollateral();
 
   const [depositRows, setDepositRows] = useState<DepositRow[]>([{ amount: '1000', currency: 'USDC' }]);
   const [activeCurrencyRow, setActiveCurrencyRow] = useState<number | null>(null);
@@ -112,8 +112,8 @@ export function BorrowOpenPosition() {
   const handleConfirm = () => {
     if (!asset || totalDepositValue <= 0) return;
 
-    const newPosition: BorrowingPosition = {
-      id: `borrow-pos-${Date.now()}`,
+    const newPosition: CollateralPosition = {
+      id: `collateral-pos-${Date.now()}`,
       asset: asset.name,
       ticker: asset.ticker,
       collateralAsset:
@@ -140,7 +140,7 @@ export function BorrowOpenPosition() {
     };
 
     addPosition(newPosition);
-    navigate('/borrowing');
+    navigate('/collateral');
   };
 
   if (!asset) {
@@ -156,7 +156,7 @@ export function BorrowOpenPosition() {
         </Button>
         <div className="py-12 text-center space-y-4">
           <BodyText className="text-muted-foreground">No asset selected.</BodyText>
-          <Button variant="ghost" onClick={() => navigate('/borrowing/trade')}>
+          <Button variant="ghost" onClick={() => navigate('/collateral/trade')}>
             Browse assets
           </Button>
         </div>
@@ -200,7 +200,7 @@ export function BorrowOpenPosition() {
       </div>
 
       <div className="space-y-2">
-        <Label>Your deposit</Label>
+        <Label>Your collateral</Label>
         <div className="space-y-2">
           {depositRows.map((row, index) => (
             <div key={index} className="flex gap-2 items-center">
@@ -252,12 +252,12 @@ export function BorrowOpenPosition() {
           className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Plus className="h-4 w-4" />
-          Deposit another token
+          Add another asset
         </button>
       </div>
 
       <div className="space-y-2">
-        <Label>Borrow</Label>
+        <Label>You receive</Label>
         <div className="rounded-md border border-border bg-card px-4 py-3">
           <BodyText className="font-semibold tabular-nums text-foreground">
             {borrowAmount.toLocaleString('en-US', {
@@ -385,7 +385,7 @@ export function BorrowOpenPosition() {
         >
           <DialogHeader>
             <DialogTitle>
-              Open borrow on {asset.name}?
+              Put up collateral for {asset.name}?
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
@@ -396,13 +396,13 @@ export function BorrowOpenPosition() {
               </BodyTextSmall>
             </div>
             <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Total deposit value</Caption>
+              <Caption className="text-muted-foreground">Total collateral value</Caption>
               <BodyTextSmall className="font-medium tabular-nums">
                 ${totalDepositValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
               </BodyTextSmall>
             </div>
             <div className="flex items-center justify-between">
-              <Caption className="text-muted-foreground">Borrow</Caption>
+              <Caption className="text-muted-foreground">You receive</Caption>
               <BodyTextSmall className="font-medium tabular-nums">
                 {borrowAmount.toLocaleString('en-US', {
                   minimumFractionDigits: 0,
@@ -413,7 +413,7 @@ export function BorrowOpenPosition() {
             </div>
             {populatedDepositRows.map((row, index) => (
               <div key={`${row.currency}-${index}`} className="flex items-center justify-between">
-                <Caption className="text-muted-foreground">Deposit {index + 1}</Caption>
+                <Caption className="text-muted-foreground">Collateral {index + 1}</Caption>
                 <BodyTextSmall className="font-medium tabular-nums">
                   {(parseFloat(row.amount) || 0).toLocaleString('en-US', {
                     minimumFractionDigits: 0,
@@ -436,7 +436,7 @@ export function BorrowOpenPosition() {
           </div>
           <DialogFooter className="gap-2">
             <Button className="w-full sm:w-auto" onClick={handleConfirm}>
-              Open Now
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

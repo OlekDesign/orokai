@@ -12,6 +12,9 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const isTransactionReview = location.pathname === '/transaction-review';
+  const isNarrowLayout =
+    location.pathname.startsWith('/trading') ||
+    location.pathname.startsWith('/collateral');
 
   return (
     <div className="min-h-screen bg-background">
@@ -19,20 +22,24 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Main Content */}
       <main className={
-        !isTransactionReview 
-          ? "md:ml-64 pb-28 md:pb-6 mt-3 md:mt-8 bg-background" 
+        !isTransactionReview
+          ? "md:ml-64 pb-28 md:pb-6 mt-3 md:mt-8 bg-background"
           : "mt-3 md:mt-16 bg-background"
       }>
         {/* Widget */}
         <Widget />
-        
+
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="mx-auto px-4 pt-2 pb-4 sm:py-6 max-w-[700px] md:max-w-[848px] bg-background mt-4 md:mt-0"
+          className={
+            isNarrowLayout
+              ? "mx-auto px-4 pt-2 pb-4 sm:py-6 max-w-[448px] bg-background mt-4 md:mt-0"
+              : "mx-auto px-4 pt-2 pb-4 sm:py-6 max-w-[700px] md:max-w-[848px] bg-background mt-4 md:mt-0"
+          }
         >
           {children}
         </motion.div>

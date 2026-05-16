@@ -4,12 +4,15 @@ import { Play } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Heading1, BodyText } from "@/components/ui/typography";
 import { useUserProfile } from '../contexts/UserProfileContext';
+import { useOnboarding } from '../contexts/OnboardingContext';
 
 export function OnboardingWelcome() {
   const navigate = useNavigate();
   const { profile } = useUserProfile();
+  const { completeIntroOnboarding } = useOnboarding();
 
   const handleStartInvesting = () => {
+    completeIntroOnboarding();
     navigate('/invest-empty');
   };
 

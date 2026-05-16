@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { TransactionsProvider } from './contexts/TransactionsContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
+import { useOnboarding } from './contexts/OnboardingContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { WidgetProvider } from './contexts/WidgetContext';
 import { TooltipProvider } from './components/ui/tooltip';
@@ -25,6 +26,7 @@ import { AffiliateAnalytics } from './pages/Affiliate-analytics';
 import { MyNFT } from './pages/my-nft';
 import { CreateInvestment } from './pages/CreateInvestment';
 import { NewInvestment } from './pages/NewInvestment';
+import { NewPassiveIncome } from './pages/NewPassiveIncome';
 import { Transactions } from './pages/Transactions';
 import TransactionsEmpty from './pages/Transactions-empty';
 import { TransactionReview } from './pages/TransactionReview';
@@ -32,15 +34,15 @@ import { TypographyDemo } from './components/TypographyDemo';
 import { ColorGuide } from './pages/ColorGuide';
 import DesignSystem from './pages/DesignSystem';
 import { TradingProvider } from './context/TradingContext';
-import { BorrowingProvider } from './context/BorrowingContext';
+import { CollateralProvider } from './context/CollateralContext';
 import { Positions } from './pages/trading/Positions';
 import { TradeBrowser } from './pages/trading/TradeBrowser';
 import { OpenPosition } from './pages/trading/OpenPosition';
 import { PreventLiquidation } from './pages/trading/PreventLiquidation';
-import { BorrowPositions } from './pages/borrowing/Positions';
-import { BorrowTradeBrowser } from './pages/borrowing/TradeBrowser';
-import { BorrowOpenPosition } from './pages/borrowing/OpenPosition';
-import { BorrowPreventLiquidation } from './pages/borrowing/PreventLiquidation';
+import { CollateralPositions } from './pages/collateral/Positions';
+import { CollateralTradeBrowser } from './pages/collateral/TradeBrowser';
+import { CollateralOpenPosition } from './pages/collateral/OpenPosition';
+import { CollateralPreventLiquidation } from './pages/collateral/PreventLiquidation';
 
 
 function RedirectFallback() {
@@ -77,7 +79,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const { profile } = useUserProfile();
+  const { state } = useOnboarding();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isLoading) return;
@@ -87,8 +91,16 @@ function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
     }
     if (!profile) {
       navigate('/create-profile', { replace: true });
+      return;
     }
-  }, [isLoading, user, profile, navigate]);
+    if (!state.hasCompletedIntro && location.pathname !== '/onboarding') {
+      navigate('/onboarding', { replace: true });
+      return;
+    }
+    if (state.hasCompletedIntro && location.pathname === '/onboarding') {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isLoading, user, profile, state.hasCompletedIntro, location.pathname, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -98,19 +110,33 @@ function ProfileProtectedRoute({ children }: { children: React.ReactNode }) {
     return <RedirectFallback />;
   }
 
+  if (!state.hasCompletedIntro && location.pathname !== '/onboarding') {
+    return <RedirectFallback />;
+  }
+
+  if (state.hasCompletedIntro && location.pathname === '/onboarding') {
+    return <RedirectFallback />;
+  }
+
   return <>{children}</>;
 }
 
 // Public route wrapper (redirects to dashboard if already logged in)
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
+  const { profile } = useUserProfile();
+  const { state } = useOnboarding();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading && user) {
-      navigate('/dashboard', { replace: true });
+      if (!profile) {
+        navigate('/create-profile', { replace: true });
+        return;
+      }
+      navigate(state.hasCompletedIntro ? '/dashboard' : '/onboarding', { replace: true });
     }
-  }, [isLoading, user, navigate]);
+  }, [isLoading, user, profile, state.hasCompletedIntro, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -227,6 +253,16 @@ function AppRoutes() {
           <ProfileProtectedRoute>
             <Layout>
               <CreateInvestment />
+            </Layout>
+          </ProfileProtectedRoute>
+        }
+      />
+      <Route
+        path="/invest/new"
+        element={
+          <ProfileProtectedRoute>
+            <Layout>
+              <NewPassiveIncome />
             </Layout>
           </ProfileProtectedRoute>
         }
@@ -364,43 +400,43 @@ function AppRoutes() {
         }
       />
 
-      {/* Borrowing Routes */}
+      {/* Collateral Routes */}
       <Route
-        path="/borrowing"
+        path="/collateral"
         element={
           <ProfileProtectedRoute>
             <Layout>
-              <BorrowPositions />
+              <CollateralPositions />
             </Layout>
           </ProfileProtectedRoute>
         }
       />
       <Route
-        path="/borrowing/trade"
+        path="/collateral/trade"
         element={
           <ProfileProtectedRoute>
             <Layout>
-              <BorrowTradeBrowser />
+              <CollateralTradeBrowser />
             </Layout>
           </ProfileProtectedRoute>
         }
       />
       <Route
-        path="/borrowing/open"
+        path="/collateral/open"
         element={
           <ProfileProtectedRoute>
             <Layout>
-              <BorrowOpenPosition />
+              <CollateralOpenPosition />
             </Layout>
           </ProfileProtectedRoute>
         }
       />
       <Route
-        path="/borrowing/prevent-liquidation"
+        path="/collateral/prevent-liquidation"
         element={
           <ProfileProtectedRoute>
             <Layout>
-              <BorrowPreventLiquidation />
+              <CollateralPreventLiquidation />
             </Layout>
           </ProfileProtectedRoute>
         }
@@ -449,7 +485,7 @@ export default function App() {
         <UserProfileProvider>
           <TransactionsProvider>
             <TradingProvider>
-              <BorrowingProvider>
+              <CollateralProvider>
                 <OnboardingProvider>
                   <ToastProvider>
                     <WidgetProvider>
@@ -459,7 +495,7 @@ export default function App() {
                     </WidgetProvider>
                   </ToastProvider>
                 </OnboardingProvider>
-              </BorrowingProvider>
+              </CollateralProvider>
             </TradingProvider>
           </TransactionsProvider>
         </UserProfileProvider>

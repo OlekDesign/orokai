@@ -1,10 +1,8 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { Home, Gem, Clock8, Users, BellRing, TrendingUp, Landmark } from 'lucide-react';
+import { Home, Gem, Clock8, Users, BellRing, TrendingUp, HandCoins, Wallet } from 'lucide-react';
 import { MetaMaskIcon } from './MetaMaskIcon';
-import { Avatar } from './Avatar';
 import { Button } from './ui/button';
 import { useAuth } from '../contexts/AuthContext';
-import { useUserProfile } from '../contexts/UserProfileContext';
 
 const navItems: Array<{
   icon: any;
@@ -15,20 +13,15 @@ const navItems: Array<{
   { icon: Home, label: 'Home', path: '/dashboard' },
   { icon: Gem, label: 'Passive Income', mobileLabel: 'Passive Income', path: '/invest' },
   { icon: TrendingUp, label: 'Trade', path: '/trading' },
-  { icon: Landmark, label: 'Borrow', mobileLabel: 'Borrow', path: '/borrowing' },
+  { icon: HandCoins, label: 'Collateral', path: '/collateral' },
   { icon: Users, label: 'Affiliate', path: '/affiliate' },
   { icon: Clock8, label: 'Transactions', path: '/transactions' },
 ];
-
-const DEMO_WALLET = {
-  address: '0x1234567890123456789012345678901234567890',
-};
 
 export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { profile } = useUserProfile();
 
   const isNavItemActive = (path: string) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -88,47 +81,19 @@ export function Navbar() {
           </nav>
         </div>
 
-        {/* Wallet Info & Logout */}
+        {/* Wallet */}
         <div className="p-4 border-t border-border">
-          <div 
-            className={`flex items-center space-x-3 px-4 py-3 cursor-pointer rounded-lg transition-colors w-full ${
+          <Link
+            to="/wallet"
+            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors w-full ${
               location.pathname === '/wallet'
                 ? 'bg-secondary text-foreground border-t border-primary/15'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
-            onClick={() => navigate('/wallet')}
           >
-              {profile?.avatar ? (
-                <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-muted">
-                  <img 
-                    src={profile.avatar} 
-                    alt={profile.name || "Profile"} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <Avatar 
-                  name={profile?.name || "User"} 
-                  size="sm" 
-                  className="w-6 h-6 text-[10px]" 
-                  singleLetter={true}
-                />
-              )}
-              <div className="flex flex-col">
-                {profile?.name && (
-                  <span className={`text-xs font-medium ${
-                    location.pathname === '/wallet' ? 'text-white' : 'text-foreground'
-                  }`}>
-                    {profile.name}
-                  </span>
-                )}
-                <span className={`text-xs ${
-                  location.pathname === '/wallet' ? 'text-white' : 'text-muted-foreground'
-                }`}>
-                  {DEMO_WALLET.address.slice(0, 6)}...{DEMO_WALLET.address.slice(-4)}
-                </span>
-              </div>
-          </div>
+            <Wallet size={16} />
+            <span className={`text-xs leading-none ${location.pathname === '/wallet' ? 'text-white' : 'text-muted-foreground'}`}>Wallet</span>
+          </Link>
         </div>
       </nav>
 
