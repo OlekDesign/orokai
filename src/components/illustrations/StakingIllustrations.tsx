@@ -36,32 +36,34 @@ interface FlowNodeProps {
 
 function FlowNode({ icon, label, amount, sublabel, pill, iconTone = 'primary', gain }: FlowNodeProps) {
   return (
-    <div className="flex w-full flex-col items-center rounded-2xl border border-border bg-card px-4 py-5 text-center shadow-sm sm:px-3 sm:py-4">
+    <div className="flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm sm:flex-col sm:gap-0 sm:px-3 sm:py-4 sm:text-center">
       <div
         className={cn(
-          'mb-3 flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14',
+          'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl sm:mb-3 sm:h-14 sm:w-14',
           iconTone === 'primary' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
         )}
       >
         {icon}
       </div>
-      <div className="text-sm font-semibold text-foreground">{label}</div>
-      {amount && (
-        <div className={cn('mt-1 text-xl font-bold tracking-tight sm:text-2xl', gain ? 'text-success' : 'text-foreground')}>
-          {amount}
-        </div>
-      )}
-      {sublabel && <div className="mt-0.5 text-xs font-medium text-muted-foreground">{sublabel}</div>}
-      {pill && (
-        <div
-          className={cn(
-            'mt-2.5 inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold sm:text-xs',
-            pill.tone === 'success' ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
-          )}
-        >
-          {pill.text}
-        </div>
-      )}
+      <div className="flex min-w-0 flex-1 flex-col items-start sm:flex-none sm:items-center">
+        <div className="text-sm font-semibold text-foreground">{label}</div>
+        {amount && (
+          <div className={cn('text-xl font-bold tracking-tight sm:mt-1 sm:text-2xl', gain ? 'text-success' : 'text-foreground')}>
+            {amount}
+          </div>
+        )}
+        {sublabel && <div className="text-xs font-medium text-muted-foreground sm:mt-0.5">{sublabel}</div>}
+        {pill && (
+          <div
+            className={cn(
+              'mt-1.5 inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold sm:mt-2.5 sm:text-xs',
+              pill.tone === 'success' ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
+            )}
+          >
+            {pill.text}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

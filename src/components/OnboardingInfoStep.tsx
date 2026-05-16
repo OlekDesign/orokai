@@ -63,7 +63,7 @@ export function OnboardingInfoStep({
         animate="animate"
         exit="exit"
         transition={{ duration: 0.25, ease: 'easeInOut' }}
-        className="flex-1 overflow-y-auto px-4 pt-8 pb-32 sm:px-6 sm:pt-12"
+        className="flex flex-1 flex-col overflow-y-auto px-4 pt-8 pb-32 sm:px-6 sm:pt-12"
       >
         <motion.div
           key={`info-content-${step}`}
@@ -72,7 +72,7 @@ export function OnboardingInfoStep({
           animate="animate"
           exit="exit"
           transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="mx-auto flex w-full max-w-xl flex-col gap-6 sm:max-w-3xl sm:gap-8"
+          className="mx-auto flex w-full max-w-xl flex-col gap-6 sm:my-auto sm:max-w-3xl sm:gap-8"
         >
           <div className="space-y-3 sm:space-y-4">
             <Heading1 as="h1" className="text-3xl sm:text-4xl">
