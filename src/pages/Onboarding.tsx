@@ -6,6 +6,12 @@ import { OnboardingPersonalization } from '../components/OnboardingPersonalizati
 import { OnboardingWelcome } from '../components/OnboardingWelcome';
 import type { BackgroundImageType } from '@/lib/getBackgroundImage';
 
+type StakingIllustrationKey =
+  | 'staking-savings'
+  | 'staking-different'
+  | 'staking-earns'
+  | 'staking-ready';
+
 type OnboardingStepDef =
   | {
       type: 'question';
@@ -18,8 +24,7 @@ type OnboardingStepDef =
       type: 'info';
       heading: string;
       description: string;
-      bullets?: string[];
-      backgroundImageType: BackgroundImageType;
+      backgroundImageType: StakingIllustrationKey;
     };
 
 const onboardingSteps: OnboardingStepDef[] = [
@@ -59,12 +64,7 @@ const onboardingSteps: OnboardingStepDef[] = [
   {
     type: 'info',
     heading: "You're ready to start",
-    description: 'It only takes three things:',
-    bullets: [
-      'Pick a strategy that fits your goals',
-      'Choose how much to stake',
-      'Watch your rewards grow',
-    ],
+    description: 'It only takes three things: pick a strategy, choose how much to stake, and watch your rewards grow.',
     backgroundImageType: 'staking-ready',
   },
   {
@@ -129,7 +129,6 @@ export function Onboarding() {
           totalSteps={totalSteps}
           heading={step.heading}
           description={step.description}
-          bullets={step.bullets}
           backgroundImageType={step.backgroundImageType}
           onNext={handleNext}
           onBack={handleBack}

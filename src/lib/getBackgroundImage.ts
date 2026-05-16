@@ -3,11 +3,7 @@ export type BackgroundImageType =
   | 'rewards'
   | 'freedom'
   | 'transparent'
-  | 'oak'
-  | 'staking-savings'
-  | 'staking-different'
-  | 'staking-earns'
-  | 'staking-ready';
+  | 'oak';
 
 const FILE_MAP: Record<BackgroundImageType, string> = {
   setup: 'setup.png',
@@ -15,10 +11,6 @@ const FILE_MAP: Record<BackgroundImageType, string> = {
   freedom: 'freedom.png',
   transparent: 'transparent.png',
   oak: 'oak.png',
-  'staking-savings': 'staking-savings.png',
-  'staking-different': 'staking-different.png',
-  'staking-earns': 'staking-earns.png',
-  'staking-ready': 'staking-ready.png',
 };
 
 export function getBackgroundImage(type: BackgroundImageType): string {
