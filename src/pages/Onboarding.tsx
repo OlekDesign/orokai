@@ -1,35 +1,87 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { OnboardingStep } from '../components/OnboardingStep';
+import { OnboardingInfoStep } from '../components/OnboardingInfoStep';
 import { OnboardingPersonalization } from '../components/OnboardingPersonalization';
 import { OnboardingWelcome } from '../components/OnboardingWelcome';
+import type { BackgroundImageType } from '@/lib/getBackgroundImage';
 
-const onboardingSteps = [
+type OnboardingStepDef =
+  | {
+      type: 'question';
+      heading: string;
+      description: string;
+      options: string[];
+      backgroundImageType: BackgroundImageType;
+    }
+  | {
+      type: 'info';
+      heading: string;
+      description: string;
+      bullets?: string[];
+      backgroundImageType: BackgroundImageType;
+    };
+
+const onboardingSteps: OnboardingStepDef[] = [
   {
+    type: 'question',
     heading: "What's your investment experience?",
-    description: "Help us understand your background so we can provide the best guidance for you.",
+    description:
+      'Help us understand your background so we can provide the best guidance for you.',
     options: [
       "I'm completely new to investing",
-      "I have some basic knowledge",
-      "I'm an experienced investor"
+      'I have some basic knowledge',
+      "I'm an experienced investor",
     ],
-    backgroundImageType: 'setup' as const
+    backgroundImageType: 'setup',
   },
   {
-    heading: "What's your main investment goal?",
-    description: "Understanding your goals helps us recommend the right investment strategy.",
-    options: [
-      "Build long-term wealth",
-      "Generate passive income",
-      "Save for a specific goal"
+    type: 'info',
+    heading: 'Staking is like a savings account',
+    description:
+      'You set money aside, and over time it earns interest. Staking works the same way — except you set aside crypto, and it earns rewards while you hold it.',
+    backgroundImageType: 'staking-savings',
+  },
+  {
+    type: 'info',
+    heading: 'But it works a bit differently',
+    description:
+      "There's no bank in the middle. Your crypto helps secure the network, and the network rewards you directly — which is why the returns tend to be higher than a typical savings account.",
+    backgroundImageType: 'staking-different',
+  },
+  {
+    type: 'info',
+    heading: 'Your crypto earns, day after day',
+    description:
+      'Stake $1,000 and earn around $100 over a year — paid automatically as crypto added to your balance. The more you stake, the more it grows.',
+    backgroundImageType: 'staking-earns',
+  },
+  {
+    type: 'info',
+    heading: "You're ready to start",
+    description: 'It only takes three things:',
+    bullets: [
+      'Pick a strategy that fits your goals',
+      'Choose how much to stake',
+      'Watch your rewards grow',
     ],
-    backgroundImageType: 'rewards' as const
-  }
+    backgroundImageType: 'staking-ready',
+  },
+  {
+    type: 'question',
+    heading: "What's your main investment goal?",
+    description:
+      'Understanding your goals helps us recommend the right investment strategy.',
+    options: ['Build long-term wealth', 'Generate passive income', 'Save for a specific goal'],
+    backgroundImageType: 'rewards',
+  },
 ];
 
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<(string | null)[]>(new Array(onboardingSteps.length).fill(null));
+  const [answers, setAnswers] = useState<(string | null)[]>(
+    new Array(onboardingSteps.length).fill(null)
+  );
   const totalSteps = onboardingSteps.length;
 
   const handleAnswerSelect = (answer: string) => {
@@ -42,7 +94,6 @@ export function Onboarding() {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Move to personalization step after all questions are answered
       setCurrentStep(totalSteps);
     }
   };
@@ -54,23 +105,38 @@ export function Onboarding() {
   };
 
   const handlePersonalizationComplete = () => {
-    // Move to welcome screen after personalization
     setCurrentStep(totalSteps + 1);
   };
 
-  const canProceed = answers[currentStep] !== null;
-
-  // Show welcome screen after personalization
   if (currentStep >= totalSteps + 1) {
     return <OnboardingWelcome />;
   }
 
-  // Show personalization step after all questions
   if (currentStep === totalSteps) {
     return <OnboardingPersonalization onComplete={handlePersonalizationComplete} />;
   }
 
   const step = onboardingSteps[currentStep];
+
+  if (step.type === 'info') {
+    return (
+      <AnimatePresence mode="wait">
+        <OnboardingInfoStep
+          key={currentStep}
+          step={currentStep + 1}
+          totalSteps={totalSteps}
+          heading={step.heading}
+          description={step.description}
+          bullets={step.bullets}
+          backgroundImageType={step.backgroundImageType}
+          onNext={handleNext}
+          onBack={handleBack}
+        />
+      </AnimatePresence>
+    );
+  }
+
+  const canProceed = answers[currentStep] !== null;
 
   return (
     <AnimatePresence mode="wait">
@@ -85,7 +151,7 @@ export function Onboarding() {
         backgroundImageType={step.backgroundImageType}
         onAnswerSelect={handleAnswerSelect}
         onNext={handleNext}
-        onBack={handleBack}
+        onBack={currentStep > 0 ? handleBack : undefined}
         canProceed={canProceed}
       />
     </AnimatePresence>
