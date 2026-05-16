@@ -42,9 +42,9 @@ const onboardingSteps: OnboardingStepDef[] = [
   },
   {
     type: 'info',
-    heading: 'Staking is like a savings account',
+    heading: 'Like a savings account, but for crypto',
     description:
-      'You set money aside, and over time it earns interest. Staking works the same way — except you set aside crypto, and it earns rewards while you hold it.',
+      'You set money aside in a bank, and it earns interest over time. Here, you set crypto aside, and it earns rewards the same way.',
     backgroundImageType: 'staking-savings',
   },
   {
@@ -56,15 +56,15 @@ const onboardingSteps: OnboardingStepDef[] = [
   },
   {
     type: 'info',
-    heading: 'Your crypto earns, day after day',
+    heading: 'Earn passive income, day after day',
     description:
-      'Stake $1,000 and earn around $100 over a year — paid automatically as crypto added to your balance. The more you stake, the more it grows.',
+      'Set aside $1,000 and earn around $100 over a year — paid automatically as crypto added to your balance. The more you set aside, the more it grows.',
     backgroundImageType: 'staking-earns',
   },
   {
     type: 'info',
     heading: "You're ready to start",
-    description: 'It only takes three things: pick a strategy, choose how much to stake, and watch your rewards grow.',
+    description: 'It only takes three things: pick a strategy, choose how much to set aside, and watch your rewards grow.',
     backgroundImageType: 'staking-ready',
   },
   {

@@ -117,9 +117,9 @@ function NetworkFlow() {
         icon={<User className="h-5 w-5 sm:h-6 sm:w-6" />}
         label="You"
         amount="$1,000"
-        sublabel="stake"
+        sublabel="deposit"
       />
-      <FlowArrow label="stake" />
+      <FlowArrow label="deposit" />
       <FlowNode
         icon={<Network className="h-5 w-5 sm:h-6 sm:w-6" />}
         label="Network"
@@ -248,7 +248,7 @@ function ThreeStepMockups() {
       </StepCard>
 
       {/* Card 2 — Amount */}
-      <StepCard num={2} title="Stake amount" footer="Choose how much to stake">
+      <StepCard num={2} title="Amount" footer="Choose how much to set aside">
         <div className="rounded-lg border border-border bg-card p-3">
           <div className="flex items-baseline gap-1.5">
             <span className="text-2xl font-bold tracking-tight text-foreground">1,000</span>
