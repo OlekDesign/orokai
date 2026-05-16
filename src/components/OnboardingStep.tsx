@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Heading1, BodyText } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from 'react';
+import { getBackgroundImage, type BackgroundImageType } from '@/lib/getBackgroundImage';
 
 
 interface OnboardingStepProps {
@@ -13,7 +14,7 @@ interface OnboardingStepProps {
   description: string;
   options: string[];
   selectedAnswer: string | null;
-  backgroundImageType?: 'setup' | 'rewards' | 'freedom' | 'transparent' | 'oak';
+  backgroundImageType?: BackgroundImageType;
   onAnswerSelect: (answer: string) => void;
   onNext: () => void;
   onBack?: () => void;
@@ -76,24 +77,7 @@ export function OnboardingStep({
   useEffect(() => {
     setFocusedOptionIndex(-1);
   }, [step]);
-  const getBackgroundImage = () => {
-    const baseUrl = import.meta.env.BASE_URL;
-    switch (backgroundImageType) {
-      case 'setup':
-        return `${baseUrl}setup.png`;
-      case 'rewards':
-        return `${baseUrl}rewards.png`;
-      case 'freedom':
-        return `${baseUrl}freedom.png`;
-      case 'transparent':
-        return `${baseUrl}transparent.png`;
-      case 'oak':
-      default:
-        return `${baseUrl}oak.png`;
-    }
-  };
-  
-  const backgroundImage = getBackgroundImage();
+  const backgroundImage = getBackgroundImage(backgroundImageType);
   
   // Animation variants
   const containerVariants = {
